@@ -119,8 +119,8 @@ DEBUG = False
 
 # ##### INTERNATIONALIZATION ##############################
 
-LANGUAGE_CODE = 'de'
-TIME_ZONE = 'Europe/Berlin'
+LANGUAGE_CODE = 'en'
+TIME_ZONE = 'Europe/Paris'
 
 # Internationalization
 USE_I18N = True
