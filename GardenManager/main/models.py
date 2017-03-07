@@ -5,6 +5,28 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class Month (models.Model):
+
+  """
+    The Month class maps the month table.
+    It defines:
+      - an ID ;
+      - a month ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=64, primary_key=True, unique=True)
+
+  MONTH_NAMES = "January", "February", "March", "April", "May", "June", \
+    "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"
+  MONTHS = enumerate (MONTH_NAMES)
+  month = models.PositiveSmallIntegerField (choices=MONTHS)
+
+  # Definition of the relation-related attributes
+  None
+
+
 class Fruit (models.Model):
 
   """
@@ -28,7 +50,7 @@ class Fruit (models.Model):
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
-  None
+  months = models.ManyToManyField (Month)
 
 
 class Flower (models.Model):
@@ -54,7 +76,7 @@ class Flower (models.Model):
   scent = models.PositiveSmallIntegerField (choices=SCENTS)
 
   # Definition of the relation-related attributes
-  None
+  months = models.ManyToManyField (Month)
 
 
 
