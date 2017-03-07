@@ -79,7 +79,6 @@ class Flower (models.Model):
   months = models.ManyToManyField (Month)
 
 
-
 class Plant (models.Model):
 
   """
@@ -151,3 +150,25 @@ class Plant (models.Model):
       A plant is identified by its common and sometimes its scientific name.
     """
     return "%s (%s)" % (self.common_name, self.scientific_name)
+
+
+class Image (models.Model):
+
+  """
+    The Image class maps the image table.
+    It defines:
+      - an ID ;
+      - a path to the cached image ;
+      - a blob (the image) ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  blob = models.BinaryField (null=True)
+  path = models.FilePathField ()
+
+  # Definition of the relation-related attributes
+  plants = models.ForeignKey (Plant, null=False)
+  flowers = models.ForeignKey (Flower, null=False)
+  fruits = models.ForeignKey (Fruit, null=False)
