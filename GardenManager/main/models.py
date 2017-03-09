@@ -2,13 +2,57 @@
 
 from __future__ import unicode_literals
 
+
 from django.db import models
 
-from hashlib import sha512
-import os
+
+from digester import Digester
 
 
 
+class Session (models.Model):
+
+  """
+    The Session class maps the Session table.
+    It defines:
+      - a user_id ;
+      - a last_operation ;
+      - a cookie ;
+  """
+
+  # Definition of the regular attributes.
+
+  user_id = models.CharField (max_length=90, primary_key=True, unique=True)
+  last_operation = models.DateField ()
+  cookie = models.CharField (max_length=256)
+
+  # Definition of the relation-related attributes
+  None
+
+  @staticmethod
+  def updating_session_operation (function):
+    def updating_session_function (self, *args, **kwargs):
+      self.updating_session_function ()
+      return function (self, *args, **kwargs)
+    return updating_session_function
+
+  def update_last_operation (self):
+    if self.session:
+      self.session.update_last_operation ()
+
+  def has_password (self, password):
+    return Digester (salt=self.salt).digest (password) == self.password
+    #return str (sha512 (password + self.salt).digest ()) == self.password
+
+  def is_connected (self):
+    return self.session is not None and self.session.has_expired is False
+
+  def disconnect (self):
+    if self.session:
+      self.session.delete ()
+
+  def __hash__ (self):
+    return Digester ().digest (self.exposure)
 
 
 class User (models.Model):
@@ -56,7 +100,7 @@ class User (models.Model):
       self.session.delete ()
 
   def __hash__ (self):
-    return str (sha512 (self.exposure).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.exposure)
 
 
 class Exposure (models.Model):
@@ -80,7 +124,7 @@ class Exposure (models.Model):
   None
 
   def __hash__ (self):
-    return str (sha512 (self.exposure).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.exposure)
 
 
 class LandscapeUse (models.Model):
@@ -104,7 +148,7 @@ class LandscapeUse (models.Model):
   None
 
   def __hash__ (self):
-    return str (sha512 (self.landscape).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.landscape)
 
 
 class Month (models.Model):
@@ -129,7 +173,7 @@ class Month (models.Model):
   None
 
   def __hash__ (self):
-    return str (sha512 (self.month).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.month)
 
 
 class Fruit (models.Model):
@@ -158,7 +202,7 @@ class Fruit (models.Model):
   months = models.ManyToManyField (Month)
 
   def __hash__ (self):
-    return str (sha512 (self.colour + self.type).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.colour + self.type)
 
 
 class Flower (models.Model):
@@ -187,7 +231,7 @@ class Flower (models.Model):
   months = models.ManyToManyField (Month)
 
   def __hash__ (self):
-    return str (sha512 (self.scent + self.colour).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.scent + self.colour)
 
 
 class Plant (models.Model):
@@ -257,7 +301,7 @@ class Plant (models.Model):
   flower = models.ForeignKey (Flower, null=True)
 
   def __hash__ (self):
-    return str (sha512 (self.common_name + self.scientific_name).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.common_name + self.scientific_name)
 
   def __str__(self):
     """
@@ -288,4 +332,4 @@ class Image (models.Model):
   fruits = models.ForeignKey (Fruit, null=False)
 
   def __hash__ (self):
-    return str (sha512 (self.blob + self.path).digest ()).encode ("base64")[:90]
+    return Digester ().digest (self.blob + self.path)
