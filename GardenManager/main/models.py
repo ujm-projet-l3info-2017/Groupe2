@@ -4,6 +4,108 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from hashlib import sha512
+import os
+
+
+
+
+
+class User (models.Model):
+
+  """
+    The User class maps the User table.
+    It defines:
+      - an ID ;
+      - a login ;
+      - a password ;
+      - an email ;
+      - a date of last login ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  EXPOSURE_NAMES = "", 
+  EXPOSURES = enumerate (EXPOSURE_NAMES)
+  exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
+
+  # Definition of the relation-related attributes
+  None
+
+  @staticmethod
+  def updating_session_operation (function):
+    def updating_session_function (self, *args, **kwargs):
+      self.updating_session_function ()
+      return function (self, *args, **kwargs)
+    return updating_session_function
+
+  def update_last_operation (self):
+    if self.session:
+      self.session.update_last_operation ()
+
+  def has_password (self, password):
+    return str (sha512 (password + self.salt).digest ()) == self.password
+
+  def is_connected (self):
+    return self.session is not None and self.session.has_expired is False
+
+  def disconnect (self):
+    if self.session:
+      self.session.delete ()
+
+  def __hash__ (self):
+    return str (sha512 (self.exposure).digest ()).encode ("base64")[:90]
+
+
+class Exposure (models.Model):
+
+  """
+    The Exposure class maps the Exposure table.
+    It defines:
+      - an ID ;
+      - an exposure ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  EXPOSURE_NAMES = "", 
+  EXPOSURES = enumerate (EXPOSURE_NAMES)
+  exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __hash__ (self):
+    return str (sha512 (self.exposure).digest ()).encode ("base64")[:90]
+
+
+class LandscapeUse (models.Model):
+
+  """
+    The LandscapeUse class maps the LandscapeUse table.
+    It defines:
+      - an ID ;
+      - a landscape ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  LANDSCAPE_NAMES = "", 
+  LANDSCAPES = enumerate (LANDSCAPE_NAMES)
+  landscape = models.PositiveSmallIntegerField (choices=LANDSCAPES)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __hash__ (self):
+    return str (sha512 (self.landscape).digest ()).encode ("base64")[:90]
+
 
 class Month (models.Model):
 
