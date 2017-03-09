@@ -7,6 +7,7 @@ import os
 
 
 class Digester (object):
+
   """
     The Digester class allow the user to create a hash of a string using three
       phases:
@@ -53,13 +54,12 @@ class Digester (object):
     digester = Digester (hash_name="md5", cutoff=0, salt=True, salt_length=32)
     hashed, salt = digester.digest ("some string", get_salt=True)
     # lol, salt is bigger than output
-
   """
 
   HASH_ALGORITHMS = hashlib.algorithms
   SUPORTED_ENCODINGS = ["base64", "", None]
 
-  def __init__ (self, name="sha512;base64;90", salt=False, salt_length=16,
+  def __init__ (self, name="sha512;base64;0", salt=False, salt_length=16,
       hash_name=None, cutoff=None, **kwargs):
     algo = name.split (';')
     if len (algo) != 3 and \
