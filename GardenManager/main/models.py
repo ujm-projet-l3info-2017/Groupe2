@@ -118,7 +118,7 @@ class Month (models.Model):
 
   # Definition of the regular attributes.
 
-  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   MONTH_NAMES = "January", "February", "March", "April", "May", "June", \
     "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"
@@ -127,6 +127,9 @@ class Month (models.Model):
 
   # Definition of the relation-related attributes
   None
+
+  def __hash__ (self):
+    return str (sha512 (self.month).digest ()).encode ("base64")[:90]
 
 
 class Fruit (models.Model):
@@ -141,7 +144,7 @@ class Fruit (models.Model):
 
   # Definition of the regular attributes.
 
-  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   COLOUR_NAMES = "brown",
   COLOURS = enumerate (COLOUR_NAMES)
@@ -153,6 +156,9 @@ class Fruit (models.Model):
 
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
+
+  def __hash__ (self):
+    return str (sha512 (self.colour + self.type).digest ()).encode ("base64")[:90]
 
 
 class Flower (models.Model):
@@ -167,7 +173,7 @@ class Flower (models.Model):
 
   # Definition of the regular attributes.
 
-  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   COLOUR_NAMES = "brown",
   COLOURS = enumerate (COLOUR_NAMES)
@@ -179,6 +185,9 @@ class Flower (models.Model):
 
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
+
+  def __hash__ (self):
+    return str (sha512 (self.scent + self.colour).digest ()).encode ("base64")[:90]
 
 
 class Plant (models.Model):
@@ -211,7 +220,7 @@ class Plant (models.Model):
       - it prevents misspelling ids (for dangerous operation like deletion) ;
       - it prevent users to guess metadate like the number of entries we have ;
   """
-  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   scientific_name = models.CharField (max_length=64, unique=True)
   common_name = models.CharField (max_length=64, unique=True)
@@ -247,6 +256,9 @@ class Plant (models.Model):
   fruit = models.ForeignKey (Fruit, null=True)
   flower = models.ForeignKey (Flower, null=True)
 
+  def __hash__ (self):
+    return str (sha512 (self.common_name + self.scientific_name).digest ()).encode ("base64")[:90]
+
   def __str__(self):
     """
       A plant is identified by its common and sometimes its scientific name.
@@ -266,7 +278,7 @@ class Image (models.Model):
 
   # Definition of the regular attributes.
 
-  id = models.CharField (max_length=64, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
   blob = models.BinaryField (null=True)
   path = models.FilePathField ()
 
@@ -274,3 +286,6 @@ class Image (models.Model):
   plants = models.ForeignKey (Plant, null=False)
   flowers = models.ForeignKey (Flower, null=False)
   fruits = models.ForeignKey (Fruit, null=False)
+
+  def __hash__ (self):
+    return str (sha512 (self.blob + self.path).digest ()).encode ("base64")[:90]
