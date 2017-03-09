@@ -1,6 +1,7 @@
 
 
 from __future__ import unicode_literals
+import time
 
 
 from django.db import models
@@ -8,6 +9,36 @@ from django.db import models
 
 from digester import Digester
 
+
+
+
+
+
+class Ground (models.Model):
+
+  """
+    The Ground class maps the Ground table.
+    It defines:
+      - an id ;
+      - a name ;
+      - a type ;
+      - a pH ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+  name = models.CharField (max_length=32)
+  ph = models.FloatField (null=False)
+
+  TYPE_NAMES = "", 
+  TYPES = enumerate (TYPE_NAMES)
+  type = models.PositiveSmallIntegerField (choices=TYPES)
+
+  # Definition of the relation-related attributes
+
+  def __hash__ (self):
+    return Digester ().digest (self.name + str (self.ph) + str (self.type))
 
 
 class Session (models.Model):
@@ -23,36 +54,18 @@ class Session (models.Model):
   # Definition of the regular attributes.
 
   user_id = models.CharField (max_length=90, primary_key=True, unique=True)
-  last_operation = models.DateField ()
+  last_operation = models.DateField (auto_now=True)
   cookie = models.CharField (max_length=256)
 
   # Definition of the relation-related attributes
   None
 
-  @staticmethod
-  def updating_session_operation (function):
-    def updating_session_function (self, *args, **kwargs):
-      self.updating_session_function ()
-      return function (self, *args, **kwargs)
-    return updating_session_function
-
   def update_last_operation (self):
-    if self.session:
-      self.session.update_last_operation ()
-
-  def has_password (self, password):
-    return Digester (salt=self.salt).digest (password) == self.password
-    #return str (sha512 (password + self.salt).digest ()) == self.password
-
-  def is_connected (self):
-    return self.session is not None and self.session.has_expired is False
-
-  def disconnect (self):
-    if self.session:
-      self.session.delete ()
+    # with auto_now, the last_operation field will be updated at each save op.
+    self.save ()
 
   def __hash__ (self):
-    return Digester ().digest (self.exposure)
+    return Digester ().digest (self.user_id)
 
 
 class User (models.Model):
@@ -76,12 +89,12 @@ class User (models.Model):
   exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
 
   # Definition of the relation-related attributes
-  None
+  session = models.ForeignKey (Session, null=True)
 
   @staticmethod
   def updating_session_operation (function):
     def updating_session_function (self, *args, **kwargs):
-      self.updating_session_function ()
+      self.update_last_operation ()
       return function (self, *args, **kwargs)
     return updating_session_function
 
@@ -101,6 +114,43 @@ class User (models.Model):
 
   def __hash__ (self):
     return Digester ().digest (self.exposure)
+
+
+class Project (models.Model):
+
+  """
+    The Session class maps the Session table.
+    It defines:
+      - an id ;
+      - a name ;
+      - a creation date ;
+      - an update date ;
+  """
+
+  def validate_name (name):
+    if self.user.projects.filter (name=name) is not None:
+      raise ValidationError('Already existing project with name: %s' % name,
+        code='invalid')
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+  name = models.CharField (max_length=32)
+  creation_date = models.DateField ()
+  update_date = models.DateField (auto_now=True)
+
+  # Definition of the relation-related attributes
+  user = models.ForeignKey (User, null=True)
+
+  def save (self):
+    """
+      This save check for the existance of another project with the same name.
+      If one is found, throw a ValidationError.
+    """
+    super (Project, self).save ()
+
+  def __hash__ (self):
+    return Digester (salt=True).digest ()
 
 
 class Exposure (models.Model):
@@ -297,8 +347,8 @@ class Plant (models.Model):
 
   # Definition of the relation-related attributes
 
-  fruit = models.ForeignKey (Fruit, null=True)
-  flower = models.ForeignKey (Flower, null=True)
+  fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
+  flower = models.ForeignKey (Flower, null=True, related_name="plants")
 
   def __hash__ (self):
     return Digester ().digest (self.common_name + self.scientific_name)
@@ -308,6 +358,53 @@ class Plant (models.Model):
       A plant is identified by its common and sometimes its scientific name.
     """
     return "%s (%s)" % (self.common_name, self.scientific_name)
+
+
+class Area (models.Model):
+
+  """
+    The Area class maps the Area table.
+    It defines:
+      - an id ;
+      - a x position ;
+      - a y position ;
+      - a ground_id ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+  x = models.FloatField (null=False)
+  y = models.FloatField (null=False)
+
+  # Definition of the relation-related attributes
+  ground = models.ForeignKey (Ground, null=False, related_name="areas")
+
+  def __hash__ (self):
+    return Digester ().digest (str (self.x) + str (self.y) + self.ground_id)
+
+
+class PlantSpot (models.Model):
+
+  """
+    The PlantSpot class maps the PlantSpot table.
+    It defines:
+      - an id ;
+      - a position id ;
+      - a plant id ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  # Definition of the relation-related attributes
+  plant = models.ForeignKey (Plant, null=False, related_name="plant_spots")
+  area = models.ForeignKey (Area, null=False, related_name="plant_spots")
+
+  def __hash__ (self):
+    # juste a random salt hashed
+    return Digester (salt=True, salt_length=64, cutoff=90).digest ()
 
 
 class Image (models.Model):
@@ -327,9 +424,34 @@ class Image (models.Model):
   path = models.FilePathField ()
 
   # Definition of the relation-related attributes
-  plants = models.ForeignKey (Plant, null=False)
-  flowers = models.ForeignKey (Flower, null=False)
-  fruits = models.ForeignKey (Fruit, null=False)
+  plant = models.ForeignKey (Plant, null=True, related_name="images")
+  flower = models.ForeignKey (Flower, null=True, related_name="images")
+  fruit = models.ForeignKey (Fruit, null=True, related_name="images")
 
   def __hash__ (self):
     return Digester ().digest (self.blob + self.path)
+
+
+class Position (models.Model):
+
+  """
+    The Position class maps the Position table.
+    It defines:
+      - an id ;
+      - an x ;
+      - an y ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+  x = models.FloatField ()
+  y = models.FloatField ()
+
+  # Definition of the relation-related attributes
+  area = models.ForeignKey (Area, null=True, related_name="positions")
+  plant_spot = models.ForeignKey (PlantSpot, null=True, related_name="positions")
+
+  def __hash__ (self):
+    # juste a random salt hashed
+    return Digester ().digest (str (self.x) + ';' + str (self.y))
