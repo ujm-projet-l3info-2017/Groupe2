@@ -13,8 +13,6 @@ class PlantSpider (scrapy.Spider):
 
   with open ("URLs", "r") as f:
     start_urls = map (str.strip, f.readlines ())
-    start_urls = [start_urls[0]]
-  print start_urls
 
   def __init__ (self):
     super (PlantSpider, self).__init__ ()
@@ -40,7 +38,7 @@ class PlantSpider (scrapy.Spider):
       "flower_flower_scent": "flower_scent",
       "flower_flower_time": "flower_time",
       "flower_colour_(petals)": "petal_colour",
-      "flower_flower_time_at_peak": "flower_time"
+      "flower_flower_time_at_peak": "flower_time",
     }
     self.frames = {
       "leaf_morphology": "leaf",
@@ -81,8 +79,8 @@ class PlantSpider (scrapy.Spider):
           skip = no + 1
           rows[key] = ' '.join (filter (lambda x:x!='', map (self.trim_no_under, value)))
         else:
-          print key
-    self.writer.writerow (rows)
+          pass#print key
+    self.writer.writerow ({key.encode ("utf-8"): value.encode ("utf-8") for key, value in rows.iteritems ()})
 
   def trim_no_under (self, text):
     return self.trim (text, False)
