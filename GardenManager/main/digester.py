@@ -58,10 +58,16 @@ class Digester (object):
 
   HASH_ALGORITHMS = hashlib.algorithms
   SUPORTED_ENCODINGS = ["base64", "", None]
+  SEP = ';'
+  DEFAULT_HASH = "sha512"
+  DEFAULT_ENCODING = "base64"
+  DEFAULT_CUTOFF = "0"
+  DEFAULT_NAME = SEP.join ([DEFAULT_HASH, DEFAULT_ENCODING,
+    str (DEFAULT_CUTOFF)])
 
-  def __init__ (self, name="sha512;base64;0", salt=False, salt_length=16,
+  def __init__ (self, name=DEFAULT_NAME, salt=False, salt_length=16,
       hash_name=None, cutoff=None, **kwargs):
-    algo = name.split (';')
+    algo = name.split (Digester.SEP)
     if len (algo) != 3 and \
         (hash_name == None or encoding == None or cutoff == None):
       raise ValueError ("The digester name has not been recognized: '%s'" % \
