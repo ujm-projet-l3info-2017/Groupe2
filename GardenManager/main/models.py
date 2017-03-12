@@ -3,14 +3,9 @@
 from __future__ import unicode_literals
 import time
 
-
 from django.db import models
 
-
 from digester import Digester
-
-
-
 
 
 
@@ -36,6 +31,7 @@ class Ground (models.Model):
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
+  None
 
   def __hash__ (self):
     return Digester ().digest (self.name + str (self.ph) + str (self.type))
@@ -350,14 +346,47 @@ class Plant (models.Model):
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
   flower = models.ForeignKey (Flower, null=True, related_name="plants")
 
-  def __hash__ (self):
+  def __init__ (self, *args, **kwargs):
+    super (Plant, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
     return Digester ().digest (self.common_name + self.scientific_name)
 
   def __str__(self):
     """
       A plant is identified by its common and sometimes its scientific name.
     """
-    return "%s (%s)" % (self.common_name, self.scientific_name)
+    return repr (self)
+
+  def __repr__ (self):
+    return ('\n'.join (("Plant object of id %(id)s ({ ", 
+      "\tscientific name  = %(scientific_name)s", 
+      "\tcommon name      = %(common_name)s", 
+      "\thabit            = %(habit)s", 
+      "\tform             = %(form)s", 
+      "\theight           = %(height)s", 
+      "\tspread           = %(spread)s", 
+      "\tgrowth rate      = %(growth_rate)s", 
+      "\tclimate          = %(climate)s", 
+      "\twater            = %(water)s", 
+      "\tcan flower       = %(can_flower)s", 
+      "\tcan fruit        = %(can_fruit)s", 
+      "})"
+    )) % {
+      "scientific_name" : self.scientific_name,
+      "common_name" : self.common_name,
+      "habit" : self.habit if self.habit else "unknown",
+      "form" : self.form if self.form else "unknown",
+      "height" : self.height if self.height else "unknown",
+      "spread" : self.spread if self.spread else "unknown",
+      "growth_rate" : self.growth_rate if self.growth_rate else "unknown",
+      "climate" : self.climate if self.climate else "unknown",
+      "water" : self.water if self.water else "unknown",
+      "can_flower" : "?" if self.can_flower is None else self.can_flower,
+      "can_fruit" : "?" if self.can_fruit is None else self.can_fruit,
+      "id": self.id,
+    })
 
 
 class Area (models.Model):
