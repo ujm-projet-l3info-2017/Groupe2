@@ -79,20 +79,25 @@ class Backend (object):
     """
       Process the csv file given in the command line
     """
-    if os.path.exists (self.args.csv) is False:
+    if os.path.exists (self.args.csv[0]) is False:
       raise ValueError ("The given path does not exists: '%s'." % \
-        self.args.csv)
+        self.args.csv[0])
     self.csv_file = self.open_csv ()
+    """
     try:
-      self.process_raw_data (csv.DictReader (csv_file))
+      self.process_raw_data (csv.DictReader (self.csv_file))
     except ValueError as error:
       raise error
     else:
       print "The given data has been processed successfully."
     finally:
       self.csv_file.close ()
+    """
+    self.process_raw_data (csv.DictReader (self.csv_file))
+    self.csv_file.close ()
 
-  def process_raw_data (self, generator, data_type=DATA_TYPES):
+  def process_raw_data (self, generator, data_type=DEFAULT_DATA_TYPE,
+                        display_errors=True):
     """
       Wait for a list of dict objects having the keys predefined by the backend.
     """
@@ -109,8 +114,12 @@ class Backend (object):
         errors.append (error)
       else:
         self.process_tested_data (plant_data_set, data_type)
+    if display_errors is True:
+      for error in errors:
+        print >>sys.stderr, error
 
-  def pass_mandatory_fields_tests (self, plant_data_set, data_type=DATA_TYPES):
+  def pass_mandatory_fields_tests (self, plant_data_set,
+                                    data_type=DEFAULT_DATA_TYPE):
     """
      Takes a plant data set (a dictionnary) and search for missing mandatory
      keys.
@@ -119,16 +128,24 @@ class Backend (object):
       set (plant_data_set.keys ())
     if not missing_fields:
       return None
-    return "Missing fields: %s" % repr (list (missing_fields))
+    return "Missing fields: %s" % repr (sorted (list (missing_fields)))
 
-  def process_tested_data (self, plant_data_set, data_type=DATA_TYPES):
+  def process_tested_data (self, plant_data_set, data_type=DEFAULT_DATA_TYPE):
     """
       Insert the data into their respective table.
     """
-    pass #lol
+    if data_type == "whole_plant":
+      self.create_plant_and_related (plant_data_set)
+
+  def create_plant_and_related (self, plant_data_set):
+    plant_attributes = self.model_attributes[self.model_module.Plant]
+    plant = self.model_module.Plant (**{ key: plant_data_set[key] \
+      for key in plant_attributes if key in plant_data_set
+    })
+    print plant
 
   def open_csv (self):
-    return open (self.args.csv, "rb")
+    return open (self.args.csv[0], "rb")
 
 
 
@@ -139,10 +156,15 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser (description=description)
   parser.add_argument ('--csv', metavar='csv_path', type=str, nargs=1,
     help='The path to the CSV file to process')
+
   args = parser.parse_args ()
+
   if Backend.usable_arguments (args) is False:
+    #backend = Backend (args=args)
     parser.print_help ()
     exit ()
+
   backend = Backend (args=args)
   backend.process_cmd_line ()
+
   exit ()
