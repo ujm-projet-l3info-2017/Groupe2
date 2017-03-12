@@ -53,8 +53,19 @@ class Backend (object):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
       settings_path or Backend.SETTINGS_PATH)
     django.setup ()
-    self.models = __import__ ("main").models
     self.args = args
+    self.model_module = __import__ ("main").models
+    model_module_attributes = dir (self.model_module)
+    model_name_list = model_module_attributes[:model_module_attributes.index (\
+      "__builtins__")]
+    model_name_list.remove ("Digester")
+    self.models = {
+      name: getattr (self.model_module, name) for name in model_name_list
+    }
+    self.model_attributes = {
+      model: set (map (lambda x:x.name, model._meta.get_fields())) \
+      for model in self.models.itervalues ()
+    }
 
   def process_cmd_line (self):
     if self.args.csv is not None:
