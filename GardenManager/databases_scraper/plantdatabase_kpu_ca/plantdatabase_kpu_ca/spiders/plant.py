@@ -74,7 +74,7 @@ class PlantSpider (scrapy.Spider):
           rows[key] = ' '.join (filter (lambda x:x!='', map (self.trim_no_under, value)))
         else:
           pass#print key
-    self.writer.writerow ({key.encode ("utf-8"): value.encode ("utf-8") for key, value in rows.iteritems ()})
+    self.writer.writerow (dict (map (self.sanitize, rows.items ())))
 
   def trim_no_under (self, text):
     return self.trim (text, False)
@@ -84,3 +84,10 @@ class PlantSpider (scrapy.Spider):
     if underscore:
       trimed = trimed.lower ().replace (" ", "_")
     return trimed
+
+  def sanitize (self, value):
+    if isinstance (value, (str, unicode)):
+      return value.replace (u"’", "'").replace (u"‘", "'").replace (u" ", " ")\
+        .encode ("utf-8")
+    else:
+      return map (self.sanitize, value)
