@@ -9,12 +9,12 @@ import django
 from django.conf import settings
 
 
-
 class Backend (object):
 
   """
     Defines a backend class to be allowed to create some plant (for the moment)
     and its related tables.
+    Only handle csv files for the moment.
   """
 
   SETTINGS_PATH = "GardenManager.settings"
@@ -43,6 +43,10 @@ class Backend (object):
 
   @staticmethod
   def usable_arguments (args):
+    """
+      Return True if the arguments given in the command line are enough to
+      execute one of the backend workflow.
+    """
     return args.csv is not None
 
   def __init__ (self, args, settings_path=None):
@@ -57,6 +61,9 @@ class Backend (object):
       self.process_csv ()
 
   def process_csv (self):
+    """
+      Process the csv file given in the command line
+    """
     if os.path.exists (self.args.csv) is False:
       raise ValueError ("The given path does not exists: '%s'." % \
         self.args.csv)
