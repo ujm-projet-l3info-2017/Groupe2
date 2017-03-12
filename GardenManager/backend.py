@@ -68,6 +68,10 @@ class Backend (object):
     }
 
   def process_cmd_line (self):
+    """
+      Select the workflow to execute in function of the command arguments and
+      execute it.
+    """
     if self.args.csv is not None:
       self.process_csv ()
 
