@@ -19,18 +19,26 @@ class Backend (object):
 
   SETTINGS_PATH = "GardenManager.settings"
   DATA_TYPES = "whole_plant", 
+  DEFAULT_DATA_TYPE = "whole_plant"
   MANDATORY_KEYS = {
-    "whole_plant" : set ([
-      "scientific_name", "pronunciation", "common_name", "family_name",
-      "plant_type", "key_id_features", "habit", "form", "texture", "height",
-      "spread", "growth_rate", "origin", "hardiness_rating", "exposure",
-      "soil_or_growing_medium", "landscape_uses", "additional_info",
-      "leaf_form", "leaf_arrangement", "leaf_texture", "leaf_surfaces",
-      "leaf_colour_in_summer", "leaf_colour_in_fall", "leaf_shapes",
-      "leaf_apices", "leaf_bases", "leaf_margins", "inflorescence_type",
-      "petal_colour", "flower_scent", "flower_time", "fruit_type",
-      "fruit_colour", "fruiting_time", "bark_morphology", "bark_or_stem_colour",
-      "propagation", "pest_susceptibility"])
+    "whole_plant": {
+      "scientific_name", "common_name", "family_name", 
+      "plant_type", "habit", "form", "height", 
+      "spread", "growth_rate", "hardiness_rating", "exposure", 
+      "soil_or_growing_medium", "landscape_uses", 
+      "leaf_colour_in_summer", "leaf_colour_in_fall", 
+      "petal_colour", "flower_scent", "flower_time", "fruit_type", 
+      "fruit_colour", "fruiting_time", "propagation" 
+    }
+  }
+
+  ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
+  ADDITIONNAL_KEYS["whole_plant"] = {
+    "pronunciation", "key_id_features", "texture", "origin", "additional_info",
+    "leaf_form", "leaf_arrangement", "leaf_texture", "leaf_surfaces", 
+    "leaf_shapes", "leaf_apices", "leaf_bases", "leaf_margins",
+    "inflorescence_type", "bark_morphology", "bark_or_stem_colour",
+    "pest_susceptibility"
   }
 
   @staticmethod
