@@ -20,7 +20,7 @@ class PlantSpider (scrapy.Spider):
       "scientific_name", "pronunciation", "common_name", "family_name",
       "plant_type", "key_id_features",
       "habit", "form", "texture", "height", "spread", "growth_rate", "origin",
-      "climate", "exposure", "soil_or_growing_medium", "water_use", 
+      "climate", "exposure", "soil_or_growing_medium", "water", 
       "landscape_uses",
       "additional_info", "leaf_form", "leaf_arrangement",
       "leaf_texture", "leaf_surfaces", "leaf_colour_in_summer", "leaf_colour_in_fall", "leaf_shapes",
@@ -39,7 +39,8 @@ class PlantSpider (scrapy.Spider):
       "flower_flower_time": "flower_time",
       "flower_colour_(petals)": "petal_colour",
       "flower_flower_time_at_peak": "flower_time",
-      "hardiness_rating": "climate"
+      "hardiness_rating": "climate",
+      "water_use": "water", 
     }
     self.frames = {
       "leaf_morphology": "leaf",
