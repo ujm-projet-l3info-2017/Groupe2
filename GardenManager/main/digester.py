@@ -116,7 +116,7 @@ class Digester (object):
       Otherwise, just the string is returned.
     """
     hashed, salt = self.hash (sentence)
-    encoded = self.encode (hashed)
+    encoded = self.encode (hashed).replace ("\n", "")
     result = self.cut (encoded)
     if get_salt:
       return result, salt
@@ -128,8 +128,10 @@ class Digester (object):
     """
     if self.apply_salt and self.salt is None:
       salt = os.urandom (self.salt_length)
-      return str (self.hash_algorithm (sentence + salt).digest ()), salt
-    return str (self.hash_algorithm (sentence + self.salt).digest ()), self.salt
+    else:
+      salt = self.salt
+    hashed = str (self.hash_algorithm (sentence + salt).digest ())
+    return hashed, salt
 
   def encode (self, sentence):
     """
@@ -148,3 +150,6 @@ class Digester (object):
 
 if __name__ == "__main__":
   help (Digester)
+
+  d = Digester ()
+  print d.digest ("test sentence")
