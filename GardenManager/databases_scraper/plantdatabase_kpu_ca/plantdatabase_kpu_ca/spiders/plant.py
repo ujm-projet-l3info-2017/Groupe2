@@ -20,7 +20,7 @@ class PlantSpider (scrapy.Spider):
       "scientific_name", "pronunciation", "common_name", "family_name",
       "plant_type", "key_id_features",
       "habit", "form", "texture", "height", "spread", "growth_rate", "origin",
-      "hardiness_rating", "exposure", "soil_or_growing_medium",
+      "climate", "exposure", "soil_or_growing_medium", "water_use"
       "landscape_uses",
       "additional_info", "leaf_form", "leaf_arrangement",
       "leaf_texture", "leaf_surfaces", "leaf_colour_in_summer", "leaf_colour_in_fall", "leaf_shapes",
@@ -39,6 +39,7 @@ class PlantSpider (scrapy.Spider):
       "flower_flower_time": "flower_time",
       "flower_colour_(petals)": "petal_colour",
       "flower_flower_time_at_peak": "flower_time",
+      "hardiness_rating": "climate"
     }
     self.frames = {
       "leaf_morphology": "leaf",
@@ -47,14 +48,6 @@ class PlantSpider (scrapy.Spider):
     }
 
   def parse (self, response):
-    """
-      writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
-      writer.writerow({'first_name': 'Lovely', 'last_name': 'Spam'})
-      urls = map (lambda x:x.xpath ("@href").extract (), response.xpath ("//tbody/tr/td/a"))
-      #urls = response.css ("tbody tr td a.preview::href").extract ()
-      print '\n'.join (map (lambda x:URLSpider.base_url + x[0], urls))
-      f.write ('\n'.join (map (lambda x:URLSpider.base_url + x[0], urls)) + ('\n' if urls else ''))
-    """
     rows = {}
     tds = response.xpath ("//tr/td")
     skip = None
