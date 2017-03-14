@@ -8,6 +8,14 @@ from django.db import models
 from digester import Digester
 
 
+def set_class_attribute (attributes):
+  print attributes
+  def attr_setter (cls):
+    for attribute, value in attributes.iteritems ():
+      setattr (cls, attribute, value)
+    return cls
+  return attr_setter
+
 
 class Ground (models.Model):
 
@@ -279,7 +287,8 @@ class Flower (models.Model):
   def digest (self):
     return Digester ().digest (self.scent + self.colour)
 
-
+#@set_class_attribute(dict (map (lambda _:_[::-1],
+  #enumerate (map ("ZONE_{}".format, range (1, 12)+["8A", "8B"])))))
 class Plant (models.Model):
 
   """
