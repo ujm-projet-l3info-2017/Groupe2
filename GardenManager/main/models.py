@@ -372,8 +372,8 @@ class Plant (models.Model):
   WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
   water = models.PositiveSmallIntegerField (choices=WATERS)
 
-  can_flower = models.BooleanField ()
-  can_fruit = models.BooleanField ()
+  can_flower = models.BooleanField (default=False)
+  can_fruit = models.BooleanField (default=False)
 
   # Definition of the relation-related attributes
 
