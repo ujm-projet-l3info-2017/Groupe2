@@ -270,7 +270,7 @@ class Fruit (models.Model):
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.colour + self.type)
 
 
