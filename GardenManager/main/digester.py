@@ -130,7 +130,8 @@ class Digester (object):
       salt = os.urandom (self.salt_length)
     else:
       salt = self.salt
-    hashed = str (self.hash_algorithm (sentence + salt).digest ())
+    sentence = str (sentence)
+    hashed = str (self.hash_algorithm (sentence or '' + salt or '').digest ())
     return hashed, salt
 
   def encode (self, sentence):
