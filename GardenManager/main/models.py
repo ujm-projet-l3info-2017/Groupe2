@@ -216,8 +216,28 @@ class LandscapeUse (models.Model):
   # Definition of the relation-related attributes
   None
 
+  def __init__ (self, *args, **kwargs):
+    super (LandscapeUse, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def set_landscape (self, name):
+    if LandscapeUse.LANDSCAPE_VALUES.has_key (name):
+      self.landscape = LandscapeUse.LANDSCAPE_VALUES[name]
+
   def digest (self):
     return Digester ().digest (self.landscape)
+
+  def __str__(self):
+    return repr (self)
+
+  def __repr__ (self):
+    return ('\n'.join (("LandscapeUse object of id %(id)s ({ ", 
+      "\tlandscape        = %(landscape)s",
+      "})"
+    )) % {
+      "landscape" : self.landscape,
+      "id": self.id,
+    })
 
 
 class Month (models.Model):
