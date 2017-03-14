@@ -336,8 +336,8 @@ class Plant (models.Model):
   """
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  scientific_name = models.CharField (max_length=64, unique=True)
-  common_name = models.CharField (max_length=64, unique=True)
+  scientific_name = models.CharField (max_length=64)
+  common_name = models.CharField (max_length=64)
 
   HABIT_NAMES = "all", "arching", "dense", "epiphytic", "fastigiate", \
     "horizontal", "irregular", "open", "pendulous", "spreading", \
