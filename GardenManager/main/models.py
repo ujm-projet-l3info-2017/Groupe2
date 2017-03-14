@@ -348,6 +348,10 @@ class Habit (models.Model):
   # Definition of the relation-related attributes
   None
 
+  def __init__ (self, *args, **kwargs):
+    super (Habit, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
   def digest (self):
     return Digester ().digest (self.habit)
 
@@ -375,6 +379,10 @@ class Form (models.Model):
 
   # Definition of the relation-related attributes
   None
+
+  def __init__ (self, *args, **kwargs):
+    super (Form, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def digest (self):
     return Digester ().digest (self.form)
