@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import re
+import os, sys
 import csv
 import argparse
 
@@ -24,8 +25,8 @@ class Backend (object):
     "whole_plant": {
       "scientific_name", "common_name", "family_name", 
       "plant_type", "habit", "form", "height", 
-      "spread", "growth_rate", "hardiness_rating", "exposure", 
-      "soil_or_growing_medium", "landscape_uses", 
+      "spread", "growth_rate", "climate", "exposure", 
+      "soil_or_growing_medium", "landscape_uses", "water",
       "leaf_colour_in_summer", "leaf_colour_in_fall", 
       "petal_colour", "flower_scent", "flower_time", "fruit_type", 
       "fruit_colour", "fruiting_time", "propagation" 
@@ -136,13 +137,114 @@ class Backend (object):
     """
     if data_type == "whole_plant":
       self.create_plant_and_related (plant_data_set)
+    else:
+      pass
+
+  def create_model_instance (self, model_class, model_attributes):
+    """
+      Create an instance of the given model, having the given attributes
+      and return the insgtance.
+    """
+    attributes = self.model_attributes.get (model_class, set ())
+    arguments = dict (map (lambda key:(key, model_attributes[key]),
+      set (attributes) & set (model_attributes)))
+    instance = model_class.objects.get_or_create (**arguments)
+    return instance[0]
+
+  def create_plant (self, plant_data_set):
+    """
+      Create a models.Plant instance with the given data and return it.
+    """
+    self.sanitize_plant_data_set (plant_data_set)
+    return self.create_model_instance (self.model_module.Plant, plant_data_set)
+
+  def sanitize_plant_data_set (self, plant_data_set):
+    print plant_data_set
+    try:
+      int (plant_data_set["climate"])
+    except ValueError:
+      search = re.search ("Zone (\w?\d+)", plant_data_set["climate"])
+      climate_name = search and ("ZONE_" + search.groups ()[0]) or "ZONE_5"
+      plant_data_set["climate"] = \
+        self.model_module.Plant.CLIMATE_VALUE[str (climate_name)]
+    try:
+      int (plant_data_set["form"])
+    except ValueError:
+      plant_data_set["form"] = \
+        self.model_module.Plant.FORM_VALUE[plant_data_set["form"].lower () or \
+          "unknown"]
+    try:
+      int (plant_data_set["habit"])
+    except ValueError:
+      plant_data_set["habit"] = \
+        self.model_module.Plant.HABIT_VALUE[plant_data_set["habit"].lower () or\
+          "unknown"]
+    try:
+      int (plant_data_set["growth_rate"])
+    except ValueError:
+      plant_data_set["growth_rate"] = self.model_module.Plant.\
+        GROWTH_RATE_VALUE[plant_data_set["growth_rate"].lower () or "unknown"]
+    try:
+      int (plant_data_set["water"])
+    except ValueError:
+      plant_data_set["water"] = self.model_module.Plant.WATER_VALUE[ \
+        plant_data_set["water"].lower () or "unknown"]
+    if plant_data_set.has_key ("height_min") is False:
+      search = re.search ("(\d+(\.\d+)?)\ \-", plant_data_set["height"])
+      if search is not None:
+        plant_data_set["height_min"] = float (search.groups ()[0])
+    if plant_data_set.has_key ("height_max") is False:
+      search = re.search ("\ \-\ (\d+(\.\d+)?)", plant_data_set["height"])
+      if search is not None:
+        plant_data_set["height_max"] = float (search.groups ()[0])
+    if plant_data_set.has_key ("spread_min") is False:
+      search = re.search ("(\d+(\.\d+)?)\ \-", plant_data_set["spread"])
+      if search is not None:
+        plant_data_set["spread_min"] = float (search.groups ()[0])
+    if plant_data_set.has_key ("spread_max") is False:
+      search = re.search ("\ \-\ (\d+(\.\d+)?)", plant_data_set["spread"])
+      if search is not None:
+        plant_data_set["spread_max"] = float (search.groups ()[0])
+
+  def create_landscape_uses (self, landscape_uses_data_set):
+    """
+      Create a models.LandscapeUses instance with the given data and return it.
+    """
+    print landscape_uses_data_set
+    self.sanitize_landscape_data_set (landscape_uses_data_set)
+    return self.create_model_instance (self.model_module.LandscapeUse, 
+      landscape_uses_data_set)
+
+  def sanitize_landscape_data_set (self, landscape_uses_data_set):
+    if isinstance (landscape_uses_data_set["landscape"], str):
+      landscape_uses_data_set["landscape"] = \
+        self.model_module.LandscapeUse.LANDSCAPE_VALUES[\
+          landscape_uses_data_set["landscape"]
+        ]
+
+  def parse_landscape_uses (self, landscape_uses):
+    if landscape_uses.startswith ('"') and landscape_uses.endswith ('"') or \
+        landscape_uses.startswith ("'") and landscape_uses.endswith ("'"):
+      landscape_uses = landscape_uses[1:-1]
+    landscape_uses = re.sub ("\ ?\([^)]*\)", "", landscape_uses)
+    return re.split (",\ ?", landscape_uses)
 
   def create_plant_and_related (self, plant_data_set):
-    plant_attributes = self.model_attributes[self.model_module.Plant]
-    plant = self.model_module.Plant (**{ key: plant_data_set[key] \
-      for key in plant_attributes if key in plant_data_set
-    })
+    plant = self.create_plant (plant_data_set)
+    landscapes = self.create_landscape_use_set (plant_data_set)
+    self.link_plant_to_landscapes (plant, landscapes)
+
+  def create_landscape_use_set (self, plant_data_set):
+    landscape_uses = plant_data_set.get ("landscape_uses", None)
+    if landscape_uses is not None:
+      uses = self.parse_landscape_uses (landscape_uses)
+      return map (self.create_landscape_uses,
+        map (lambda use: { "landscape": use }, uses))
+    return []
+
+  def link_plant_to_landscapes (self, plant, landscapes):
     print plant
+    plant.landscapes.add (*landscapes)
 
   def open_csv (self):
     return open (self.args.csv[0], "rb")
