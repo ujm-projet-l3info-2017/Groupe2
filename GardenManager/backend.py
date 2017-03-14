@@ -24,7 +24,7 @@ class Backend (object):
   MANDATORY_KEYS = {
     "whole_plant": {
       "scientific_name", "common_name", "family_name", 
-      "plant_type", "habit", "form", "height", 
+      "plant_type", "form", "height", 
       "spread", "growth_rate", "climate", "exposure", 
       "soil_or_growing_medium", "landscape_uses", "water",
       "leaf_colour_in_summer", "leaf_colour_in_fall", 
@@ -159,7 +159,6 @@ class Backend (object):
     return self.create_model_instance (self.model_module.Plant, plant_data_set)
 
   def sanitize_plant_data_set (self, plant_data_set):
-    print plant_data_set
     try:
       int (plant_data_set["climate"])
     except ValueError:
@@ -168,27 +167,10 @@ class Backend (object):
       plant_data_set["climate"] = \
         self.model_module.Plant.CLIMATE_VALUE[str (climate_name)]
     try:
-      int (plant_data_set["form"])
-    except ValueError:
-      plant_data_set["form"] = \
-        self.model_module.Plant.FORM_VALUE[plant_data_set["form"].lower () or \
-          "unknown"]
-    try:
-      int (plant_data_set["habit"])
-    except ValueError:
-      plant_data_set["habit"] = \
-        self.model_module.Plant.HABIT_VALUE[plant_data_set["habit"].lower () or\
-          "unknown"]
-    try:
       int (plant_data_set["growth_rate"])
     except ValueError:
       plant_data_set["growth_rate"] = self.model_module.Plant.\
         GROWTH_RATE_VALUE[plant_data_set["growth_rate"].lower () or "unknown"]
-    try:
-      int (plant_data_set["water"])
-    except ValueError:
-      plant_data_set["water"] = self.model_module.Plant.WATER_VALUE[ \
-        plant_data_set["water"].lower () or "unknown"]
     if plant_data_set.has_key ("height_min") is False:
       search = re.search ("(\d+(\.\d+)?)\ \-", plant_data_set["height"])
       if search is not None:
@@ -210,7 +192,6 @@ class Backend (object):
     """
       Create a models.LandscapeUses instance with the given data and return it.
     """
-    print landscape_uses_data_set
     self.sanitize_landscape_data_set (landscape_uses_data_set)
     return self.create_model_instance (self.model_module.LandscapeUse, 
       landscape_uses_data_set)
@@ -219,7 +200,7 @@ class Backend (object):
     if isinstance (landscape_uses_data_set["landscape"], str):
       landscape_uses_data_set["landscape"] = \
         self.model_module.LandscapeUse.LANDSCAPE_VALUES[\
-          landscape_uses_data_set["landscape"]
+          landscape_uses_data_set["landscape"] or "unknown"
         ]
 
   def parse_landscape_uses (self, landscape_uses):
@@ -229,10 +210,77 @@ class Backend (object):
     landscape_uses = re.sub ("\ ?\([^)]*\)", "", landscape_uses)
     return re.split (",\ ?", landscape_uses)
 
+  def create_habits (self, habit_data_set):
+    """
+      Create a models.Habit instance with the given data and return it.
+    """
+    self.sanitize_habit_data_set (habit_data_set)
+    return self.create_model_instance (self.model_module.Habit, 
+      habit_data_set)
+
+  def parse_habits (self, habit):
+    if habit.startswith ('"') and habit.endswith ('"') or \
+        habit.startswith ("'") and habit.endswith ("'"):
+      habit = habit[1:-1]
+    habit = re.sub ("\ ?\([^)]*\)", "", habit).lower ()
+    return re.split (",\ ?", habit)
+
+  def sanitize_habit_data_set (self, habit_data_set):
+    if isinstance (habit_data_set["habit"], str):
+      habit_data_set["habit"] = \
+        self.model_module.Habit.HABIT_VALUE[habit_data_set["habit"] or "unknown"]
+
+  def create_forms (self, form_data_set):
+    """
+      Create a models.Form instance with the given data and return it.
+    """
+    self.sanitize_form_data_set (form_data_set)
+    return self.create_model_instance (self.model_module.Form, 
+      form_data_set)
+
+  def parse_forms (self, form):
+    if form.startswith ('"') and form.endswith ('"') or \
+        form.startswith ("'") and form.endswith ("'"):
+      form = form[1:-1]
+    form = re.sub ("\ ?\([^)]*\)", "", form).lower ()
+    return re.split (",\ ?", form)
+
+  def sanitize_form_data_set (self, form_data_set):
+    if isinstance (form_data_set["form"], str):
+      form_data_set["form"] = \
+        self.model_module.Form.FORM_VALUE[form_data_set["form"] or "unknown"]
+
+  def create_waters (self, water_data_set):
+    """
+      Create a models.Water instance with the given data and return it.
+    """
+    self.sanitize_water_data_set (water_data_set)
+    return self.create_model_instance (self.model_module.Water, 
+      water_data_set)
+
+  def parse_waters (self, water):
+    if water.startswith ('"') and water.endswith ('"') or \
+        water.startswith ("'") and water.endswith ("'"):
+      water = water[1:-1]
+    water = re.sub ("\ ?\([^)]*\)", "", water).lower ()
+    return re.split (",\ ?", water)
+
+  def sanitize_water_data_set (self, water_data_set):
+    if isinstance (water_data_set["water"], str):
+      water_data_set["water"] = \
+        self.model_module.Water.WATER_VALUE[water_data_set["water"] or "unknown"]
+
   def create_plant_and_related (self, plant_data_set):
     plant = self.create_plant (plant_data_set)
     landscapes = self.create_landscape_use_set (plant_data_set)
+    habits = self.create_habit_set (plant_data_set)
+    forms = self.create_form_set (plant_data_set)
+    waters = self.create_water_set (plant_data_set)
     self.link_plant_to_landscapes (plant, landscapes)
+    self.link_plant_to_habits (plant, habits)
+    self.link_plant_to_forms (plant, forms)
+    self.link_plant_to_waters (plant, waters)
+    print plant
 
   def create_landscape_use_set (self, plant_data_set):
     landscape_uses = plant_data_set.get ("landscape_uses", None)
@@ -242,9 +290,41 @@ class Backend (object):
         map (lambda use: { "landscape": use }, uses))
     return []
 
+  def create_habit_set (self, habit_data_set):
+    habits = habit_data_set.get ("habit", None)
+    if habits is not None:
+      habits = self.parse_habits (habits)
+      return map (self.create_habits,
+        map (lambda habit: { "habit": habit }, habits))
+    return []
+
+  def create_form_set (self, form_data_set):
+    forms = form_data_set.get ("form", None)
+    if forms is not None:
+      forms = self.parse_forms (forms)
+      return map (self.create_forms,
+        map (lambda form: { "form": form }, forms))
+    return []
+
+  def create_water_set (self, water_data_set):
+    waters = water_data_set.get ("water", None)
+    if waters is not None:
+      waters = self.parse_waters (waters)
+      return map (self.create_waters,
+        map (lambda water: { "water": water }, waters))
+    return []
+
   def link_plant_to_landscapes (self, plant, landscapes):
-    print plant
     plant.landscapes.add (*landscapes)
+
+  def link_plant_to_habits (self, plant, habits):
+    plant.habits.add (*habits)
+
+  def link_plant_to_forms (self, plant, forms):
+    plant.forms.add (*forms)
+
+  def link_plant_to_waters (self, plant, waters):
+    plant.waters.add (*waters)
 
   def open_csv (self):
     return open (self.args.csv[0], "rb")
