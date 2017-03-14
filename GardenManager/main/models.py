@@ -194,6 +194,7 @@ class LandscapeUse (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
+  UNSPECIFIED_LANDSCAPE_NAMES = "Arbors or trellis", 
   LANDSCAPE_NAMES = "All", "Accent plant", "Alpine", "Aquatic - ponds",        \
     "Attract beneficial insects", "Attract birds", "Attract butterflies",      \
     "Bedding plant", "Container planting", "Cut flower or foliage",            \
@@ -209,6 +210,7 @@ class LandscapeUse (models.Model):
     "Urban agriculture", "Waterside planting", "Wetland - bogs",               \
     "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
     "Woodland margin", "unknown"
+  LANDSCAPE_NAMES += UNSPECIFIED_LANDSCAPE_NAMES
   LANDSCAPES = enumerate (LANDSCAPE_NAMES)
   LANDSCAPE_VALUES = dict (map (lambda x:x[::-1], LANDSCAPES))
   landscape = models.PositiveSmallIntegerField (choices=LANDSCAPES)
