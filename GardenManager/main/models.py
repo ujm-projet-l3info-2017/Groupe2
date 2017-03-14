@@ -351,8 +351,9 @@ class Plant (models.Model):
   FORMS = enumerate (FORM_NAMES)
   form = models.PositiveSmallIntegerField (choices=FORMS)
 
-  height = models.FloatField ()
-  spread = models.FloatField ()
+  spread_min = models.FloatField (null=True)
+  spread_max = models.FloatField (null=True)
+  height_min = models.FloatField (null=True)
   height_max = models.FloatField (null=True)
 
   GROWTH_RATE_NAMES = "fast", "moderate", "slow"
