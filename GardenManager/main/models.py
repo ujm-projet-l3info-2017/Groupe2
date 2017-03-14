@@ -33,7 +33,7 @@ class Ground (models.Model):
   # Definition of the relation-related attributes
   None
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.name + str (self.ph) + str (self.type))
 
 
@@ -60,7 +60,7 @@ class Session (models.Model):
     # with auto_now, the last_operation field will be updated at each save op.
     self.save ()
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.user_id)
 
 
@@ -108,7 +108,7 @@ class User (models.Model):
     if self.session:
       self.session.delete ()
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.exposure)
 
 
@@ -145,7 +145,7 @@ class Project (models.Model):
     """
     super (Project, self).save ()
 
-  def __hash__ (self):
+  def digest (self):
     return Digester (salt=True).digest ()
 
 
@@ -169,7 +169,7 @@ class Exposure (models.Model):
   # Definition of the relation-related attributes
   None
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.exposure)
 
 
@@ -193,7 +193,7 @@ class LandscapeUse (models.Model):
   # Definition of the relation-related attributes
   None
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.landscape)
 
 
@@ -218,7 +218,7 @@ class Month (models.Model):
   # Definition of the relation-related attributes
   None
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.month)
 
 
@@ -276,7 +276,7 @@ class Flower (models.Model):
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.scent + self.colour)
 
 
@@ -409,7 +409,7 @@ class Area (models.Model):
   # Definition of the relation-related attributes
   ground = models.ForeignKey (Ground, null=False, related_name="areas")
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (str (self.x) + str (self.y) + self.ground_id)
 
 
@@ -431,7 +431,7 @@ class PlantSpot (models.Model):
   plant = models.ForeignKey (Plant, null=False, related_name="plant_spots")
   area = models.ForeignKey (Area, null=False, related_name="plant_spots")
 
-  def __hash__ (self):
+  def digest (self):
     # juste a random salt hashed
     return Digester (salt=True, salt_length=64, cutoff=90).digest ()
 
@@ -457,7 +457,7 @@ class Image (models.Model):
   flower = models.ForeignKey (Flower, null=True, related_name="images")
   fruit = models.ForeignKey (Fruit, null=True, related_name="images")
 
-  def __hash__ (self):
+  def digest (self):
     return Digester ().digest (self.blob + self.path)
 
 
@@ -481,6 +481,6 @@ class Position (models.Model):
   area = models.ForeignKey (Area, null=True, related_name="positions")
   plant_spot = models.ForeignKey (PlantSpot, null=True, related_name="positions")
 
-  def __hash__ (self):
+  def digest (self):
     # juste a random salt hashed
     return Digester ().digest (str (self.x) + ';' + str (self.y))
