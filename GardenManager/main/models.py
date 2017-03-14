@@ -35,7 +35,7 @@ class Ground (models.Model):
   ph = models.FloatField (null=False)
 
   TYPE_NAMES = "", 
-  TYPES = enumerate (TYPE_NAMES)
+  TYPES = tuple (enumerate (TYPE_NAMES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
@@ -43,6 +43,18 @@ class Ground (models.Model):
 
   def digest (self):
     return Digester ().digest (self.name + str (self.ph) + str (self.type))
+
+  def __str__ (self):
+    return "Ground (%s)" % self.name
+
+  def __repr__ (self):
+    return ('\n'.join (("Ground object of id %(id)s ({ ",
+      "\tname             = %(water)s",
+      "\ttype             = %(type)s",
+      "\tph               = %(ph)s",
+      "})")) % { "id": self.id, "name": self.name, "type": self.type,
+        "ph": self.ph
+    })
 
 
 class Session (models.Model):
@@ -88,9 +100,10 @@ class User (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  EXPOSURE_NAMES = "", 
-  EXPOSURES = enumerate (EXPOSURE_NAMES)
-  exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
+  login = models.CharField (max_length=32, null=True)
+  password = models.CharField (max_length=90, null=True)
+  email = models.EmailField (null=True)
+  last_login = models.DateField (auto_now=True)
 
   # Definition of the relation-related attributes
   session = models.ForeignKey (Session, null=True)
@@ -171,7 +184,8 @@ class Exposure (models.Model):
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   EXPOSURE_NAMES = "", 
-  EXPOSURES = enumerate (EXPOSURE_NAMES)
+  EXPOSURES = tuple (enumerate (EXPOSURE_NAMES))
+  EXPOSURE_VALUES = dict (map (lambda x:x[::-1], EXPOSURES))
   exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
 
   # Definition of the relation-related attributes
@@ -179,6 +193,15 @@ class Exposure (models.Model):
 
   def digest (self):
     return Digester ().digest (self.exposure)
+
+  def __str__ (self):
+    return "Exposure (%s)" % Exposure.EXPOSURE_VALUES[self.exposure]
+
+  def __repr__ (self):
+    return ('\n'.join (("Exposure object of id %(id)s ({ ",
+      "\texposure  = %(exposure)s",
+      "})")) % { "id": self.id, "exposure": str (self)
+    })
 
 
 class LandscapeUse (models.Model):
@@ -211,7 +234,7 @@ class LandscapeUse (models.Model):
     "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
     "Woodland margin", "unknown"
   LANDSCAPE_NAMES += UNSPECIFIED_LANDSCAPE_NAMES
-  LANDSCAPES = enumerate (LANDSCAPE_NAMES)
+  LANDSCAPES = tuple (enumerate (LANDSCAPE_NAMES))
   LANDSCAPE_VALUES = dict (map (lambda x:x[::-1], LANDSCAPES))
   landscape = models.PositiveSmallIntegerField (choices=LANDSCAPES)
 
@@ -229,16 +252,16 @@ class LandscapeUse (models.Model):
   def digest (self):
     return Digester ().digest (self.landscape)
 
-  def __str__(self):
-    return repr (self)
+  def str_landscape (self):
+    return LandscapeUse.LANDSCAPES[self.water][1]
+
+  def __str__ (self):
+    return "Landscape (%s)" % self.str_landscape ()
 
   def __repr__ (self):
-    return ('\n'.join (("LandscapeUse object of id %(id)s ({ ", 
-      "\tlandscape        = %(landscape)s",
-      "})"
-    )) % {
-      "landscape" : self.landscape,
-      "id": self.id,
+    return ('\n'.join (("Landscape object of id %(id)s ({ ",
+      "\tlandscape use    = %(landscape)s",
+      "})")) % { "id": self.id, "landscape": str (self)
     })
 
 
@@ -257,7 +280,7 @@ class Month (models.Model):
 
   MONTH_NAMES = "January", "February", "March", "April", "May", "June", \
     "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"
-  MONTHS = enumerate (MONTH_NAMES)
+  MONTHS = tuple (enumerate (MONTH_NAMES))
   month = models.PositiveSmallIntegerField (choices=MONTHS)
 
   # Definition of the relation-related attributes
@@ -282,11 +305,11 @@ class Fruit (models.Model):
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   COLOUR_NAMES = "brown",
-  COLOURS = enumerate (COLOUR_NAMES)
+  COLOURS = tuple (enumerate (COLOUR_NAMES))
   colour = models.PositiveSmallIntegerField (choices=COLOURS)
 
   TYPE_NAMES = "capsule",
-  TYPES = enumerate (TYPE_NAMES)
+  TYPES = tuple (enumerate (TYPE_NAMES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
@@ -311,11 +334,11 @@ class Flower (models.Model):
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   COLOUR_NAMES = "brown",
-  COLOURS = enumerate (COLOUR_NAMES)
+  COLOURS = tuple (enumerate (COLOUR_NAMES))
   colour = models.PositiveSmallIntegerField (choices=COLOURS)
 
   SCENT_NAMES = "fragrant",
-  SCENTS = enumerate (SCENT_NAMES)
+  SCENTS = tuple (enumerate (SCENT_NAMES))
   scent = models.PositiveSmallIntegerField (choices=SCENTS)
 
   # Definition of the relation-related attributes
@@ -341,8 +364,8 @@ class Habit (models.Model):
   HABIT_NAMES = "all", "arching", "dense", "epiphytic", "fastigiate", \
     "horizontal", "irregular", "open", "pendulous", "spreading", \
     "stiffly upright", "twiggy", "upright", "unknown"
-  HABITS = enumerate (HABIT_NAMES)
-  HABIT_VALUE = dict (map (lambda _:_[::-1], HABITS))
+  HABITS = tuple (enumerate (HABIT_NAMES))
+  HABIT_VALUES = dict (map (lambda _:_[::-1], HABITS))
   habit = models.PositiveSmallIntegerField (choices=HABITS)
 
   # Definition of the relation-related attributes
@@ -354,6 +377,18 @@ class Habit (models.Model):
 
   def digest (self):
     return Digester ().digest (self.habit)
+
+  def str_habit (self):
+    return Habit.HABITS[self.habit][1]
+
+  def __str__ (self):
+    return "Habit (%s)" % self.str_habit ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Habit object of id %(id)s ({ ",
+      "\thabit            = %(habit)s",
+      "})")) % { "id": self.id, "habit": str (self)
+    })
 
 
 class Form (models.Model):
@@ -373,8 +408,8 @@ class Form (models.Model):
     "irregular", "mounded", "oval - horizontal", "oval - vertical",           \
     "pyramidal - narrowly", "pyramidal - widely", "round", "vase", "weeping", \
     "unknown"
-  FORMS = enumerate (FORM_NAMES)
-  FORM_VALUE = dict (map (lambda _:_[::-1], FORMS))
+  FORMS = tuple (enumerate (FORM_NAMES))
+  FORM_VALUES = dict (map (lambda _:_[::-1], FORMS))
   form = models.PositiveSmallIntegerField (choices=FORMS)
 
   # Definition of the relation-related attributes
@@ -387,6 +422,18 @@ class Form (models.Model):
   def digest (self):
     return Digester ().digest (self.form)
 
+  def str_form (self):
+    return Form.FORMS[self.form][1]
+
+  def __str__ (self):
+    return "Form (%s)" % self.str_form ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Form object of id %(id)s ({ ",
+      "\tform             = %(water)s",
+      "})")) % { "id": self.id, "form": str (self)
+    })
+
 
 class Water (models.Model):
 
@@ -394,7 +441,7 @@ class Water (models.Model):
     The Water class maps the water table.
     It defines:
       - an ID ;
-      - a form name ;
+      - a Water frequency ;
   """
 
   # Definition of the regular attributes.
@@ -402,9 +449,9 @@ class Water (models.Model):
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   WATER_NAMES = "low", "moderate", "high", "wetlands", "summer dry", \
-    "aquatic", "winter dry", "unknown", 
-  WATERS = enumerate (WATER_NAMES)
-  WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
+    "aquatic", "winter dry", "dryland", "unknown"
+  WATERS = tuple (enumerate (WATER_NAMES))
+  WATER_VALUES = dict (map (lambda _:_[::-1], WATERS))
   water = models.PositiveSmallIntegerField (choices=WATERS)
 
   # Definition of the relation-related attributes
@@ -416,6 +463,18 @@ class Water (models.Model):
 
   def digest (self):
     return Digester ().digest (self.water)
+
+  def str_water (self):
+    return Water.WATERS[self.water][1]
+
+  def __str__ (self):
+    return "Water (%s)" % self.str_water ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Water object of id %(id)s ({ ",
+      "\twater frequency  = %(water)s",
+      "})")) % { "id": self.id, "water": str (self)
+    })
 
 
 #@set_class_attribute(dict (map (lambda _:_[::-1],
@@ -465,7 +524,7 @@ class Plant (models.Model):
   GROWTH_RATE_VALUE = dict (map (lambda _:_[::-1], GROWTH_RATES))
   growth_rate = models.PositiveSmallIntegerField (choices=GROWTH_RATES)
 
-  CLIMATE_NAMES = map ("ZONE_{}".format, range (1, 12)+["8A", "8B"])
+  CLIMATE_NAMES = map ("ZONE_{}".format, range (1, 12)+["8A", "8B"]) + ["unknown"]
   CLIMATES = enumerate (CLIMATE_NAMES)
   CLIMATE_VALUE = dict (map (lambda _:_[::-1], CLIMATES))
   DEFAULT_CLIMATE = 5
@@ -478,11 +537,10 @@ class Plant (models.Model):
 
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
   flower = models.ForeignKey (Flower, null=True, related_name="plants")
-  landscapes = models.ManyToManyField (LandscapeUse, null=True,
-    related_name="plants")
-  habits = models.ManyToManyField (Habit, null=True, related_name="plants")
-  forms = models.ManyToManyField (Form, null=True, related_name="plants")
-  waters = models.ManyToManyField (Water, null=True, related_name="plants")
+  landscapes = models.ManyToManyField (LandscapeUse, related_name="plants")
+  habits = models.ManyToManyField (Habit, related_name="plants")
+  forms = models.ManyToManyField (Form, related_name="plants")
+  waters = models.ManyToManyField (Water, related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
@@ -491,8 +549,14 @@ class Plant (models.Model):
   def digest (self):
     return Digester ().digest (self.common_name + self.scientific_name)
 
+  def str_growth_rate (self):
+    return Plant.GROWTH_RATE_NAMES[self.growth_rate or -1].lower ().capitalize ()
+
+  def str_climate (self):
+    return Plant.CLIMATE_NAMES[self.climate or -1].lower ().capitalize ()
+
   def __str__(self):
-    return repr (self)
+    return "Plant (%s ; %s)" % (self.common_name, self.scientific_name)
 
   def __repr__ (self):
     return ('\n'.join (("Plant object of id %(id)s ({ ", 
@@ -511,15 +575,15 @@ class Plant (models.Model):
     )) % {
       "scientific_name" : self.scientific_name,
       "common_name" : self.common_name,
-      "habits" : map (repr, self.habits.all ()) if self.habits else "unknown",
-      "form" : map (repr, self.forms.all ()) if self.forms else "unknown",
+      "habits" : map (str, self.habits.all ()) if self.habits else "unknown",
+      "form" : map (str, self.forms.all ()) if self.forms else "unknown",
       "height_min" : self.height_min if self.height_min else "unknown",
       "height_max" : self.height_max if self.height_max else "unknown",
       "spread_min" : self.spread_min if self.spread_min else "unknown",
       "spread_max" : self.spread_max if self.spread_max else "unknown",
-      "growth_rate" : self.growth_rate if self.growth_rate else "unknown",
-      "climate" : self.climate if self.climate else "unknown",
-      "water" : map (repr, self.waters.all ()) if self.waters else "unknown",
+      "growth_rate" : self.str_growth_rate () if self.growth_rate is not None else "unknown",
+      "climate" : self.str_climate () if self.climate is not None else "unknown",
+      "water" : map (str, self.waters.all ()) if self.waters else "unknown",
       "can_flower" : "?" if self.can_flower is None else self.can_flower,
       "can_fruit" : "?" if self.can_fruit is None else self.can_fruit,
       "id": self.id,
