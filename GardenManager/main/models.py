@@ -194,8 +194,23 @@ class LandscapeUse (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  LANDSCAPE_NAMES = "", 
+  LANDSCAPE_NAMES = "All", "Accent plant", "Alpine", "Aquatic - ponds",        \
+    "Attract beneficial insects", "Attract birds", "Attract butterflies",      \
+    "Bedding plant", "Container planting", "Cut flower or foliage",            \
+    "Dried flower or fruit", "Dryland", "Erosion control",       \
+    "Espalier", "Fall interest", "Filler", "Floristry", "Forestry",            \
+    "Fragrance", "Golf green", "Green roof technology", "Green walls",         \
+    "Ground cover", "Group or mass planting", "Hanging basket", "Hedge row",   \
+    "Herb", "Indoor plant", "Lawn - sports field", "Medicinal plant",          \
+    "Mixed shrub border", "Native planting", "Perennial border", "Reclamation",\
+    "Rock garden", "Screening", "Security/barrier", "Shade tree",              \
+    "Sheared hedge", "Small garden/space", "Specimen plant", "Spring interest",\
+    "Street", "Summer interest", "Tall background", "Topiary",\
+    "Urban agriculture", "Waterside planting", "Wetland - bogs",               \
+    "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
+    "Woodland margin"
   LANDSCAPES = enumerate (LANDSCAPE_NAMES)
+  LANDSCAPE_VALUES = dict (map (lambda x:x[::-1], LANDSCAPES))
   landscape = models.PositiveSmallIntegerField (choices=LANDSCAPES)
 
   # Definition of the relation-related attributes
@@ -324,27 +339,36 @@ class Plant (models.Model):
   scientific_name = models.CharField (max_length=64, unique=True)
   common_name = models.CharField (max_length=64, unique=True)
 
-  HABIT_NAMES = "twiggy",
+  HABIT_NAMES = "all", "arching", "dense", "epiphytic", "fastigiate", \
+    "horizontal", "irregular", "open", "pendulous", "spreading", \
+    "stiffly upright", "twiggy", "upright"
   HABITS = enumerate (HABIT_NAMES)
   habit = models.PositiveSmallIntegerField (choices=HABITS)
 
-  FORM_NAMES = "round",
+  FORM_NAMES = "all", "climbing", "columnar", "creeping / mat-like",        \
+    "irregular", "mounded", "oval - horizontal", "oval - vertical",         \
+    "pyramidal - narrowly", "pyramidal - widely", "round", "vase", "weeping"
   FORMS = enumerate (FORM_NAMES)
   form = models.PositiveSmallIntegerField (choices=FORMS)
 
   height = models.FloatField ()
   spread = models.FloatField ()
+  height_max = models.FloatField (null=True)
 
-  GROWTH_RATE_NAMES = "moderate",
+  GROWTH_RATE_NAMES = "fast", "moderate", "slow"
   GROWTH_RATES = enumerate (GROWTH_RATE_NAMES)
+  GROWTH_RATE_VALUE = dict (map (lambda _:_[::-1], GROWTH_RATES))
   growth_rate = models.PositiveSmallIntegerField (choices=GROWTH_RATES)
 
-  CLIMATE_NAMES = "moderate",
+  CLIMATE_NAMES = map ("ZONE_{}".format, range (1, 12)+["8A", "8B"])
   CLIMATES = enumerate (CLIMATE_NAMES)
+  CLIMATE_VALUE = dict (map (lambda _:_[::-1], CLIMATES))
+  DEFAULT_CLIMATE = 5
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
-  WATER_NAMES = "moderate",
+  WATER_NAMES = "low", "moderate", "unknown", "high"
   WATERS = enumerate (WATER_NAMES)
+  WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
   water = models.PositiveSmallIntegerField (choices=WATERS)
 
   can_flower = models.BooleanField ()
