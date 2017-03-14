@@ -208,7 +208,7 @@ class LandscapeUse (models.Model):
     "Street", "Summer interest", "Tall background", "Topiary",\
     "Urban agriculture", "Waterside planting", "Wetland - bogs",               \
     "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
-    "Woodland margin"
+    "Woodland margin", "unknown"
   LANDSCAPES = enumerate (LANDSCAPE_NAMES)
   LANDSCAPE_VALUES = dict (map (lambda x:x[::-1], LANDSCAPES))
   landscape = models.PositiveSmallIntegerField (choices=LANDSCAPES)
@@ -322,6 +322,62 @@ class Flower (models.Model):
   def digest (self):
     return Digester ().digest (self.scent + self.colour)
 
+
+class Habit (models.Model):
+
+  """
+    The Habit class maps the habit table.
+    It defines:
+      - an ID ;
+      - a habit name ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  HABIT_NAMES = "all", "arching", "dense", "epiphytic", "fastigiate", \
+    "horizontal", "irregular", "open", "pendulous", "spreading", \
+    "stiffly upright", "twiggy", "upright", "unknown"
+  HABITS = enumerate (HABIT_NAMES)
+  HABIT_VALUE = dict (map (lambda _:_[::-1], HABITS))
+  habit = models.PositiveSmallIntegerField (choices=HABITS)
+
+  # Definition of the relation-related attributes
+  None
+
+  def digest (self):
+    return Digester ().digest (self.habit)
+
+
+class Form (models.Model):
+
+  """
+    The Form class maps the form table.
+    It defines:
+      - an ID ;
+      - a form name ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  FORM_NAMES = "all", "climbing", "columnar", "creeping / mat-like",          \
+    "irregular", "mounded", "oval - horizontal", "oval - vertical",           \
+    "pyramidal - narrowly", "pyramidal - widely", "round", "vase", "weeping", \
+    "unknown"
+  FORMS = enumerate (FORM_NAMES)
+  FORM_VALUE = dict (map (lambda _:_[::-1], FORMS))
+  form = models.PositiveSmallIntegerField (choices=FORMS)
+
+  # Definition of the relation-related attributes
+  None
+
+  def digest (self):
+    return Digester ().digest (self.form)
+
+
 #@set_class_attribute(dict (map (lambda _:_[::-1],
   #enumerate (map ("ZONE_{}".format, range (1, 12)+["8A", "8B"])))))
 class Plant (models.Model):
@@ -359,26 +415,12 @@ class Plant (models.Model):
   scientific_name = models.CharField (max_length=64)
   common_name = models.CharField (max_length=64)
 
-  HABIT_NAMES = "all", "arching", "dense", "epiphytic", "fastigiate", \
-    "horizontal", "irregular", "open", "pendulous", "spreading", \
-    "stiffly upright", "twiggy", "upright"
-  HABITS = enumerate (HABIT_NAMES)
-  HABIT_VALUE = dict (map (lambda _:_[::-1], HABITS))
-  habit = models.PositiveSmallIntegerField (choices=HABITS)
-
-  FORM_NAMES = "all", "climbing", "columnar", "creeping / mat-like",        \
-    "irregular", "mounded", "oval - horizontal", "oval - vertical",         \
-    "pyramidal - narrowly", "pyramidal - widely", "round", "vase", "weeping"
-  FORMS = enumerate (FORM_NAMES)
-  FORM_VALUE = dict (map (lambda _:_[::-1], FORMS))
-  form = models.PositiveSmallIntegerField (choices=FORMS)
-
   spread_min = models.FloatField (null=True)
   spread_max = models.FloatField (null=True)
   height_min = models.FloatField (null=True)
   height_max = models.FloatField (null=True)
 
-  GROWTH_RATE_NAMES = "fast", "moderate", "slow"
+  GROWTH_RATE_NAMES = "fast", "moderate", "slow", "unknown"
   GROWTH_RATES = enumerate (GROWTH_RATE_NAMES)
   GROWTH_RATE_VALUE = dict (map (lambda _:_[::-1], GROWTH_RATES))
   growth_rate = models.PositiveSmallIntegerField (choices=GROWTH_RATES)
@@ -389,7 +431,8 @@ class Plant (models.Model):
   DEFAULT_CLIMATE = 5
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
-  WATER_NAMES = "low", "moderate", "unknown", "high"
+  WATER_NAMES = "low", "moderate", "unknown", "high", "low, moderate", \
+    "moderate, high", "unknown", "wetlands"
   WATERS = enumerate (WATER_NAMES)
   WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
   water = models.PositiveSmallIntegerField (choices=WATERS)
@@ -403,6 +446,7 @@ class Plant (models.Model):
   flower = models.ForeignKey (Flower, null=True, related_name="plants")
   landscapes = models.ManyToManyField (LandscapeUse, null=True,
     related_name="plants")
+  habits = models.ManyToManyField (Habit, null=True, related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
@@ -418,7 +462,7 @@ class Plant (models.Model):
     return ('\n'.join (("Plant object of id %(id)s ({ ", 
       "\tscientific name  = %(scientific_name)s", 
       "\tcommon name      = %(common_name)s", 
-      "\thabit            = %(habit)s", 
+      "\thabit            = %(habits)s", 
       "\tform             = %(form)s", 
       "\theight           = %(height_min)s - %(height_max)s", 
       "\tspread           = %(spread_min)s - %(spread_max)s", 
@@ -431,7 +475,7 @@ class Plant (models.Model):
     )) % {
       "scientific_name" : self.scientific_name,
       "common_name" : self.common_name,
-      "habit" : self.habit if self.habit else "unknown",
+      "habits" : repr (self.habits.all ()) if self.habits else "unknown",
       "form" : self.form if self.form else "unknown",
       "height_min" : self.height_min if self.height_min else "unknown",
       "height_max" : self.height_max if self.height_max else "unknown",
