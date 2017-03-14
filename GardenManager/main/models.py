@@ -343,12 +343,14 @@ class Plant (models.Model):
     "horizontal", "irregular", "open", "pendulous", "spreading", \
     "stiffly upright", "twiggy", "upright"
   HABITS = enumerate (HABIT_NAMES)
+  HABIT_VALUE = dict (map (lambda _:_[::-1], HABITS))
   habit = models.PositiveSmallIntegerField (choices=HABITS)
 
   FORM_NAMES = "all", "climbing", "columnar", "creeping / mat-like",        \
     "irregular", "mounded", "oval - horizontal", "oval - vertical",         \
     "pyramidal - narrowly", "pyramidal - widely", "round", "vase", "weeping"
   FORMS = enumerate (FORM_NAMES)
+  FORM_VALUE = dict (map (lambda _:_[::-1], FORMS))
   form = models.PositiveSmallIntegerField (choices=FORMS)
 
   spread_min = models.FloatField (null=True)
@@ -390,9 +392,6 @@ class Plant (models.Model):
     return Digester ().digest (self.common_name + self.scientific_name)
 
   def __str__(self):
-    """
-      A plant is identified by its common and sometimes its scientific name.
-    """
     return repr (self)
 
   def __repr__ (self):
@@ -401,8 +400,8 @@ class Plant (models.Model):
       "\tcommon name      = %(common_name)s", 
       "\thabit            = %(habit)s", 
       "\tform             = %(form)s", 
-      "\theight           = %(height)s", 
-      "\tspread           = %(spread)s", 
+      "\theight           = %(height_min)s - %(height_max)s", 
+      "\tspread           = %(spread_min)s - %(spread_max)s", 
       "\tgrowth rate      = %(growth_rate)s", 
       "\tclimate          = %(climate)s", 
       "\twater            = %(water)s", 
@@ -414,8 +413,10 @@ class Plant (models.Model):
       "common_name" : self.common_name,
       "habit" : self.habit if self.habit else "unknown",
       "form" : self.form if self.form else "unknown",
-      "height" : self.height if self.height else "unknown",
-      "spread" : self.spread if self.spread else "unknown",
+      "height_min" : self.height_min if self.height_min else "unknown",
+      "height_max" : self.height_max if self.height_max else "unknown",
+      "spread_min" : self.spread_min if self.spread_min else "unknown",
+      "spread_max" : self.spread_max if self.spread_max else "unknown",
       "growth_rate" : self.growth_rate if self.growth_rate else "unknown",
       "climate" : self.climate if self.climate else "unknown",
       "water" : self.water if self.water else "unknown",
