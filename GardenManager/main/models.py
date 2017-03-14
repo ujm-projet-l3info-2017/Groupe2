@@ -388,6 +388,36 @@ class Form (models.Model):
     return Digester ().digest (self.form)
 
 
+class Water (models.Model):
+
+  """
+    The Water class maps the water table.
+    It defines:
+      - an ID ;
+      - a form name ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  WATER_NAMES = "low", "moderate", "high", "wetlands", "summer dry", \
+    "aquatic", "winter dry", "unknown", 
+  WATERS = enumerate (WATER_NAMES)
+  WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
+  water = models.PositiveSmallIntegerField (choices=WATERS)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Water, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (self.water)
+
+
 #@set_class_attribute(dict (map (lambda _:_[::-1],
   #enumerate (map ("ZONE_{}".format, range (1, 12)+["8A", "8B"])))))
 class Plant (models.Model):
@@ -441,12 +471,6 @@ class Plant (models.Model):
   DEFAULT_CLIMATE = 5
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
-  WATER_NAMES = "low", "moderate", "unknown", "high", "low, moderate", \
-    "moderate, high", "unknown", "wetlands"
-  WATERS = enumerate (WATER_NAMES)
-  WATER_VALUE = dict (map (lambda _:_[::-1], WATERS))
-  water = models.PositiveSmallIntegerField (choices=WATERS)
-
   can_flower = models.BooleanField (default=False)
   can_fruit = models.BooleanField (default=False)
 
@@ -457,6 +481,8 @@ class Plant (models.Model):
   landscapes = models.ManyToManyField (LandscapeUse, null=True,
     related_name="plants")
   habits = models.ManyToManyField (Habit, null=True, related_name="plants")
+  forms = models.ManyToManyField (Form, null=True, related_name="plants")
+  waters = models.ManyToManyField (Water, null=True, related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
@@ -485,15 +511,15 @@ class Plant (models.Model):
     )) % {
       "scientific_name" : self.scientific_name,
       "common_name" : self.common_name,
-      "habits" : repr (self.habits.all ()) if self.habits else "unknown",
-      "form" : self.form if self.form else "unknown",
+      "habits" : map (repr, self.habits.all ()) if self.habits else "unknown",
+      "form" : map (repr, self.forms.all ()) if self.forms else "unknown",
       "height_min" : self.height_min if self.height_min else "unknown",
       "height_max" : self.height_max if self.height_max else "unknown",
       "spread_min" : self.spread_min if self.spread_min else "unknown",
       "spread_max" : self.spread_max if self.spread_max else "unknown",
       "growth_rate" : self.growth_rate if self.growth_rate else "unknown",
       "climate" : self.climate if self.climate else "unknown",
-      "water" : self.water if self.water else "unknown",
+      "water" : map (repr, self.waters.all ()) if self.waters else "unknown",
       "can_flower" : "?" if self.can_flower is None else self.can_flower,
       "can_fruit" : "?" if self.can_fruit is None else self.can_fruit,
       "id": self.id,
