@@ -379,6 +379,8 @@ class Plant (models.Model):
 
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
   flower = models.ForeignKey (Flower, null=True, related_name="plants")
+  landscapes = models.ManyToManyField (LandscapeUse, null=True,
+    related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
