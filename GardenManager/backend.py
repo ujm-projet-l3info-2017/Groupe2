@@ -228,7 +228,7 @@ class Backend (object):
   def sanitize_habit_data_set (self, habit_data_set):
     if isinstance (habit_data_set["habit"], str):
       habit_data_set["habit"] = \
-        self.model_module.Habit.HABIT_VALUE[habit_data_set["habit"] or "unknown"]
+        self.model_module.Habit.HABIT_VALUES[habit_data_set["habit"] or "unknown"]
 
   def create_forms (self, form_data_set):
     """
@@ -248,7 +248,7 @@ class Backend (object):
   def sanitize_form_data_set (self, form_data_set):
     if isinstance (form_data_set["form"], str):
       form_data_set["form"] = \
-        self.model_module.Form.FORM_VALUE[form_data_set["form"] or "unknown"]
+        self.model_module.Form.FORM_VALUES[form_data_set["form"] or "unknown"]
 
   def create_waters (self, water_data_set):
     """
@@ -268,7 +268,7 @@ class Backend (object):
   def sanitize_water_data_set (self, water_data_set):
     if isinstance (water_data_set["water"], str):
       water_data_set["water"] = \
-        self.model_module.Water.WATER_VALUE[water_data_set["water"] or "unknown"]
+        self.model_module.Water.WATER_VALUES[water_data_set["water"] or "unknown"]
 
   def create_plant_and_related (self, plant_data_set):
     plant = self.create_plant (plant_data_set)
@@ -280,7 +280,7 @@ class Backend (object):
     self.link_plant_to_habits (plant, habits)
     self.link_plant_to_forms (plant, forms)
     self.link_plant_to_waters (plant, waters)
-    print plant
+    print repr (plant)
 
   def create_landscape_use_set (self, plant_data_set):
     landscape_uses = plant_data_set.get ("landscape_uses", None)
