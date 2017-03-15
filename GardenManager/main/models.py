@@ -199,9 +199,9 @@ class Exposure (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  EXPOSURE_NAMES = "moderate", "Filtered shade", "Full sun", \
-    "Part sun/part shade", "Full sun only if soil kept moist", \
-    "Deep shade", "Sheltered"
+  EXPOSURE_NAMES = "moderate", "filtered shade", "full sun", \
+    "part sun/part shade", "full sun only if soil kept moist", \
+    "deep shade", "sheltered", "unknown"
   EXPOSURES = tuple (enumerate (EXPOSURE_NAMES))
   EXPOSURE_VALUES = dict (map (lambda x:x[::-1], EXPOSURES))
   exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
@@ -209,11 +209,15 @@ class Exposure (models.Model):
   # Definition of the relation-related attributes
   None
 
+  def __init__ (self, *args, **kwargs):
+    super (Exposure, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
   def digest (self):
-    return Digester ().digest (self.exposure)
+    return Digester ().digest (str (self))
 
   def __str__ (self):
-    return "Exposure (%s)" % Exposure.EXPOSURE_VALUES[self.exposure]
+    return "Exposure (%s)" % Exposure.EXPOSURE_NAMES[self.exposure]
 
   def __repr__ (self):
     return ('\n'.join (("Exposure object of id %(id)s ({ ",
