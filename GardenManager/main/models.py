@@ -34,7 +34,8 @@ class Ground (models.Model):
   name = models.CharField (max_length=32)
   ph = models.FloatField (null=False)
 
-  TYPE_NAMES = "", 
+  TYPE_NAMES = "All", "Acidic", "Alkaline", "Bog", "Humus rich", \
+    "Rocky or gravelly or dry", "Well-drained", 
   TYPES = tuple (enumerate (TYPE_NAMES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
