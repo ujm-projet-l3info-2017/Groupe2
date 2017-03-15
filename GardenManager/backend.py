@@ -117,14 +117,13 @@ class Backend (object):
       for error in errors:
         print >>sys.stderr, error
 
-  def pass_mandatory_fields_tests (self, plant_data_set,
+  def pass_mandatory_fields_tests (self, data_set,
       data_type=DEFAULT_DATA_TYPE):
     """
-     Takes a plant data set (a dictionnary) and search for missing mandatory
-     keys.
+     Takes a data set (a dictionnary) and search for missing mandatory keys.
     """
     missing_fields = Backend.MANDATORY_KEYS[data_type] - \
-      set (plant_data_set.keys ())
+      set (data_set.keys ())
     if not missing_fields:
       return None
     return "Missing fields: %s" % repr (sorted (list (missing_fields)))
