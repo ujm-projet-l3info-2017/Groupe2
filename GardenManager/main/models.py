@@ -23,39 +23,54 @@ class Ground (models.Model):
     The Ground class maps the Ground table.
     It defines:
       - an id ;
-      - a name ;
-      - a type ;
-      - a pH ;
+      - a ground ;
   """
 
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
-  name = models.CharField (max_length=32)
-  ph = models.FloatField (null=False)
 
-  TYPE_NAMES = "All", "Acidic", "Alkaline", "Bog", "Humus rich", \
-    "Rocky or gravelly or dry", "Well-drained", 
-  TYPES = tuple (enumerate (TYPE_NAMES))
-  type = models.PositiveSmallIntegerField (choices=TYPES)
+  GROUND_NAMES = "all", "acidic", "bog", "well-drained", "humus rich", \
+    "alkaline", "rocky or gravelly or dry", "unknown", 
+  GROUNDS = tuple (enumerate (GROUND_NAMES))
+  GROUND_VALUES = dict (map (lambda x:x[::-1], GROUNDS))
+  ground = models.PositiveSmallIntegerField (choices=GROUNDS, null=True)
+
+  #ph = models.FloatField (null=True)
+  PH_VALUES = {
+    "all":2, "neutral": 2, "acidic":1, "bog": 1, "well-drained": 1, \
+    "humus rich": 1, "rocky or gravelly or dry": 3, "alkaline": 3,
+    "unknown": 2
+  }
+  PH_EQUIVALANCES = {
+    lambda x:x < 7: PH_VALUES["acidic"],
+    lambda x:x > 7: PH_VALUES["alkaline"],
+    lambda x:x == 7: PH_VALUES["neutral"],
+  }
 
   # Definition of the relation-related attributes
   None
 
+  def __init__ (self, *args, **kwargs):
+    super (Ground, self).__init__ (*args, **kwargs)
+    """
+    if kwargs.has_key ("ph") is False and self.ground is not None:
+      self.ph = Ground.PH_VALUES[Ground.GROUND_NAMES[self.ground]]
+    """
+    self.id = self.digest ()
+
   def digest (self):
-    return Digester ().digest (self.name + str (self.ph) + str (self.type))
+    #return Digester ().digest (str (self.ph) + str (self.ground))
+    return Digester ().digest (str (self))
 
   def __str__ (self):
-    return "Ground (%s)" % self.name
+    return "Ground (%s)" % Ground.GROUND_NAMES[self.ground]
 
   def __repr__ (self):
     return ('\n'.join (("Ground object of id %(id)s ({ ",
-      "\tname             = %(water)s",
-      "\ttype             = %(type)s",
+      "\ttype             = %(ground)s",
       "\tph               = %(ph)s",
-      "})")) % { "id": self.id, "name": self.name, "type": self.type,
-        "ph": self.ph
-    })
+      "})")) % { "id": self.id, "ground": Ground.GROUND_NAMES[self.ground], "ph": self.ph })
 
 
 class Session (models.Model):
