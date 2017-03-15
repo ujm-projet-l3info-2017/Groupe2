@@ -452,7 +452,7 @@ class Form (models.Model):
 
   def __repr__ (self):
     return ('\n'.join (("Form object of id %(id)s ({ ",
-      "\tform             = %(water)s",
+      "\tform             = %(form)s",
       "})")) % { "id": self.id, "form": str (self)
     })
 
