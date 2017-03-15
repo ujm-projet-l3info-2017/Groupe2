@@ -163,22 +163,26 @@ class Backend (object):
   def create_plant_and_related (self, plant_data_set):
     """
       Create a plant and all its related attributes in foreign tables:
-        - exposures (todo) ;
+        - exposures ;
         - flower (todo) ;
         - forms ;
         - fruit (todo) ;
-        - grounds (todo) ;
+        - grounds ;
         - habits ;
         - landscapes ;
         - waters ;
       The dataset is a dictionnary containing all {keys-value} for all tables.
     """
     plant = self.create_plant (plant_data_set, verify=False)
+    exposures = self.create_exposure_set (plant_data_set, verify=False)
     forms = self.create_form_set (plant_data_set, verify=False)
+    grounds = self.create_ground_set (plant_data_set, verify=False)
     habits = self.create_habit_set (plant_data_set, verify=False)
     landscapes = self.create_landscape_use_set (plant_data_set, verify=False)
     waters = self.create_water_set (plant_data_set, verify=False)
+    self.link_plant_to_exposures (plant, exposures)
     self.link_plant_to_forms (plant, forms)
+    self.link_plant_to_grounds (plant, grounds)
     self.link_plant_to_habits (plant, habits)
     self.link_plant_to_landscapes (plant, landscapes)
     self.link_plant_to_waters (plant, waters)
@@ -232,21 +236,62 @@ class Backend (object):
       if search is not None:
         plant_data_set["spread_max"] = float (search.groups ()[0])
 
-  def link_plant_to_landscapes (self, plant, landscapes):
-    plant.landscapes.add (*landscapes)
-
-  def link_plant_to_habits (self, plant, habits):
-    plant.habits.add (*habits)
+  def link_plant_to_exposures (self, plant, exposures):
+    plant.exposures.add (*exposures)
 
   def link_plant_to_forms (self, plant, forms):
     plant.forms.add (*forms)
 
+  def link_plant_to_grounds (self, plant, grounds):
+    plant.grounds.add (*grounds)
+
+  def link_plant_to_habits (self, plant, habits):
+    plant.habits.add (*habits)
+
+  def link_plant_to_landscapes (self, plant, landscapes):
+    plant.landscapes.add (*landscapes)
+
   def link_plant_to_waters (self, plant, waters):
     plant.waters.add (*waters)
 
+  def create_exposures (self, exposure_data_set, verify=True):
+    """
+      Extract the exposure's attributes from the exposure_data_set,
+      create a models.Exposure instance with the given data and return it.
+    """
+    self.sanitize_exposure_data_set (exposure_data_set)
+    errors = self.pass_mandatory_fields_tests (exposure_data_set, "exposure")
+    assert errors is None, errors
+    return self.create_model_instance (self.model_module.Exposure, 
+      exposure_data_set)
+
+  def parse_exposures (self, exposure):
+    """
+      Extract all diffrent exposures (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (exposure, lower=True)
+
+  def sanitize_exposure_data_set (self, exposure_data_set):
+    """
+      Sanitize the exposure_data_set dictionnary by:
+        - Replacing the exposure value by its corresponding integer.
+    """
+    if isinstance (exposure_data_set["exposure"], str):
+      exposure_data_set["exposure"] = self.model_module.Exposure.\
+        EXPOSURE_VALUES[exposure_data_set["exposure"] or "unknown"]
+
+  def create_exposure_set (self, exposure_data_set, verify=True):
+    exposures = exposure_data_set.get ("exposure", None)
+    if exposures is not None:
+      exposures = self.parse_exposures (exposures)
+      return map (lambda *args:self.create_exposures (*args, verify=verify),
+        map (lambda exposure: { "exposure": exposure }, exposures))
+    return []
+
   def create_forms (self, form_data_set, verify=True):
     """
-      Extract the form's attributes from the form_uses_data_set,
+      Extract the form's attributes from the form_data_set,
       create a models.Form instance with the given data and return it.
     """
     self.sanitize_form_data_set (form_data_set)
@@ -277,6 +322,42 @@ class Backend (object):
       forms = self.parse_forms (forms)
       return map (lambda *args:self.create_forms (*args, verify=verify),
         map (lambda form: { "form": form }, forms))
+    return []
+
+  def create_grounds (self, ground_data_set, verify=True):
+    """
+      Extract the ground's attributes from the ground_uses_data_set,
+      create a models.Ground instance with the given data and return it.
+    """
+    self.sanitize_ground_data_set (ground_data_set)
+    errors = self.pass_mandatory_fields_tests (ground_data_set, "ground")
+    assert errors is None, errors
+    return self.create_model_instance (self.model_module.Ground, 
+      ground_data_set)
+
+  def parse_grounds (self, ground):
+    """
+      Extract all diffrent grounds (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (ground, lower=True)
+
+  def sanitize_ground_data_set (self, ground_data_set):
+    """
+      Sanitize the ground_data_set dictionnary by:
+        - Replacing the ground value by its corresponding integer.
+    """
+    if isinstance (ground_data_set["ground"], str):
+      ground_data_set["ground"] = \
+        self.model_module.Ground.GROUND_VALUES[ground_data_set["ground"] or \
+          "unknown"]
+
+  def create_ground_set (self, ground_data_set, verify=True):
+    grounds = ground_data_set.get ("soil_or_growing_medium", None)
+    if grounds is not None:
+      grounds = self.parse_grounds (grounds)
+      return map (lambda *args:self.create_grounds (*args, verify=verify),
+        map (lambda ground: { "ground": ground }, grounds))
     return []
 
   def create_habits (self, habit_data_set, verify=True):
