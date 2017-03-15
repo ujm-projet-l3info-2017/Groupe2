@@ -275,7 +275,7 @@ class LandscapeUse (models.Model):
     return Digester ().digest (self.landscape)
 
   def str_landscape (self):
-    return LandscapeUse.LANDSCAPES[self.water][1]
+    return LandscapeUse.LANDSCAPES[self.landscape][1]
 
   def __str__ (self):
     return "Landscape (%s)" % self.str_landscape ()
