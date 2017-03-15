@@ -30,7 +30,15 @@ class Backend (object):
       "leaf_colour_in_summer", "leaf_colour_in_fall", 
       "petal_colour", "flower_scent", "flower_time", "fruit_type", 
       "fruit_colour", "fruiting_time", "propagation" 
-    }
+    }, 
+    "plant": { "scientific_name", "common_name" },
+    "landscape": { "landscape_uses" },
+    "climate": { "climate" },
+    "exposure": { "exposure" },
+    "water": { "water" },
+    "ground": { "soil_or_growing_medium" },
+    "form": { "form" },
+    "habit": { "habit" },
   }
 
   ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
