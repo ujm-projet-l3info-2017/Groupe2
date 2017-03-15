@@ -32,11 +32,11 @@ class Backend (object):
       "fruit_colour", "fruiting_time", "propagation" 
     }, 
     "plant": { "scientific_name", "common_name" },
-    "landscape": { "landscape_uses" },
+    "landscape": { "landscape" },
     "climate": { "climate" },
     "exposure": { "exposure" },
     "water": { "water" },
-    "ground": { "soil_or_growing_medium" },
+    "ground": { "ground" },
     "form": { "form" },
     "habit": { "habit" },
   }
@@ -251,6 +251,8 @@ class Backend (object):
       create a models.Form instance with the given data and return it.
     """
     self.sanitize_form_data_set (form_data_set)
+    errors = self.pass_mandatory_fields_tests (form_data_set, "form")
+    assert errors is None, errors
     return self.create_model_instance (self.model_module.Form, 
       form_data_set)
 
@@ -289,6 +291,8 @@ class Backend (object):
       create a models.Habit instance with the given data and return it.
     """
     self.sanitize_habit_data_set (habit_data_set)
+    errors = self.pass_mandatory_fields_tests (habit_data_set, "habit")
+    assert errors is None, errors
     return self.create_model_instance (self.model_module.Habit, 
       habit_data_set)
 
@@ -324,6 +328,9 @@ class Backend (object):
       create a models.LandscapeUses instance with the given data and return it.
     """
     self.sanitize_landscape_data_set (landscape_uses_data_set)
+    errors = self.pass_mandatory_fields_tests (landscape_uses_data_set, \
+      "landscape")
+    assert errors is None, errors
     return self.create_model_instance (self.model_module.LandscapeUse, 
       landscape_uses_data_set)
 
@@ -360,6 +367,8 @@ class Backend (object):
       create a models.Water instance with the given data and return it.
     """
     self.sanitize_water_data_set (water_data_set)
+    errors = self.pass_mandatory_fields_tests (water_data_set, "water")
+    assert errors is None, errors
     return self.create_model_instance (self.model_module.Water, 
       water_data_set)
 
