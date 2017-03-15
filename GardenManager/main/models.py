@@ -588,12 +588,15 @@ class Plant (models.Model):
       "\tscientific name  = %(scientific_name)s", 
       "\tcommon name      = %(common_name)s", 
       "\thabit            = %(habits)s", 
+      "\texposure         = %(exposure)s", 
+      "\tground           = %(ground)s", 
       "\tform             = %(form)s", 
       "\theight           = %(height_min)s - %(height_max)s", 
       "\tspread           = %(spread_min)s - %(spread_max)s", 
       "\tgrowth rate      = %(growth_rate)s", 
       "\tclimate          = %(climate)s", 
       "\twater            = %(water)s", 
+      "\tlandscape        = %(landscape)s", 
       "\tcan flower       = %(can_flower)s", 
       "\tcan fruit        = %(can_fruit)s", 
       "})"
@@ -601,6 +604,8 @@ class Plant (models.Model):
       "scientific_name" : self.scientific_name,
       "common_name" : self.common_name,
       "habits" : map (str, self.habits.all ()) if self.habits else "unknown",
+      "exposure" : map (str, self.exposures.all ()) if self.exposures else "unknown",
+      "ground" : map (str, self.grounds.all ()) if self.grounds else "unknown",
       "form" : map (str, self.forms.all ()) if self.forms else "unknown",
       "height_min" : self.height_min if self.height_min else "unknown",
       "height_max" : self.height_max if self.height_max else "unknown",
@@ -609,6 +614,7 @@ class Plant (models.Model):
       "growth_rate" : self.str_growth_rate () if self.growth_rate is not None else "unknown",
       "climate" : self.str_climate () if self.climate is not None else "unknown",
       "water" : map (str, self.waters.all ()) if self.waters else "unknown",
+      "landscape" : map (str, self.landscapes.all ()) if self.landscapes else "unknown",
       "can_flower" : "?" if self.can_flower is None else \
         "No" if self.can_flower is False else \
         "Yes (%s)" % map (str, self.flower.all ()),
