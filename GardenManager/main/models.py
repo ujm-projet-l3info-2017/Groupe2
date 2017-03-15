@@ -184,7 +184,9 @@ class Exposure (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  EXPOSURE_NAMES = "", 
+  EXPOSURE_NAMES = "moderate", "Filtered shade", "Full sun", \
+    "Part sun/part shade", "Full sun only if soil kept moist", \
+    "Deep shade", "Sheltered"
   EXPOSURES = tuple (enumerate (EXPOSURE_NAMES))
   EXPOSURE_VALUES = dict (map (lambda x:x[::-1], EXPOSURES))
   exposure = models.PositiveSmallIntegerField (choices=EXPOSURES)
@@ -529,6 +531,7 @@ class Plant (models.Model):
   CLIMATES = enumerate (CLIMATE_NAMES)
   CLIMATE_VALUE = dict (map (lambda _:_[::-1], CLIMATES))
   DEFAULT_CLIMATE = 5
+  DEFAULT_CLIMATE_NAME = CLIMATE_NAMES[DEFAULT_CLIMATE]
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
   can_flower = models.BooleanField (default=False)
@@ -539,9 +542,11 @@ class Plant (models.Model):
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
   flower = models.ForeignKey (Flower, null=True, related_name="plants")
   landscapes = models.ManyToManyField (LandscapeUse, related_name="plants")
+  exposures = models.ManyToManyField (Exposure, related_name="plants")
   habits = models.ManyToManyField (Habit, related_name="plants")
   forms = models.ManyToManyField (Form, related_name="plants")
   waters = models.ManyToManyField (Water, related_name="plants")
+  grounds = models.ManyToManyField (Ground, related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
@@ -585,8 +590,12 @@ class Plant (models.Model):
       "growth_rate" : self.str_growth_rate () if self.growth_rate is not None else "unknown",
       "climate" : self.str_climate () if self.climate is not None else "unknown",
       "water" : map (str, self.waters.all ()) if self.waters else "unknown",
-      "can_flower" : "?" if self.can_flower is None else self.can_flower,
-      "can_fruit" : "?" if self.can_fruit is None else self.can_fruit,
+      "can_flower" : "?" if self.can_flower is None else \
+        "No" if self.can_flower is False else \
+        "Yes (%s)" % map (str, self.flower.all ()),
+      "can_fruit" : "?" if self.can_fruit is None else \
+        "No" if self.can_fruit is False else \
+        "Yes (%s)" % map (str, self.fruit.all ()),
       "id": self.id,
     })
 
