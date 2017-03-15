@@ -91,19 +91,9 @@ class Backend (object):
     if os.path.exists (self.args.csv[0]) is False:
       raise ValueError ("The given path does not exists: '%s'." % \
         self.args.csv[0])
-    self.csv_file = self.open_csv ()
-    """
-    try:
+    with open (self.args.csv[0], "rb") as self.csv_file:
       self.process_raw_data (csv.DictReader (self.csv_file))
-    except ValueError as error:
-      raise error
-    else:
       print "The given data has been processed successfully."
-    finally:
-      self.csv_file.close ()
-    """
-    self.process_raw_data (csv.DictReader (self.csv_file))
-    self.csv_file.close ()
 
   def process_raw_data (self, generator, data_type=DEFAULT_DATA_TYPE,
                         display_errors=True):
