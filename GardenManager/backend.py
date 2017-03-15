@@ -262,11 +262,6 @@ class Backend (object):
       separated sentence.
     """
     return self.split_from_data (form, lower=True)
-    if form.startswith ('"') and form.endswith ('"') or \
-        form.startswith ("'") and form.endswith ("'"):
-      form = form[1:-1]
-    form = re.sub ("\ ?\([^)]*\)", "", form).lower ()
-    return re.split (",\ ?", form)
 
   def sanitize_form_data_set (self, form_data_set):
     """
@@ -298,11 +293,6 @@ class Backend (object):
 
   def parse_habits (self, habit):
     return self.split_from_data (habit)
-    if habit.startswith ('"') and habit.endswith ('"') or \
-        habit.startswith ("'") and habit.endswith ("'"):
-      habit = habit[1:-1]
-    habit = re.sub ("\ ?\([^)]*\)", "", habit).lower ()
-    return re.split (",\ ?", habit)
 
   def sanitize_habit_data_set (self, habit_data_set):
     """
@@ -347,11 +337,6 @@ class Backend (object):
 
   def parse_landscape_uses (self, landscape_uses):
     return self.split_from_data (landscape_uses, lower=False)
-    if landscape_uses.startswith ('"') and landscape_uses.endswith ('"') or \
-        landscape_uses.startswith ("'") and landscape_uses.endswith ("'"):
-      landscape_uses = landscape_uses[1:-1]
-    landscape_uses = re.sub ("\ ?\([^)]*\)", "", landscape_uses)
-    return re.split (",\ ?", landscape_uses)
 
   def create_landscape_use_set (self, plant_data_set, verify=True):
     landscape_uses = plant_data_set.get ("landscape_uses", None)
@@ -378,11 +363,6 @@ class Backend (object):
       separated sentence.
     """
     return self.split_from_data (water, lower=True)
-    if water.startswith ('"') and water.endswith ('"') or \
-        water.startswith ("'") and water.endswith ("'"):
-      water = water[1:-1]
-    water = re.sub ("\ ?\([^)]*\)", "", water).lower ()
-    return re.split (",\ ?", water)
 
   def sanitize_water_data_set (self, water_data_set):
     """
