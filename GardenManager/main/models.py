@@ -5,7 +5,7 @@ import time
 
 from django.db import models
 
-from digester import Digester
+from utils.digester import Digester
 
 
 def set_class_attribute (attributes):
