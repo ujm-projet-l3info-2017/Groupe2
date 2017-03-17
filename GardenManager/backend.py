@@ -68,6 +68,7 @@ class Backend (object):
     model_name_list = model_module_attributes[:model_module_attributes.index (\
       "__builtins__")]
     model_name_list.remove ("Digester")
+    model_name_list.remove ("CircularList")
     self.models = {
       name: getattr (self.model_module, name) for name in model_name_list
     }

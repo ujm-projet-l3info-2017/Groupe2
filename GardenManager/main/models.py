@@ -6,6 +6,7 @@ import time
 from django.db import models
 
 from utils.digester import Digester
+from utils.circular_list import CircularList
 
 
 def set_class_attribute (attributes):
@@ -300,8 +301,8 @@ class Month (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  MONTH_NAMES = "January", "February", "March", "April", "May", "June", \
-    "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"
+  MONTH_NAMES = CircularList (("January", "February", "March", "April", "May", \
+    "June", "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"))
   MONTHS = tuple (enumerate (MONTH_NAMES))
   month = models.PositiveSmallIntegerField (choices=MONTHS)
 
@@ -310,6 +311,18 @@ class Month (models.Model):
 
   def digest (self):
     return Digester ().digest (self.month)
+
+  def str_month (self):
+    return Month.MONTHS[self.month][1]
+
+  def __str__ (self):
+    return "Month (%s)" % self.str_month ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Month object of id %(id)s ({ ",
+      "\tmonth            = %(month)s",
+      "})")) % { "id": self.id, "month": str (self)
+    })
 
 
 class Fruit (models.Model):
@@ -566,6 +579,7 @@ class Plant (models.Model):
   forms = models.ManyToManyField (Form, related_name="plants")
   waters = models.ManyToManyField (Water, related_name="plants")
   grounds = models.ManyToManyField (Ground, related_name="plants")
+  plantation_time = models.ManyToManyField (Month, related_name="plants")
 
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
@@ -595,6 +609,7 @@ class Plant (models.Model):
       "\tspread           = %(spread_min)s - %(spread_max)s", 
       "\tgrowth rate      = %(growth_rate)s", 
       "\tclimate          = %(climate)s", 
+      "\tplantation time  = %(plantation_time)s", 
       "\twater            = %(water)s", 
       "\tlandscape        = %(landscape)s", 
       "\tcan flower       = %(can_flower)s", 
@@ -613,6 +628,7 @@ class Plant (models.Model):
       "spread_max" : self.spread_max if self.spread_max else "unknown",
       "growth_rate" : self.str_growth_rate () if self.growth_rate is not None else "unknown",
       "climate" : self.str_climate () if self.climate is not None else "unknown",
+      "plantation_time" : map (str, self.plantation_time.all ()),
       "water" : map (str, self.waters.all ()) if self.waters else "unknown",
       "landscape" : map (str, self.landscapes.all ()) if self.landscapes else "unknown",
       "can_flower" : "?" if self.can_flower is None else \
