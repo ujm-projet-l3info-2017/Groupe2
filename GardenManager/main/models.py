@@ -309,6 +309,10 @@ class Month (models.Model):
   # Definition of the relation-related attributes
   None
 
+  def from_to (self, start, stop, step=1):
+    start_index, stop_index = map (Month.MONTH_NAMES.index, (start, stop))
+    return Month.MONTH_NAMES[start_index:stop_index:step]
+
   def digest (self):
     return Digester ().digest (self.month)
 
