@@ -79,23 +79,28 @@ class CircularList (object):
         raise StopIteration ()
       start, stop, step = map (item_slice.__getattribute__,
         ["start", "stop", "step"])
+      if stop is None:
+        stop = len (self.real_list)
       if step is None:
         step = 1 if stop > start else -1
       if not isinstance (start, int):
         raise TypeError ("start must be int, not %s" % type (start))
+        print start, stop, step
       if not isinstance (stop, int):
         raise TypeError ("stop must be int, not %s" % type (stop))
-      if step == 0 or \
-          (start > stop and step > 0) or \
-          (start < stop and step < 0):
+      if step == 0:
         raise StopIteration ()
+      while start > stop and step > 0:
+        stop += len (self)
+      while start < stop and step < 0:
+        start += len (self)
       while start != stop:
         yield self.real_list[start % len (self.real_list)]
         start += step
     return CircularList (item_slice)
 
   def __getslice__ (self, start, stop):
-    return self[start:stop:1 if stop > start else -1]
+    return self[start:stop:1]
 
   def __ge__ (self, iterable):
     try:
@@ -190,12 +195,13 @@ class CircularList (object):
       del self.real_list[-1]
 
   def index (self, value, start=0, stop=None):
-    if stop > self.max_length:
+    if stop > self.max_length or stop is None:
       stop = self.max_length
     else:
       length = len (self.real_list)
       if stop > length:
         stop = length
+    print list (self[start:stop])
     return list (self[start:stop]).index (value)
 
   def pop (self):
@@ -223,3 +229,4 @@ if __name__ == "__main__":
   s.append (10)
   assert list (s[1473:1493]) == [10] + range (11) + range(8)
   assert str (s) == "[..., 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...]"
+  print list (s[7:5])
