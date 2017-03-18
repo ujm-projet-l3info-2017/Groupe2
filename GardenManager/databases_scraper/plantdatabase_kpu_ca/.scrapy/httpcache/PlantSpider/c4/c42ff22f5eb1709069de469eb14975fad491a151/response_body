@@ -1,0 +1,983 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="description" content="Kwantlen Polytechnic University. School of Horticulture Plant Database. Langley British Columbia."/>
+	<meta name="keywords" content="school, horticulture, Foliage plant,Fruit type,Fruiting time,Full sun,Garden plants,Ground cover,Hanging basket,Hardiness,House plant identification,Indoor plant,Inflorescence type,Landscape design,Landscape plants,Landscape uses,Landscaping,Leaf apices,Leaf arrangement,Leaf base,Leaf margin,Leaf morphology,Leaf scar,Leaf shape,Leaf surface,Leaf texture,Leaf type,Leaf venation,Leaflet shape,Native plants,Organ modifications,Ornamental plants,Ornamental grasses,Part sun,Perennial boarder,Pest susceptibility,Plant characteristics,Plant database,Plant exposure,Plant family,Plant finder,Plant form,Plant habit,Plant ID,Plant identifier,Plant identification by,Plant images,Plant information,Plant pictures,Plant search,Plant texture,Plant type,Plants database,Pond plants,Rhizome,Rock Garden,Shade garden,Shade tree,Small garden,Street tree,Tropical plant identification,Urban agriculture,USDA plants,West coast gardening,Wild flower garden,Woody plants"/>
+	<meta name="robots" content="all"/>
+	<meta name="revisit" content="after 10 days"/>
+	<meta name="google-site-verification" content="8y7xXYu09vHMFz52o-AstG-jD8s5gacFBDYf4k1UjvQ"/>
+
+	<link rel='shortcut icon' href='http://www.kpu.ca/favicon.ico' >
+	<link rel='icon' href='http://www.kpu.ca/animated_favicon1.gif' type='image/gif' >
+
+	<title>Plant Database</title>	
+        <link rel="stylesheet" href="/css/styles.css"/>
+<!--	<link rel="stylesheet" href="/css/styles-print.css"/> -->
+
+	<script type="text/javascript" src="/js/rolloverimage_jquery.js"></script>
+ 
+	<script type="text/javascript" src="/js/rolloverimage_main.js"></script>
+ 
+	<script type="text/javascript" src="/js/public_site/flashanim.js"></script>
+ 
+
+	<script type="text/javascript" src="/js/jquery-1.4.2.js"></script>
+ 
+        <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+ 
+        <script type="text/javascript" src="/js/jquery.easing.1.3.js"></script>
+ 
+        <script type="text/javascript" src="/js/jquery.slideviewer.1.2.js"></script>
+ 
+
+	<script language="javascript" type="text/javascript">
+		// Expandable content script 
+		var ie4 = false; if(document.all) { ie4 = true; }
+		function getObject(id) { if (ie4) { return document.all[id]; } else { return document.getElementById(id); } }
+		function toggle(link, divId) { var lText = link.innerHTML; var d = getObject(divId);
+		 if (lText == 'Expand') { link.innerHTML = 'Collapse'; d.style.display = 'block'; }
+		 else { link.innerHTML = 'Expand'; d.style.display = 'none'; } }
+	</script>
+	<!-- click on   --> 
+	<script language='javascript'>
+		function happycode(){
+	/*	   if (parent.document.URL.indexOf("searchByCourse") != -1){ */
+		   if (parent.document.URL.indexOf("AARB") != -1 || parent.document.URL.indexOf("HORT") != -1 || parent.document.URL.indexOf("Apprenticeship") != -1){ 
+			$('li#plantlist ul').show();
+			$(window).resize(positionLogo);
+	                $(window).scroll(positionLogo);
+		   }
+		   if (parent.document.URL.indexOf("resource") != -1){
+			$('li#resources ul').show();
+			$(window).resize(positionLogo);
+	                $(window).scroll(positionLogo);
+		   }
+		   if (parent.document.URL.indexOf("ID1") != -1){
+			$('li#plantid1weekly ul').show();
+			$(window).resize(positionLogo);
+	                $(window).scroll(positionLogo);
+		   }
+		   if (parent.document.URL.indexOf("ID2") != -1){
+			$('li#plantid2weekly ul').show();
+			$(window).resize(positionLogo);
+	                $(window).scroll(positionLogo);
+		   }
+		}
+	</script>
+</head>
+<body>
+ 
+  <script>
+	//call after page loaded
+	window.onload= happycode;
+  </script>
+  <!-- the absolutely positioned logo at top left of the screen -->
+  <a name="top"></a>
+  <div id="container">
+    <div id="content">
+      <div id="navigation">
+		 <div class="nav_logo"><a href="http://www.kpu.ca/" target="_blank"><img class="kpu" src="/images/signaturefile3.png" width="190" height="55"  alt="logo" /></a></div>
+		 <div class="nav_divider"></div>
+		 <div id="soh"><strong><a href="http://www.kpu.ca/hort.html" >School of Horticulture</a></strong><a href="http://www.pu.ca/hort.html" ></a></div>
+		 <div class="nav_divider"></div>
+		 <div id="nav_content">
+			<ul id="menu">
+                          <li style="padding-bottom: 20px;"><a href="http://www.kpu.ca/hort.html" ><strong>School of Horticulture</strong></a></li>
+			  <li id="pdb"><a href="/plant/search.gsp" class="selected">Plant  Database</a></li>
+                          <li id="plantloc"><a href="/plant/map.gsp" >Plant Location Map</a></li> 
+			  <li id="plantlist"><img src='/images/arrow-right.png' width='11' height='7' alt="arrow" /><a href="#" >Course Plant List</a>
+				<ul class="sub_nav">
+				  <li><a href="/plant/searchByCourse/AARB+1012" title="AARB 1012">AARB 1012</a></li>
+				  <li><a href="/plant/searchByCourse/CLT+Training" title="CLT Training">CLT Training</a></li>
+				  <li><a href="/plant/searchByCourse/HORT+1155" title="HORT 1155">HORT 1155</a></li>
+				  <li><a href="/plant/searchByCourse/HORT+1193" title="HORT 1193">HORT 1193/1293</a></li>
+			<!--	  <li><a href="/plant/searchByCourse/HORT+1255" title="HORT 1255">HORT 1255</a></li> -->
+				  <li><a href="/plant/searchByCourse/HORT+2355" title="HORT 2355">HORT 2355</a></li>
+				  <li><a href="/plant/searchByCourse/Level+1+Apprenticeship" title="Level 1 Apprenticeship">Level 1 Apprenticeship</a></li>
+				  <li><a href="/plant/searchByCourse/Level+2+Apprenticeship" title="Level 2 Apprenticeship">Level 2 Apprenticeship</a></li>
+				  <li><a href="/plant/searchByCourse/Level+3+Apprenticeship" title="Level 3 Apprenticeship">Level 3 Apprenticeship</a></li>
+				  <li><a href="/plant/searchByCourse/Level+4+Apprenticeship" title="Level 4 Apprenticeship">Level 4 Apprenticeship</a></li>
+				</ul>              
+			  </li> 
+	<!--		  <li id="plantid1weekly"><img src='/images/arrow-right.png' width='11' height='7'alt="arrow" /><a href="#" >Plant ID 1 by Week</a>
+				<ul class="sub_nav">
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+1" >Week 1</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+2" >Week 2</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+3" >Week 3</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+4" >Week 4</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+5" >Week 5</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+6" >Week 6</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+7" >Week 7</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+8" >Week 8</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+9" >Week 9</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+11" >Week 11</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+12" >Week 12</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID1+Week+13" >Week 13</a></li>
+				</ul>             
+			  </li>  -->
+	<!--		  <li id="plantid2weekly"><img src='/images/arrow-right.png' width='11' height='7'alt="arrow" /><a href="#" >Plant ID 2 by Week</a>
+				<ul class="sub_nav">
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+1" >Week 1</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+2" >Week 2</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+3" >Week 3</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+4" >Week 4</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+5" >Week 5</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+6" >Week 6</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+7" >Week 7</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+8" >Week 8</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+9" >Week 9</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+10" >Week 10</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+11" >Week 11</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+12" >Week 12</a></li>
+				  <li><a href="/plant/searchByCourse/Plant+ID2+Week+13" >Week 13</a></li>
+				</ul>             
+			  </li>	 -->		  
+			  <li id="resources"><img src='/images/arrow-right.png' width='11' height='7'alt="arrow" /><a href="#" >Plant ID Resources</a>
+				<ul class="sub_nav">
+				  <li><a href="/plant/resourcePlantIdLink.gsp" >Plant ID Links</a></li>
+				  <li><a href="/plant/resourcePestIdLink.gsp" >Pest ID Links</a></li>
+				  <li><a href="http://libguides.kpu.ca/hort" target="_blank">Library Link</a></li>
+				  <li><a href="/plant/resourceReferences.gsp">Books</a></li>
+ 				  <li><a href="/plant/resourcePlantMasterList" >Plant Master List</a></li>
+				  <li><a href="http://www.planthardiness.gc.ca"  target="_blank">Hardiness Zone Map</a></li>
+				</ul>
+			  </li>
+			  <li id="reviews"><img src='/images/arrow-right.png' width='11' height='7'alt="arrow" /><a href="#" >Online Lab Reviews</a>
+				<ul class="sub_nav">
+				  <li><a href="http://www.kpu.ca/hort/students/enrolled#botany" target="_blank">Botany</a></li>
+				  <li><a href="http://www.kpu.ca/hort/students/enrolled#botany" target="_blank">Plant Science</a></li>
+				  <li><a href="http://www.kpu.ca/hort/students/enrolled#labs" target="_blank">Plant Health</a></li>
+				  <li><a href="http://www.kpu.ca/hort/students/enrolled#labs" target="_blank">Pest Management</a></li>
+				</ul>              
+			  </li>
+			  <li><a href="/plant/siteIndex" >Site Index</a></li>
+			  <li><a href="/plant/copyright.gsp" >Copyright Information</a></li> 
+             </ul>            
+         </div><!--nav_content --><br/><br/> 
+<div style="">
+        <div style=" text-align: center; padding-bottom: 10px;"><a href="https://play.google.com/store/apps/details?id=com.kpu.plantidlite" target="_blank"><img src="/images/GooglePlayBadge.png" width="150" height="52" alt="AndroidStore"  /></a></div>
+    <div style="text-align: center;"> <a href="https://itunes.apple.com/ca/app/kpu-plant-database-lite/id871568925?mt=8" target="_blank"><img src="/images/App_Store_(black).png" width="150" height="52" alt="AppStore"  /></a></div>
+    </div> 
+	 
+		 <div class="nav_divider"></div>  
+		 <div class="stay_connected_container">
+			<div class="stay_connected"><p>Stay connected:</p></div>
+			<div class="stay_connected"><a href="http://twitter.com/kwantlenu" target="_blank"><img src="/images/small_twitter.png" width="16" height="16" alt="Connect to Twitter"  /></a></div>
+			<div class="stay_connected"><a href="https://www.facebook.com/kwantlenU" target="_blank"><img src="/images/small_facebook.png" width="16" height="16" alt="Connect to Facebook" /></a></div>
+		 </div>
+		 <br clear="all" />  
+
+	<!--	 <div class="nav_divider"></div>
+		 <div id="search_container">
+		   <div style="text-align: center; padding-bottom: 10px;"><a href="https://play.google.com/store/apps/details?id=com.kpu.plantidlite" target="_blank"><img src="images/GooglePlayBadge.png" width="150" height="45" alt="AndroidStore"  /></a></div><br/>
+		   <div style="text-align: center;"> <a href="https://itunes.apple.com/ca/app/kpu-plant-database-lite/id871568925?mt=8" target="_blank"><img src="images/App_Store_(black).png" width="150" height="45" alt="AppStore"  /></a>
+		 </div>  -->
+		 <div id="static_kpu_logo" style="display: none;">
+			<img src="/images/kpu_logo.jpg" width="43" height="72" alt="logo"/>
+		 </div>
+
+
+      </div> <!-- navigation   --> 
+	
+      <!--mqin content start-->
+      
+      <!--mqin content start-->
+      <div id="content_area">
+        <div class="">
+         <div style='height:75px;'><h3 id="header">School of Horticulture<br />Plant Database</h3></div>      
+           
+         <!--Start of search results display-->
+           <div id="display_where">Details of...</div>
+               
+           <div id="results_table" >
+  <!--start holding the tables-->
+             <div class="">
+               <table class="pdetail">
+               <tr>
+                 <td class="colum-a">Scientific Name:</td>
+                 <td class="dark"><span class="scientific1"> Abelia</span> <span class="scientific2">x</span><span class="scientific1"> grandiflora </span> <span class="scientific2">'Edward Goucher'</span></td>
+               </tr>  
+               <tr>
+  		 
+			 <td>Pronunciation:</td>
+			 <td class="dark">a-BEE-lee-uh gran-dih-FLOR-uh</td>
+                 
+               </tr>                              
+               <tr>
+                 <td>Common Name:</td>
+                 <td class="dark">Edward Goucher abelia</td>
+               </tr>                              
+               <tr>
+                 <td>Family Name: </td>
+                 <td class="dark">Caprifoliaceae</td>
+               </tr>
+               <tr>
+                 <td>Plant Type:</td>
+                 <td class="dark">
+			
+			  
+			      Broadleaf evergreen,
+			  
+			
+			  
+			      Semi-evergreen
+			  
+			 
+		 </td>
+               </tr>
+               <tr>
+		 <td>Key ID Features:</td>
+		 <td class="dark">Semi-evergreen shrub with arching reddish branches; leaves to 6 cm long, opposite, glossy dark green with long acuminate tips; some bronzing in winter.</td>
+               </tr>
+               <tr>
+                 <td>Course(s):</td>
+         <!--    <td class="dark">HORT 1155;  Level 2 Apprenticeship;  </td> --> 
+	         <td class="dark">
+		    
+		       
+			      HORT 1155, 
+		        
+		   
+		       
+			       Level 2 Apprenticeship
+		       
+		  
+                 </td>
+               </tr>
+               </table> <!-- basic_date table --> <br/>
+               <div id="nav_icons">
+                  <div class="printer"><a href="/plant/printableSummary/196" target="_blank"><img src="/images/icons/printer.png" width="32px" height="32px" alt="print" /><br />Printable Summary</a></div>
+                  <div class="search"><a href="/plant/search.gsp"><img src="/images/icons/find_new.png" width="32px" height="32px" alt="search_again" /><br />New Search</a></div>
+		  
+			  <div class="slideshow">
+			     
+			     
+			    <a href="/plant/plantImages/196?image=h" target="_blank"><img src="/images/icons/slideshow.jpg" width="32px" height="32px" alt="search_again" /><br/>Slide Show</a>
+			  </div>
+		  
+	       </div>
+               </br>
+<!--  the first table  -->
+               <table id="expanded_data" border="0" cellpadding="0" cellspacing="0" class="pdetail">
+                 <tr valign="top">
+                   <td>
+                     <table class="pdetail">
+		      <tr valign="top">
+			<td class="colum-a">Habit:</td>
+			<td class="dark">
+				
+				  
+				      Twiggy
+				  
+				 
+			</td>
+                      </tr>
+		      <tr valign="top"> 
+			<td>Form:</td>
+			<td class="dark">
+				
+				  
+				      Round
+				  
+				 
+			</td>
+		      </tr>
+		      <tr valign="top">
+			<td>Texture:</td>
+			<td class="dark">
+			  
+			    Medium - fine
+                          
+			</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td>Mature Size:</td><td class="dark"></td>
+		      </tr>
+		      <tr valign="top"> 
+			<td class="indent">Height:</td><td class="dark">1.3 - 2.0m</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td class="indent">Spread:</td><td class="dark">1.5 - 2.0m</td>
+		      </tr>
+		      <tr valign="top"> 
+		        
+			   <td>Growth Rate:</td><td class="dark">Moderate</td>
+                        
+		      </tr>
+		      <tr valign="top"> 
+			<td>Origin:</td>
+			<td class="dark">
+				
+				  
+				      B.C. west of Cascades,
+				  
+				
+				  
+				      Garden origin,
+				  
+				
+				  
+				      S.E. Asia / Japan / China
+				  
+				
+				
+				     (cross between A. x grandiflora  and  A. shumannii in1911 )
+				
+			</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td>Hardiness Rating:</td>
+			<td class="dark">Zone 6: (-23 to -18 C)</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td>Exposure:</td>
+			<td class="dark">
+				
+				  
+				      Full sun,
+				  
+				
+				  
+				      Part sun/part shade
+				  
+				 
+			</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td>Soil/ Growing Medium:</td>
+			<td class="dark">
+				
+				  
+				      Acidic,
+				  
+				
+				  
+				      Well-drained
+				  
+				 
+			</td>
+		      </tr>
+       	              
+			      <tr valign="top"> 
+				<td>Water Use:</td>
+				<td class="dark">
+					
+					  
+					      Moderate
+					  
+					 
+				</td>
+			      </tr>
+		      
+		      <tr valign="top"> 
+			<td>Landscape Uses:</td>
+			<td class="dark">
+				
+				  
+				      Dryland (no watering),
+				  
+				
+				  
+				      Fragrance,
+				  
+				
+				  
+				      Group or mass planting,
+				  
+				
+				  
+				      Hedge row,
+				  
+				
+				  
+				      Mixed shrub border,
+				  
+				
+				  
+				      Sheared hedge,
+				  
+				
+				  
+				      Summer interest
+				  
+				 
+				
+			</td>
+		      </tr>
+		      <tr valign="top"> 
+			<td>Additional Info:</td>
+			<td class="dark"><a href ='http://www.google.ca/images?um=1&hl=en&biw=1024&bih=605&tbs=isch%3A1&sa=1&q=%22Abelia+%27Edward+Goucher%27%22&aq=f&aqi=&aql=f&oq=' target='_blank'>Google Images</a></td>
+		      </tr>
+                     </table>
+                  </td>
+		   <td style="vertical-align: top; text-align:right; ">
+			
+			         
+			         
+   			        <a href="/plant/plantImages/196?image=h" target="_blank">
+				<img class="image_alignment" src="/images/habit/tabedh1.jpg" width="175px" title="Edward Goucher abelia" alt="Edward Goucher abelia"/><br/>&nbsp;</a>
+			
+		   </td>
+                 </tr>
+		 <tr valign="top">
+		    <td class="lastrow" colspan="2">&nbsp;</td>
+		 </tr>
+               </table>
+   <!-- second table -->
+               <table border="0"  class="pdetail">
+                 <tr valign="top">
+                   <td>
+                     <table border="0"  class="pdetail">
+		       <tr valign="top">
+			 <td class="colum-a">Leaf Morphology:</td><td class="dark"></td>
+		       </tr>
+		       <tr valign="top"> 
+			<td class="indent">Form:</td>
+			<td class="dark">
+				
+				  
+				      Simple
+				  
+				 
+			
+			</td>
+		       </tr>
+		       <tr valign="top"> 
+			<td class="indent">Arrangement:</td>
+			<td class="dark">
+				
+				  
+				      Opposite
+				  
+				 
+			
+			</td>
+		       </tr>
+		       <tr valign="top"> 
+			<td class="indent">Texture/ Venation:</td>
+			<td class="dark">
+				
+				  
+				      Pinnate venation,
+				  
+				
+				  
+				      Soft flexible
+				  
+				 
+			
+			</td>
+		       </tr>
+		       <tr valign="top"> 
+			<td class="indent">Surfaces:</td>
+			<td class="dark">
+				
+				  
+				      Glabrous,
+				  
+				
+				  
+				      Lustrous
+				  
+				 
+			
+			</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Colour in Summer:</td>
+			<td class="dark">
+				
+				  
+				      Green,
+				  
+				
+				  
+				    
+					Red
+				    
+				  
+				 
+				
+			</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Colour in Fall:</td>
+			<td class="dark">
+				
+				  
+				      Green,
+				  
+				
+				  
+				      Yellow,
+				  
+				
+				  
+				      Dark-red
+				  
+				 
+		
+			</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Leaf(let) Terms:</td>
+			<td class="dark"></td>
+		       </tr>
+		       <tr valign="top"> 
+			<td class="indent">Shapes:</td>
+			<td class="dark">
+				
+				  
+				      Ovate
+				  
+				 
+			
+			</td>
+		       </tr>
+		       
+			       <tr valign="top"> 
+				<td class="indent">Apices:</td>
+				<td class="dark">
+					
+					  
+					      Acuminate
+					  
+					 
+				
+				</td>
+			       </tr>
+		       
+		       
+			       <tr valign="top"> 
+				<td class="indent">Bases:</td>
+				<td class="dark">
+					
+					  
+					      Obtuse
+					  
+					 
+				</td>
+			       </tr>
+		       
+		       <tr valign="top"> 
+			<td class="indent">Margins:</td>
+			<td class="dark">
+				
+				  
+				      Entire,
+				  
+				
+				  
+				      Serrulate
+				  
+				 
+			</td>
+		       </tr>
+		       
+			       <tr valign="top"> 
+				<td>Additional Info:</td>
+				<td class="dark">
+				   
+				   
+				   base entire but mid-leaf to apex with small teeth
+				</td>
+			       </tr>
+		       
+                     </table>
+                  </td>
+		   <td style="vertical-align: top; text-align:right; ">
+			
+			         
+			         
+   			        <a href="/plant/plantImages/196?image=l" target="_blank">
+				<img class="image_alignment" src="/images/leaves/tabedl1.jpg" width="175px" alt="" /><br />
+				  &nbsp;</a>
+			
+		   </td>
+                 </tr>
+		 <tr valign="top">
+		    <td class="lastrow" colspan="2">&nbsp;</td>
+		 </tr>
+               </table>
+  <!-- the third table  -->
+	       <table border="0" cellspacing="0" cellpadding="0" class="pdetail">
+		  <tr valign="top">
+		    <td>
+		     <table border="0" cellpadding="1" cellspacing="0" class="pdetail">
+		       <tr valign="top">
+			<td class="colum-a">Inflorescence Type:</td>
+			<td class="dark">
+				
+				Cyme
+			</td>
+		       </tr>
+		       <tr valign="top"> 
+			  <td>Flower Morphology:</td><td class="dark">Flowers perfect</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td class="indent">Number of Petals:</td><td class="dark">5</td>
+		       </tr>
+		       
+		       
+		       <tr valign="top"> 
+			<td class="indent">Corolla Shape:</td><td class="dark">Tubular</td>
+		       </tr>
+		       
+		       
+		       <tr valign="top"> 
+			<td class="indent">Ovary Position:</td><td class="dark">Inferior</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Colour (petals):</td>
+			<td class="dark">
+				
+				  Showy, 
+				
+				
+				
+				  
+				      
+				        Pink
+                                      
+				  
+				
+				
+			</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Flower Scent:</td>
+			<td class="dark">
+				
+				  
+				      Fragrant
+				  
+				 
+			
+			</td>
+		       </tr>
+		       
+		       <tr valign="top"> 
+			<td>Flower Time at Peak:</td>
+			<td class="dark">
+				
+				  
+				      Jun,
+				  
+				
+				  
+				      Jul,
+				  
+				
+				  
+				      Aug
+				  
+				 
+			
+			</td>
+		       </tr>
+		       
+                     </table>
+                    </td>
+		    <td style="vertical-align: top; text-align:right; ">
+			
+			         
+			         
+   			        <a href="/plant/plantImages/196?image=f" target="_blank">
+				<img class="image_alignment" src="/images/flowers/tabedf1.jpg" width="175px" alt="" /><br />
+				  </a>
+			
+		    </td>
+                  </tr>
+		  <tr valign="top">
+		    <td class="lastrow" colspan="2">&nbsp;</td>
+		  </tr>
+               </table>
+<!-- the 4th table  -->
+	       <table border="0" cellspacing="0" cellpadding="0" class="pdetail">
+		  <tr valign="top">
+		    <td>
+		     <table border="1" cellpadding="1" cellspacing="0" class="pdetail">
+		       <tr valign="top"> 
+			<td class="colum-a">Fruit Type:</td>
+			<td class="dark">
+				
+				  
+                                       Capsule
+				  
+				 
+			</td>
+		       </tr>
+		       <tr> 
+			<td>Fruit Colour:</td>
+			<td class="dark">
+				
+				  
+				    
+					Brown
+				    
+				  
+				 
+							       
+			</td>
+		       </tr>
+		       <tr> 
+			<td>Fruiting Time:</td>
+			<td class="dark">
+				
+				  
+				      Oct,
+				  
+				
+				  
+				      Nov
+				  
+				 
+			
+			</td>
+		       </tr>
+		       
+			       <tr> 
+				<td>Additional Info:</td>
+				<td class="dark">
+			        
+			        
+				   Not showy
+			        
+			        
+			        
+			        
+			        
+
+				  
+				</td>
+			       </tr>  
+		       
+                     </table>
+                    </td>
+		    <td style="vertical-align: top; text-align:right; ">
+			
+			         
+			         
+   			        <a href="/plant/plantImages/196?image=t" target="_blank">
+				<img class="image_alignment" src="/images/fruit/tabedt1.jpg" width="175px" alt="" /><br />
+				  </a>
+			
+		    </td>
+                  </tr>
+		   <tr>
+		    <td class="lastrow" colspan="2">&nbsp;</td>
+		  </tr>
+	       </table>
+<!-- the 5th table -->
+	       <table border="0" cellspacing="0" cellpadding="0" class="pdetail">
+		  <tr valign="top">
+		    <td style="vertical-align: top;">
+		     <table border="0" cellpadding="0" cellspacing="0" class="pdetail">
+		       
+			       <tr valign="top"> 
+				<td class="colum-a">Bark Morphology: </td>
+				<td class="dark">
+					
+					
+
+					
+					  
+					      Smooth,
+					  
+					
+					  
+					      Lightly fissured
+					  
+					 
+				
+				</td>
+			       </tr>
+		       
+		       <tr> 
+			<td class="colum-a"> Bark or Stem Colour:</td>
+			<td class="dark">
+				
+				  
+				      Yellow,
+				  
+				
+				  
+				      Brown
+				  
+				 
+
+			</td>
+		       </tr>
+		       
+			       <tr> 
+				<td>Additional Info:</td><td class="dark">long vertical fissures on bark</td>
+			       </tr>
+		       
+		       <tr valign="top">
+			  <td>&nbsp;</td><td>&nbsp;</td>
+		       </tr>
+		       
+		       <tr> 
+			<td>Leaf Bud Type: </td>
+			<td class="dark">
+				
+				  
+				      Ovoid
+				  
+				 
+
+				
+				
+			</td>
+		       </tr>
+		       
+                       
+		       <tr> 
+			<td>Leaf Scar Shape:</td><td class="dark">Other</td>
+		       </tr>
+		       
+		       
+	             </table>
+	            </td>
+		    <td width="210px">
+		      <table class="pdetail">
+			<tr valign="top">
+			    <td class="caption" style="vertical-align: top; text-align:right; ">
+				
+					 
+					 
+					<a href="/plant/plantImages/196?image=k" target="_blank">
+					<img class="image_alignment" src="/images/bark/tabedk.jpg" width="100px" alt="" /><br />
+					  </a>
+		
+				
+			   </td>
+			   <td class="caption" style="vertical-align: top; text-align:right; ">
+				
+					 
+					 
+					<a href="/plant/plantImages/196?image=o" target="_blank">
+					<img class="image_alignment" src="/images/other/tabedo.jpg" width="100px" alt="" /><br/>
+					  </a>
+				
+                            </td>
+
+			</tr>
+		      </table>
+		    </td>
+		  </tr>
+	       </table>
+<!-- the 6th table -->
+	       <table border="0" cellspacing="0" cellpadding="0" class="pdetail">
+		  <tr valign="top">
+       		     
+			<td class="colum-a">Propagation:</td>
+			<td class="dark"><span>
+				
+				  
+				      Greenwood cuttings,
+				  
+				
+				  
+				      Softwood cuttings
+				  
+				</span> 
+                     
+		  </tr>
+		  
+		  <tr> 
+			<td>Plant Care:</td><td class="dark"></td>
+		  </tr>
+		  
+		  
+		  
+		  <tr> 
+			<td class="indent">Maintenance:</td><td class="dark">Low maintenance plant</td>
+		  </tr>
+		  
+		  
+		  
+		  
+		  <tr> 
+			<td>Pest Susceptibility:</td>
+			<td class="dark">
+				
+				    Pest resistant,
+				
+				
+				
+				    Disease resistant,
+				
+				
+
+			
+				
+				  
+				      Fungal leaf spot,
+				  
+				
+				  
+				      Root rot,
+				  
+				
+				  
+				      Deer resistant
+				  
+				 
+
+		         </td>
+		  </tr>
+		  
+		  
+
+		   <tr><td class="lastrow" colspan="2">&nbsp;</td></tr>
+               </table>
+	       <table border="0" cellspacing="0" cellpadding="0" class="pdetail">
+		  <tr valign="top">
+		    <td>Location(s): <br> 
+			
+			   <b>(MCC)</b> Main Campus Courtyard
+			   
+				: 697
+			   <br>
+         		
+			   <b>(PPL)</b> Pine PLanting
+			   <br>
+         		 
+		    <a href="/plant/map.gsp" class="selected">Location Map</a></td>
+		  </tr>
+		  <tr/>
+	       </table>
+	       <br>
+               <p style="color:red"><A HREF="mailto:aaron.roth@kwantlen.ca?subject=Report an error on Plant Database site"><font color="red">Report an Error</font></A></p>
+             </div><!--end of holding the tables-->
+           </div><!--end of results_table--> 
+    	   <div class="clear"></div>
+           <div id="bottom_copyright"></div> 
+
+        </div>
+      </div><!--content_area -->
+      <!-- mqin end of content -->
+
+  
+      <!-- mqin end of content -->
+      </div> <!-- content div-->
+      <div class="kpu_static_logo_bottomofleftnav"><a href="http://www.kpu.ca" target="_blank"><img src="/images/signaturefile3.png" width="190" height="55" id="" alt="logo" /></div><!--DO NOT DELETE THIS<img src="/images/signaturefile3.png" width="190" height="55" id="kpu_logo" alt="logo" />--> <!-- end of content div -->
+
+    </div> <!--container div -->
+
+    <div id="copyright" style="text-align:center;"><p>School of Horticulture &copy;2015</p></div>
+    <script type="text/javascript" src="/js/public_site/jquery.js"></script>
+ 
+    <script type="text/javascript" src="/js/public_site/site.js"></script>
+ 
+    <div style="display: none;"><!-- petya $version 1.0 --></div>
+  </body>
+</html>
