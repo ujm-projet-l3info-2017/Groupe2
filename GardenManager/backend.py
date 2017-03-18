@@ -39,10 +39,21 @@ class Backend (object):
     "ground": { "ground" },
     "form": { "form" },
     "habit": { "habit" },
+    "month": { "month" }
   }
 
   ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
   ADDITIONNAL_KEYS["whole_plant"] = {
+    "foreign_tables": dict (),
+    "attributes": set ()
+  }
+  ADDITIONNAL_KEYS["plant"] = {
+    "foreign_tables": {
+      "Month": { "plantation_time" }
+    }, "attributes": set ()
+  }
+  UNUSED_KEYS = { key: set () for key in DATA_TYPES }
+  UNUSED_KEYS["whole_plant"]= {
     "pronunciation", "key_id_features", "texture", "origin", "additional_info",
     "leaf_form", "leaf_arrangement", "leaf_texture", "leaf_surfaces", 
     "leaf_shapes", "leaf_apices", "leaf_bases", "leaf_margins",
@@ -123,18 +134,17 @@ class Backend (object):
     """
      Takes a data set (a dictionnary) and search for missing mandatory keys.
     """
-    missing_fields = Backend.MANDATORY_KEYS[data_type] - \
-      set (data_set.keys ())
+    missing_fields = Backend.MANDATORY_KEYS[data_type] - data_set.viewkeys ()
     if not missing_fields:
       return None
     return "Missing fields: %s" % repr (sorted (list (missing_fields)))
 
-  def process_tested_data (self, plant_data_set, data_type=DEFAULT_DATA_TYPE):
+  def process_tested_data (self, data_set, data_type=DEFAULT_DATA_TYPE):
     """
       Insert the data into their respective table.
     """
     if data_type == "whole_plant":
-      self.create_plant_and_related (plant_data_set)
+      self.create_plant_and_related (data_set)
     else:
       pass
 
@@ -151,12 +161,22 @@ class Backend (object):
 
   def split_from_data (self, sentence, sep=",\ ?", remove_parenthesis=True,
       remove_quotes=True, lower=True):
+    """
+      Split a sentence into a list of words/sub-sentences, using the regex sep.
+      Strip the simple/double quotes from the original sentence if
+        remove_quotes is True.
+      Lower the sentence is lower is True (before split).
+      Remove any parenthesis is remove_parenthesis is True (before split).
+    """
     if remove_quotes:
       if sentence.startswith ('"') and sentence.endswith ('"') or \
           sentence.startswith ("'") and sentence.endswith ("'"):
         sentence = sentence[1:-1]
-    if remove_parenthesis:
-      sentence = re.sub ("\ ?\([^)]*\)", "", sentence)
+    try:
+      while remove_parenthesis and sentence.index ('(') < sentence.index (')'):
+        sentence = re.sub ("\ ?\([^)]*\)", "", sentence)
+    except ValueError:
+      pass
     if lower:
       sentence = sentence.lower ()
     return re.split (sep, sentence)
@@ -195,7 +215,17 @@ class Backend (object):
       create a models.Plant instance with the given data and return it.
     """
     self.sanitize_plant_data_set (plant_data_set)
-    return self.create_model_instance (self.model_module.Plant, plant_data_set)
+    additionnal_keys = Backend.ADDITIONNAL_KEYS.get ("plant", {})
+    additionnal_attributes = additionnal_keys.get ("attributes", set ())
+    additional_relations = additionnal_keys.get ("foreign_tables", dict ())
+    plant = self.create_model_instance (self.model_module.Plant, plant_data_set)
+    if additionnal_attributes:
+      for attribute, value in additionnal_attributes.iteritems ():
+        setattr (plant, attribute,  value)
+    if additional_relations:
+      for table_name in additional_relations.iterkeys ():
+        self.process_tested_data (plant_data_set, data_type=table_name.lower ())
+    return plant
 
   def sanitize_plant_data_set (self, plant_data_set):
     """
