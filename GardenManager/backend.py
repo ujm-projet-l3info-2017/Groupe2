@@ -427,9 +427,8 @@ class Backend (object):
         - Replacing the ground value by its corresponding integer.
     """
     if isinstance (ground_data_set["ground"], str):
-      ground_data_set["ground"] = \
-        self.model_module.Ground.GROUND_VALUES[ground_data_set["ground"] or \
-          "unknown"]
+      ground_data_set["ground"] = self.model_module.Ground.GROUND_VALUES[\
+        ground_data_set["ground"] or "unknown"]
 
   def create_ground_set (self, ground_data_set, verify=True):
     grounds = ground_data_set.get ("soil_or_growing_medium", None)
@@ -459,9 +458,8 @@ class Backend (object):
         - Replacing the habit value by its corresponding integer.
     """
     if isinstance (habit_data_set["habit"], str):
-      habit_data_set["habit"] = \
-        self.model_module.Habit.HABIT_VALUES[habit_data_set["habit"] or \
-          "unknown"]
+      habit_data_set["habit"] = self.model_module.Habit.HABIT_VALUES[\
+        habit_data_set["habit"] or "unknown"]
 
   def create_habit_set (self, habit_data_set, verify=True):
     habits = habit_data_set.get ("habit", None)
