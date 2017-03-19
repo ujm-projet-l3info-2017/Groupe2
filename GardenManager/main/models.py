@@ -588,7 +588,7 @@ class Water (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.water)
+    return Digester ().digest (str (self))
 
   def str_water (self):
     return Water.WATERS[self.water][1]
