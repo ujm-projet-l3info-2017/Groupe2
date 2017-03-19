@@ -286,7 +286,7 @@ class LandscapeUse (models.Model):
   LANDSCAPE_NAMES = "All", "Accent plant", "Alpine", "Aquatic - ponds",        \
     "Attract beneficial insects", "Attract birds", "Attract butterflies",      \
     "Bedding plant", "Container planting", "Cut flower or foliage",            \
-    "Dried flower or fruit", "Dryland", "Erosion control",       \
+    "Dried flower or fruit", "Dryland", "Erosion control",                     \
     "Espalier", "Fall interest", "Filler", "Floristry", "Forestry",            \
     "Fragrance", "Golf green", "Green roof technology", "Green walls",         \
     "Ground cover", "Group or mass planting", "Hanging basket", "Hedge row",   \
@@ -294,7 +294,7 @@ class LandscapeUse (models.Model):
     "Mixed shrub border", "Native planting", "Perennial border", "Reclamation",\
     "Rock garden", "Screening", "Security/barrier", "Shade tree",              \
     "Sheared hedge", "Small garden/space", "Specimen plant", "Spring interest",\
-    "Street", "Summer interest", "Tall background", "Topiary",\
+    "Street", "Summer interest", "Tall background", "Topiary",                 \
     "Urban agriculture", "Waterside planting", "Wetland - bogs",               \
     "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
     "Woodland margin", "unknown"
@@ -343,20 +343,26 @@ class Month (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  MONTH_NAMES = CircularList (("January", "February", "March", "April", "May", \
-    "June", "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"))
+  MONTH_NAMES = CircularList (("january", "february", "march", "april", "may", \
+    "june", "july", "august", "septembre", "octobre", "novembre", "decembre"))
   MONTHS = tuple (enumerate (MONTH_NAMES))
+  MONTH_VALUES = dict (map (lambda _:_[::-1], MONTHS))
+  MONTH_FULL_NAME = { month[:3]: month for month in MONTH_NAMES }
   month = models.PositiveSmallIntegerField (choices=MONTHS)
 
   # Definition of the relation-related attributes
   None
+
+  def __init__ (self, *args, **kwargs):
+    super (Month, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def from_to (self, start, stop, step=1):
     start_index, stop_index = map (Month.MONTH_NAMES.index, (start, stop))
     return Month.MONTH_NAMES[start_index:stop_index:step]
 
   def digest (self):
-    return Digester ().digest (self.month)
+    return Digester ().digest (str (self))
 
   def str_month (self):
     return Month.MONTHS[self.month][1]
