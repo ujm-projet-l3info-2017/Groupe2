@@ -18,6 +18,48 @@ def set_class_attribute (attributes):
   return attr_setter
 
 
+class Colour (models.Model):
+
+  """
+    The Colour class maps the Colour table.
+    It defines:
+      - an id ;
+      - a colour ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  COLOUR_NAMES = "all", "white", "orange", "yellow", "green-yellow", "green",  \
+    "blue", "violet", "purple", "pink", "magenta", "red", "dark-red", "brown", \
+    "bronze", "silver", "black", "unknown"
+  COLOURS = tuple (enumerate (COLOUR_NAMES))
+  COLOUR_VALUES = dict (map (lambda x:x[::-1], COLOURS))
+  colour = models.PositiveSmallIntegerField (choices=COLOURS, null=True)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Colour, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (str (self))
+
+  def str_colour (self):
+    return Colour.COLOUR_NAMES[self.colour]
+
+  def __str__ (self):
+    return "Colour (%s)" % self.str_colour ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Colour object of id %(id)s ({ ",
+      "\tcolour            = %(colour)s",
+      "})")) % { "id": self.id, "colour": Colour.COLOUR_NAMES[self.colour], "ph": self.ph })
+
+
 class Ground (models.Model):
 
   """
