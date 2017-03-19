@@ -441,11 +441,9 @@ class Flower (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  COLOUR_NAMES = "brown",
-  COLOURS = tuple (enumerate (COLOUR_NAMES))
-  colour = models.PositiveSmallIntegerField (choices=COLOURS)
+  colours = models.ManyToManyField (Colour, related_name="flowers")
 
-  SCENT_NAMES = "fragrant",
+  SCENT_NAMES = "fragrant", 
   SCENTS = tuple (enumerate (SCENT_NAMES))
   scent = models.PositiveSmallIntegerField (choices=SCENTS)
 
