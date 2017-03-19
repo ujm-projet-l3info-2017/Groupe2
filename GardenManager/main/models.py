@@ -384,26 +384,47 @@ class Fruit (models.Model):
     It defines:
       - an ID ;
       - a type ;
-      - a colour ;
+      - some colours ;
+      - a fruit time.
   """
 
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  COLOUR_NAMES = "brown",
-  COLOURS = tuple (enumerate (COLOUR_NAMES))
-  colour = models.PositiveSmallIntegerField (choices=COLOURS)
+  colours = models.ManyToManyField (Colour, related_name="fruits")
 
-  TYPE_NAMES = "capsule",
+  TYPE_NAMES = "capsule", "cone (winged seeds)", \
+    "aborted (hybrids) or absent", "schizocarp, capsule", "samara", "unknown"
   TYPES = tuple (enumerate (TYPE_NAMES))
+  TYPES_VALUES = dict (map (lambda _:_[::-1], TYPES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Fruit, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.colour + self.type)
+    return Digester ().digest (str (self))
+
+  def str_colour (self):
+    return Fruit.COLOUR_NAMES[self.colour]
+
+  def str_type (self):
+    return Fruit.TYPE_NAMES[self.type]
+
+  def __str__ (self):
+    return "Fruit (colour is %s ; type is %s)" % (self.str_colour (), self.str_type ())
+
+  def __repr__ (self):
+    return ('\n'.join (("Fruit object of id %(id)s ({ ",
+      "\tfruit           = %(fruit)s",
+      "})")) % { "id": self.id, "fruit": str (self)
+    })
 
 
 class Flower (models.Model):
