@@ -170,17 +170,24 @@ class Backend (object):
       Remove any parenthesis is remove_parenthesis is True (before split).
     """
     if remove_quotes:
-      if sentence.startswith ('"') and sentence.endswith ('"') or \
-          sentence.startswith ("'") and sentence.endswith ("'"):
-        sentence = sentence[1:-1]
+      sentence = self.remove_trailing_from_data (sentence)
     try:
-      while remove_parenthesis and sentence.index ('(') < sentence.index (')'):
-        sentence = re.sub ("\ ?\([^)]*\)", "", sentence)
+      while sentence is not None and remove_parenthesis and \
+          sentence.index ('(') < sentence.index (')'):
+        sentence = self.remove_parenthesis_from_data (sentence)
     except ValueError:
       pass
-    if lower:
+    if lower and sentence is not None:
       sentence = sentence.lower ()
-    return re.split (sep, sentence)
+    return re.split (sep, sentence or '')
+
+  def remove_trailing_from_data (self, sentence, trailing="\"'"):
+    for character in trailing:
+      if sentence.startswith (character) and sentence.endswith (character):
+        sentence = sentence[1:-1]
+
+  def remove_parenthesis_from_data (self, sentence):
+    return re.sub ("\ ?\([^)]*\)", "", sentence)
 
   def create_plant_and_related (self, plant_data_set):
     """
