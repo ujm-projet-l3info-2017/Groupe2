@@ -449,9 +449,29 @@ class Flower (models.Model):
 
   # Definition of the relation-related attributes
   months = models.ManyToManyField (Month)
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Flower, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.scent + self.colour)
+    return Digester ().digest (str (self))
+
+  def str_colour (self):
+    return Flower.COLOUR_NAMES[self.colour]
+
+  def str_scent (self):
+    return Flower.SCENT_NAMES[self.scent]
+
+  def __str__ (self):
+    return "Flower (colour is %s ; scent is %s)" % (self.str_colour (), self.str_scent ())
+
+  def __repr__ (self):
+    return ('\n'.join (("Flower object of id %(id)s ({ ",
+      "\tflower           = %(flower)s",
+      "})")) % { "id": self.id, "flower": str (self)
+    })
 
 
 class Habit (models.Model):
