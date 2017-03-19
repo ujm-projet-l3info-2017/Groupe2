@@ -502,7 +502,7 @@ class Habit (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.habit)
+    return Digester ().digest (str (self))
 
   def str_habit (self):
     return Habit.HABITS[self.habit][1]
