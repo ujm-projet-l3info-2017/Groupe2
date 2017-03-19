@@ -546,7 +546,7 @@ class Form (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.form)
+    return Digester ().digest (str (self))
 
   def str_form (self):
     return Form.FORMS[self.form][1]
