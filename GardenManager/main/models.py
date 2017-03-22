@@ -387,13 +387,16 @@ class FruitType (models.Model):
 
   # Definition of the regular attributes.
 
-  #id = models.CharField (max_length=90, primary_key=True, unique=True)
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
   # id is auto-inc 'cause two flowers can be similare without being the same.
 
-  TYPE_NAMES = "capsule", "cone", "aborted or absent", "schizocarp", "samara", \
-    "cypsela", "follicle", "aggregate fruit", "unknown"
+  TYPE_NAMES = "All", "Aggregate fruit", "Achene", "Berry", "Capsule",         \
+    "Cypsela", "Drupe", "Edible", "Follicle", "Grain", "Hesperidium", "Legume",\
+    "Multiple fruit", "Nut", "Pepo", "Pome", "Samara", "Schizocarp", "Silicle",\ 
+    "Silique", "Aborted or absent", "Cone", "Sporangium", "unknown"
+
   TYPES = tuple (enumerate (TYPE_NAMES))
-  TYPES_VALUES = dict (map (lambda _:_[::-1], TYPES))
+  TYPE_VALUES = dict (map (lambda _:_[::-1], TYPES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
