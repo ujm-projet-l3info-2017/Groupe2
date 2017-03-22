@@ -57,7 +57,7 @@ class Colour (models.Model):
   def __repr__ (self):
     return ('\n'.join (("Colour object of id %(id)s ({ ",
       "\tcolour            = %(colour)s",
-      "})")) % { "id": self.id, "colour": Colour.COLOUR_NAMES[self.colour], "ph": self.ph })
+      "})")) % { "id": self.id, "colour": self.str_colour () })
 
 
 class Ground (models.Model):
