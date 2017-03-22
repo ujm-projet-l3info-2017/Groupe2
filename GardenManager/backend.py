@@ -688,7 +688,7 @@ class Backend (object):
       Extract all diffrent months (without parenthesis) from comma
       separated sentence.
     """
-    if month.lower () == "can flower any month":
+    if "can flower any month" in month.lower ():
       month = str (", ".join (self.model_module.Month.MONTH_FULL_NAME.keys ()))
     return self.split_from_data (month, lower=True)
 
