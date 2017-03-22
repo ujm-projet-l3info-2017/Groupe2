@@ -31,7 +31,8 @@ class Scent (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  SCENT_NAMES = "none", "fragrant", "spicy", "sweet", "lemony", "unknown"
+  SCENT_NAMES = "none", "fragrant", "spicy", "sweet", "lemony", "musky", \
+    "unpleasant", "unknown"
   SCENTS = tuple (enumerate (SCENT_NAMES))
   SCENT_VALUES = dict (map (lambda x:x[::-1], SCENTS))
   scent = models.PositiveSmallIntegerField (choices=SCENTS, null=True)
