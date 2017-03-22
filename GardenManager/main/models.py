@@ -494,13 +494,16 @@ class Flower (models.Model):
 
   def __init__ (self, *args, **kwargs):
     super (Flower, self).__init__ (*args, **kwargs)
+    self.update_id ()
+
+  def update_id (self):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (str (self))
+    return Digester (salt=True).digest ('')# str (self))
 
   def str_colour (self):
-    return Flower.COLOUR_NAMES[self.colour]
+    return ', '.join (colour.str_colour () for colour in self.colours.all ())
 
   def str_scent (self):
     return Flower.SCENT_NAMES[self.scent]
@@ -510,8 +513,8 @@ class Flower (models.Model):
 
   def __repr__ (self):
     return ('\n'.join (("Flower object of id %(id)s ({ ",
-      "\tflower           = %(flower)s",
-      "})")) % { "id": self.id, "flower": str (self)
+      "\tcolours          = %(colours)s",
+      "})")) % { "id": self.id, "colours": self.str_colour ()
     })
 
 
