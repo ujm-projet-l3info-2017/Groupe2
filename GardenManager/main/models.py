@@ -103,7 +103,6 @@ class Ground (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    #return Digester ().digest (str (self.ph) + str (self.ground))
     return Digester ().digest (str (self))
 
   def __str__ (self):
@@ -315,10 +314,10 @@ class LandscapeUse (models.Model):
       self.landscape = LandscapeUse.LANDSCAPE_VALUES[name]
 
   def digest (self):
-    return Digester ().digest (self.landscape)
+    return Digester ().digest (str (self))
 
   def str_landscape (self):
-    return LandscapeUse.LANDSCAPES[self.landscape][1]
+    return LandscapeUse.LANDSCAPE_NAMES[self.landscape]
 
   def __str__ (self):
     return "Landscape (%s)" % self.str_landscape ()
