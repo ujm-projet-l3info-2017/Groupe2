@@ -323,7 +323,6 @@ class Backend (object):
     flower = self.create_model_instance (self.model_module.Flower, flower_data_set)
     months = self.create_month_set (
       {"months" : flower_data_set["flower_time"]})
-    print flower_data_set["petal_colour"]
     colours = self.create_colour_set (
       {"colours" : flower_data_set["petal_colour"]})
     scents = self.create_flower_scent_set (
@@ -661,8 +660,9 @@ class Backend (object):
     if isinstance (colour_data_set["colour"], str):
       if colour_data_set["colour"] in ("n/a", '', None):
         colour_data_set["colour"] = "unknown"
-      colour_data_set["colour"] = self.model_module.Colour.COLOUR_VALUES[\
-        colour_data_set["colour"]]
+      colour_data_set["colour"] = self.model_module.Colour.COLOUR_VALUES.get (\
+        colour_data_set["colour"],
+        self.model_module.Colour.COLOUR_VALUES["unknown"])
 
   def create_colour_set (self, colour_data_set, verify=True):
     colours = colour_data_set.get ("colours", None)
@@ -688,6 +688,8 @@ class Backend (object):
       Extract all diffrent months (without parenthesis) from comma
       separated sentence.
     """
+    if month.lower () == "can flower any month":
+      month = str (", ".join (self.model_module.Month.MONTH_FULL_NAME.keys ()))
     return self.split_from_data (month, lower=True)
 
   def sanitize_month_data_set (self, month_data_set):
