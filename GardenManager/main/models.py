@@ -424,48 +424,48 @@ class Fruit (models.Model):
     The Fruit class maps the fruit table.
     It defines:
       - an ID ;
-      - a type ;
+      - some type ;
       - some colours ;
-      - a fruit time.
+      - some fruit time.
   """
 
   # Definition of the regular attributes.
-
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  colours = models.ManyToManyField (Colour, related_name="fruits")
-
-  TYPE_NAMES = "capsule", "cone (winged seeds)", \
-    "aborted (hybrids) or absent", "schizocarp, capsule", "samara", "unknown"
-  TYPES = tuple (enumerate (TYPE_NAMES))
-  TYPES_VALUES = dict (map (lambda _:_[::-1], TYPES))
-  type = models.PositiveSmallIntegerField (choices=TYPES)
-
   # Definition of the relation-related attributes
-  months = models.ManyToManyField (Month)
+  colours = models.ManyToManyField (Colour, related_name="fruits")
+  types = models.ManyToManyField (FruitType, related_name="fruits")
+  months = models.ManyToManyField (Month, related_name="fruits")
   None
 
   def __init__ (self, *args, **kwargs):
     super (Fruit, self).__init__ (*args, **kwargs)
+    self.update_id ()
+
+  def update_id (self):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (str (self))
+    return Digester (salt=True).digest ('')# str (self))
 
   def str_colour (self):
-    return Fruit.COLOUR_NAMES[self.colour]
+    return ', '.join ([colour.str_colour () for colour in self.colours.all ()])
+
+  def str_month (self):
+    return ', '.join ([month.str_month () for month in self.months.all ()])
 
   def str_type (self):
-    return Fruit.TYPE_NAMES[self.type]
+    return ', '.join ([fruit_type.str_type () \
+      for fruit_type in self.types.all ()])
 
   def __str__ (self):
-    return "Fruit (colour is %s ; type is %s)" % (self.str_colour (), self.str_type ())
+    return "Fruit (colours are %s ; types are %s ; fruiting times are %s)" % (
+      self.str_colour (), self.str_type (), self.str_month ())
 
   def __repr__ (self):
     return ('\n'.join (("Fruit object of id %(id)s ({ ",
-      "\tfruit           = %(fruit)s",
-      "})")) % { "id": self.id, "fruit": str (self)
-    })
+      "\tcolour           = %(colour)s",
+      "})")) % { "id": str (self.id), "colour": self.str_colour () })
 
 
 class Flower (models.Model):
