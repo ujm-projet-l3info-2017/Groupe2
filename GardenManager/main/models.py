@@ -18,6 +18,46 @@ def set_class_attribute (attributes):
   return attr_setter
 
 
+class Scent (models.Model):
+
+  """
+    The Scent class maps the Scent table.
+    It defines:
+      - an id ;
+      - a scent ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  SCENT_NAMES = "none", "fragrant", "spicy", "sweet", "lemony", "unknown"
+  SCENTS = tuple (enumerate (SCENT_NAMES))
+  SCENT_VALUES = dict (map (lambda x:x[::-1], SCENTS))
+  scent = models.PositiveSmallIntegerField (choices=SCENTS, null=True)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Scent, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (str (self))
+
+  def str_scent (self):
+    return Scent.SCENT_NAMES[self.scent]
+
+  def __str__ (self):
+    return "Scent (%s)" % self.str_scent ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Scent object of id %(id)s ({ ",
+      "\tscent            = %(scent)s",
+      "})")) % { "id": self.id, "scent": self.str_scent () })
+
+
 class Colour (models.Model):
 
   """
@@ -33,7 +73,7 @@ class Colour (models.Model):
 
   COLOUR_NAMES = "all", "white", "orange", "yellow", "green-yellow", "green",  \
     "blue", "violet", "purple", "pink", "magenta", "red", "dark-red", "brown", \
-    "bronze", "silver", "black", "unknown"
+    "bronze", "silver", "black", "showy", "not showy", "none", "unknown"
   COLOURS = tuple (enumerate (COLOUR_NAMES))
   COLOUR_VALUES = dict (map (lambda x:x[::-1], COLOURS))
   colour = models.PositiveSmallIntegerField (choices=COLOURS, null=True)
@@ -388,12 +428,11 @@ class FruitType (models.Model):
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
-  # id is auto-inc 'cause two flowers can be similare without being the same.
 
-  TYPE_NAMES = "All", "Aggregate fruit", "Achene", "Berry", "Capsule",         \
-    "Cypsela", "Drupe", "Edible", "Follicle", "Grain", "Hesperidium", "Legume",\
-    "Multiple fruit", "Nut", "Pepo", "Pome", "Samara", "Schizocarp", "Silicle",\ 
-    "Silique", "Aborted or absent", "Cone", "Sporangium", "unknown"
+  TYPE_NAMES = "all", "aggregate fruit", "achene", "berry", "capsule",         \
+    "cypsela", "drupe", "edible", "follicle", "grain", "hesperidium", "legume",\
+    "multiple fruit", "nut", "pepo", "pome", "samara", "schizocarp", "silicle",\
+    "silique", "aborted or absent", "cone", "sporangium", "unknown"
 
   TYPES = tuple (enumerate (TYPE_NAMES))
   TYPE_VALUES = dict (map (lambda _:_[::-1], TYPES))
@@ -477,22 +516,19 @@ class Flower (models.Model):
     The Flower class maps the flower table.
     It defines:
       - an ID ;
-      - a scent ;
-      - a colour ;
+      - some scents ;
+      - some petal colours ;
+      - some flower times
   """
 
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  colours = models.ManyToManyField (Colour, related_name="flowers")
-
-  SCENT_NAMES = "fragrant", 
-  SCENTS = tuple (enumerate (SCENT_NAMES))
-  scent = models.PositiveSmallIntegerField (choices=SCENTS)
-
   # Definition of the relation-related attributes
-  months = models.ManyToManyField (Month)
+  months = models.ManyToManyField (Month, related_name="flowers")
+  petal_colours = models.ManyToManyField (Colour, related_name="flowers")
+  scents = models.ManyToManyField (Scent, related_name="flowers")
   None
 
   def __init__ (self, *args, **kwargs):
@@ -503,12 +539,13 @@ class Flower (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester (salt=True).digest ('')# str (self))
+    return Digester (salt=True).digest ('')
 
   def str_colour (self):
-    return ', '.join (colour.str_colour () for colour in self.colours.all ())
+    return ', '.join (colour.str_colour () for colour in self.petal_colours.all ())
 
   def str_scent (self):
+    return ', '.join (scent.str_scent () for scent in self.scents.all ())
     return Flower.SCENT_NAMES[self.scent]
 
   def __str__ (self):
