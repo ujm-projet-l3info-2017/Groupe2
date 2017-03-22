@@ -364,7 +364,7 @@ class Month (models.Model):
     return Digester ().digest (str (self))
 
   def str_month (self):
-    return Month.MONTHS[self.month][1]
+    return list (Month.MONTH_NAMES[self.month])[0]
 
   def __str__ (self):
     return "Month (%s)" % self.str_month ()
