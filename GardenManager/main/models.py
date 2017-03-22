@@ -549,7 +549,7 @@ class Habit (models.Model):
     return Digester ().digest (str (self))
 
   def str_habit (self):
-    return Habit.HABITS[self.habit][1]
+    return Habit.HABIT_NAMES[self.habit]
 
   def __str__ (self):
     return "Habit (%s)" % self.str_habit ()
@@ -593,7 +593,7 @@ class Form (models.Model):
     return Digester ().digest (str (self))
 
   def str_form (self):
-    return Form.FORMS[self.form][1]
+    return Form.FORM_NAMES[self.form]
 
   def __str__ (self):
     return "Form (%s)" % self.str_form ()
