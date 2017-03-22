@@ -742,9 +742,6 @@ class Plant (models.Model):
   DEFAULT_CLIMATE_NAME = CLIMATE_NAMES[DEFAULT_CLIMATE]
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
-  can_flower = models.BooleanField (default=False)
-  can_fruit = models.BooleanField (default=False)
-
   # Definition of the relation-related attributes
 
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
@@ -790,8 +787,6 @@ class Plant (models.Model):
       "\tplantation time  = %(plantation_time)s", 
       "\twater            = %(water)s", 
       "\tlandscape        = %(landscape)s", 
-      "\tcan flower       = %(can_flower)s", 
-      "\tcan fruit        = %(can_fruit)s", 
       "})"
     )) % {
       "scientific_name" : self.scientific_name,
@@ -811,12 +806,6 @@ class Plant (models.Model):
       "plantation_time" : map (str, self.plantation_time.all ()),
       "water" : map (str, self.waters.all ()) if self.waters else "unknown",
       "landscape" : map (str, self.landscapes.all ()) if self.landscapes else "unknown",
-      "can_flower" : "?" if self.can_flower is None else \
-        "No" if self.can_flower is False else \
-        "Yes (%s)" % map (str, self.flower.all ()),
-      "can_fruit" : "?" if self.can_fruit is None else \
-        "No" if self.can_fruit is False else \
-        "Yes (%s)" % map (str, self.fruit.all ()),
       "id": self.id,
     })
 
