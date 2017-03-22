@@ -42,7 +42,9 @@ class Backend (object):
     "month": { "month" },
     "fruit": { "fruit_type", "fruit_colour", "fruiting_time" },
     "colour": { "colour" },
-    "fruit_type": { "fruit_type" }
+    "fruit_type": { "fruit_type" },
+    "flower": { "petal_colour", "flower_scent", "flower_time" },
+    "flower_scent": { "scent" } ,
   }
 
   ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
@@ -208,6 +210,7 @@ class Backend (object):
     plant = self.create_plant (plant_data_set, verify=False)
     exposures = self.create_exposure_set (plant_data_set, verify=False)
     forms = self.create_form_set (plant_data_set, verify=False)
+    flower = self.create_flowers (plant_data_set, verify=False)
     fruit = self.create_fruits (plant_data_set, verify=False)
     grounds = self.create_ground_set (plant_data_set, verify=False)
     habits = self.create_habit_set (plant_data_set, verify=False)
@@ -215,6 +218,7 @@ class Backend (object):
     waters = self.create_water_set (plant_data_set, verify=False)
     self.link_plant_to_exposures (plant, exposures)
     self.link_plant_to_forms (plant, forms)
+    self.link_plant_to_flower (plant, flower)
     self.link_plant_to_fruit (plant, fruit)
     self.link_plant_to_grounds (plant, grounds)
     self.link_plant_to_habits (plant, habits)
@@ -290,6 +294,10 @@ class Backend (object):
     if fruit:
       plant.fruit = fruit
 
+  def link_plant_to_flower (self, plant, flower):
+    if flower:
+      plant.flower = flower
+
   def link_plant_to_grounds (self, plant, grounds):
     plant.grounds.add (*grounds)
 
@@ -301,6 +309,85 @@ class Backend (object):
 
   def link_plant_to_waters (self, plant, waters):
     plant.waters.add (*waters)
+
+  def create_flowers (self, flower_data_set, verify=True):
+    """
+      Extract the flower's attributes from the flower_data_set,
+      create a models.Flower instance with the given data.
+      Create the related months and link them to the created flower.
+      Return the newly created flower.
+    """
+    self.sanitize_flower_data_set (flower_data_set)
+    errors = self.pass_mandatory_fields_tests (flower_data_set, "flower")
+    assert errors is None, errors
+    flower = self.create_model_instance (self.model_module.Flower, flower_data_set)
+    months = self.create_month_set (
+      {"months" : flower_data_set["flower_time"]})
+    print flower_data_set["petal_colour"]
+    colours = self.create_colour_set (
+      {"colours" : flower_data_set["petal_colour"]})
+    scents = self.create_flower_scent_set (
+      {"scents" : flower_data_set["flower_scent"]})
+    self.link_flower_to_months (flower, months)
+    self.link_flower_to_colours (flower, colours)
+    self.link_flower_to_scents (flower, scents)
+    
+    return flower
+
+  def sanitize_flower_data_set (self, flower_data_set):
+    """
+      Sanitize the flower_data_set dictionnary by:
+        - Replacing the flower value by its corresponding integer.
+    """
+    flower_data_set["petal_colour"] = re.sub ("Male\ Cone(\([^)]*\))?", 
+      "red, yellow", flower_data_set["petal_colour"])
+    if "no flowers" in flower_data_set["petal_colour"].lower ():
+      flower_data_set["petal_colour"] = "none"
+
+  def link_flower_to_months (self, flower, months):
+    flower.months.add (*months)
+
+  def link_flower_to_colours (self, flower, colours):
+    flower.petal_colours.add (*colours)
+
+  def link_flower_to_scents (self, flower, scents):
+    flower.scents.add (*scents)
+
+  def create_flower_scents (self, flower_scent_data_set, verify=True):
+    """
+      Extract the flower_scent's attributes from the flower_scent_data_set,
+      create a models.FruitType instance with the given data and return it.
+    """
+    self.sanitize_flower_scent_data_set (flower_scent_data_set)
+    errors = self.pass_mandatory_fields_tests (flower_scent_data_set,
+      "flower_scent")
+    assert errors is None, errors
+    return self.create_model_instance (self.model_module.Scent, 
+      flower_scent_data_set)
+
+  def parse_flower_scents (self, flower_scent):
+    """
+      Extract all diffrent flower_scents (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (flower_scent, lower=True)
+
+  def sanitize_flower_scent_data_set (self, flower_scent_data_set):
+    """
+      Sanitize the flower_scent_data_set dictionnary by:
+        - Replacing the flower_scent value by its corresponding integer.
+    """
+    if isinstance (flower_scent_data_set["scent"], str):
+      flower_scent_data_set["scent"] = self.model_module.Scent.\
+        SCENT_VALUES[flower_scent_data_set["scent"] or "unknown"]
+
+  def create_flower_scent_set (self, flower_scent_data_set, verify=True):
+    flower_scents = flower_scent_data_set.get ("scents", None)
+    if flower_scents is not None:
+      flower_scents = self.parse_flower_scents (flower_scents)
+      return map (lambda *args:self.create_flower_scents (*args, verify=verify),
+        map (lambda flower_scent: { "scent": flower_scent }, flower_scents))
+    return []
 
   def create_fruits (self, fruit_data_set, verify=True):
     """
