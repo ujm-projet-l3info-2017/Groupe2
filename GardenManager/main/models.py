@@ -376,6 +376,48 @@ class Month (models.Model):
     })
 
 
+class FruitType (models.Model):
+
+  """
+    The FruitType class maps the fruit_type table.
+    It defines:
+      - an ID ;
+      - a type ;
+  """
+
+  # Definition of the regular attributes.
+
+  #id = models.CharField (max_length=90, primary_key=True, unique=True)
+  # id is auto-inc 'cause two flowers can be similare without being the same.
+
+  TYPE_NAMES = "capsule", "cone", "aborted or absent", "schizocarp", "samara", \
+    "cypsela", "follicle", "aggregate fruit", "unknown"
+  TYPES = tuple (enumerate (TYPE_NAMES))
+  TYPES_VALUES = dict (map (lambda _:_[::-1], TYPES))
+  type = models.PositiveSmallIntegerField (choices=TYPES)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (FruitType, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (str (self))
+
+  def str_type (self):
+    return FruitType.TYPE_NAMES[self.type]
+
+  def __str__ (self):
+    return "FruitType (%s)" % self.str_type ()
+
+  def __repr__ (self):
+    return ('\n'.join (("FruitType object of id %(id)s ({ ",
+      "\ttype             = %(type)s",
+      "})")) % { "id": str (self.id), "type": self.str_type () })
+
+
 class Fruit (models.Model):
 
   """
