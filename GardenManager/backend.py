@@ -42,7 +42,7 @@ class Backend (object):
     "month": { "month" },
     "fruit": { "fruit_type", "fruit_colour", "fruiting_time" },
     "colour": { "colour" },
-    "fruit_type": { "type" }
+    "fruit_type": { "fruit_type" }
   }
 
   ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
@@ -365,11 +365,13 @@ class Backend (object):
         - Replacing the fruit_type value by its corresponding integer.
     """
     if isinstance (fruit_type_data_set["fruit_type"], str):
-      fruit_type_data_set["fruit_type"] = self.model_module.FruitType.\
+      if fruit_type_data_set["fruit_type"] == "n/a":
+        fruit_type_data_set["fruit_type"] = "unknown"
+      fruit_type_data_set["type"] = self.model_module.FruitType.\
         TYPE_VALUES[fruit_type_data_set["fruit_type"] or "unknown"]
 
   def create_fruit_type_set (self, fruit_type_data_set, verify=True):
-    fruit_types = fruit_type_data_set.get ("fruit_type", None)
+    fruit_types = fruit_type_data_set.get ("types", None)
     if fruit_types is not None:
       fruit_types = self.parse_fruit_types (fruit_types)
       return map (lambda *args:self.create_fruit_types (*args, verify=verify),
