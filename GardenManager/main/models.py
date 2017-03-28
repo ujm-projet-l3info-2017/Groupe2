@@ -18,6 +18,89 @@ def set_class_attribute (attributes):
   return attr_setter
 
 
+class Scent (models.Model):
+
+  """
+    The Scent class maps the Scent table.
+    It defines:
+      - an id ;
+      - a scent ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  SCENT_NAMES = "none", "fragrant", "spicy", "sweet", "lemony", "musky", \
+    "unpleasant", "unknown"
+  SCENTS = tuple (enumerate (SCENT_NAMES))
+  SCENT_VALUES = dict (map (lambda x:x[::-1], SCENTS))
+  scent = models.PositiveSmallIntegerField (choices=SCENTS, null=True)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Scent, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (str (self))
+
+  def str_scent (self):
+    return Scent.SCENT_NAMES[self.scent]
+
+  def __str__ (self):
+    return "Scent (%s)" % self.str_scent ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Scent object of id %(id)s ({ ",
+      "\tscent            = %(scent)s",
+      "})")) % { "id": self.id, "scent": self.str_scent () })
+
+
+class Colour (models.Model):
+
+  """
+    The Colour class maps the Colour table.
+    It defines:
+      - an id ;
+      - a colour ;
+  """
+
+  # Definition of the regular attributes.
+
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  COLOUR_NAMES = "all", "white", "orange", "yellow", "green-yellow", "green",  \
+    "blue", "violet", "purple", "pink", "magenta", "red", "dark-red", "brown", \
+    "bronze", "silver", "black", "showy", "not showy", "none", "unknown"
+  COLOURS = tuple (enumerate (COLOUR_NAMES))
+  COLOUR_VALUES = dict (map (lambda x:x[::-1], COLOURS))
+  colour = models.PositiveSmallIntegerField (choices=COLOURS, null=True)
+
+  # Definition of the relation-related attributes
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Colour, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester ().digest (str (self))
+
+  def str_colour (self):
+    return Colour.COLOUR_NAMES[self.colour]
+
+  def __str__ (self):
+    return "Colour (%s)" % self.str_colour ()
+
+  def __repr__ (self):
+    return ('\n'.join (("Colour object of id %(id)s ({ ",
+      "\tcolour            = %(colour)s",
+      "})")) % { "id": self.id, "colour": self.str_colour () })
+
+
 class Ground (models.Model):
 
   """
@@ -61,7 +144,6 @@ class Ground (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    #return Digester ().digest (str (self.ph) + str (self.ground))
     return Digester ().digest (str (self))
 
   def __str__ (self):
@@ -244,7 +326,7 @@ class LandscapeUse (models.Model):
   LANDSCAPE_NAMES = "All", "Accent plant", "Alpine", "Aquatic - ponds",        \
     "Attract beneficial insects", "Attract birds", "Attract butterflies",      \
     "Bedding plant", "Container planting", "Cut flower or foliage",            \
-    "Dried flower or fruit", "Dryland", "Erosion control",       \
+    "Dried flower or fruit", "Dryland", "Erosion control",                     \
     "Espalier", "Fall interest", "Filler", "Floristry", "Forestry",            \
     "Fragrance", "Golf green", "Green roof technology", "Green walls",         \
     "Ground cover", "Group or mass planting", "Hanging basket", "Hedge row",   \
@@ -252,7 +334,7 @@ class LandscapeUse (models.Model):
     "Mixed shrub border", "Native planting", "Perennial border", "Reclamation",\
     "Rock garden", "Screening", "Security/barrier", "Shade tree",              \
     "Sheared hedge", "Small garden/space", "Specimen plant", "Spring interest",\
-    "Street", "Summer interest", "Tall background", "Topiary",\
+    "Street", "Summer interest", "Tall background", "Topiary",                 \
     "Urban agriculture", "Waterside planting", "Wetland - bogs",               \
     "Wild flower garden", "Wildlife food", "Wind break", "Winter interest",    \
     "Woodland margin", "unknown"
@@ -273,10 +355,10 @@ class LandscapeUse (models.Model):
       self.landscape = LandscapeUse.LANDSCAPE_VALUES[name]
 
   def digest (self):
-    return Digester ().digest (self.landscape)
+    return Digester ().digest (str (self))
 
   def str_landscape (self):
-    return LandscapeUse.LANDSCAPES[self.landscape][1]
+    return LandscapeUse.LANDSCAPE_NAMES[self.landscape]
 
   def __str__ (self):
     return "Landscape (%s)" % self.str_landscape ()
@@ -301,23 +383,29 @@ class Month (models.Model):
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  MONTH_NAMES = CircularList (("January", "February", "March", "April", "May", \
-    "June", "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"))
+  MONTH_NAMES = CircularList (("january", "february", "march", "april", "may", \
+    "june", "july", "august", "septembre", "octobre", "novembre", "decembre"))
   MONTHS = tuple (enumerate (MONTH_NAMES))
+  MONTH_VALUES = dict (map (lambda _:_[::-1], MONTHS))
+  MONTH_FULL_NAME = { month[:3]: month for month in MONTH_NAMES }
   month = models.PositiveSmallIntegerField (choices=MONTHS)
 
   # Definition of the relation-related attributes
   None
+
+  def __init__ (self, *args, **kwargs):
+    super (Month, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def from_to (self, start, stop, step=1):
     start_index, stop_index = map (Month.MONTH_NAMES.index, (start, stop))
     return Month.MONTH_NAMES[start_index:stop_index:step]
 
   def digest (self):
-    return Digester ().digest (self.month)
+    return Digester ().digest (str (self))
 
   def str_month (self):
-    return Month.MONTHS[self.month][1]
+    return list (Month.MONTH_NAMES[self.month])[0]
 
   def __str__ (self):
     return "Month (%s)" % self.str_month ()
@@ -329,33 +417,98 @@ class Month (models.Model):
     })
 
 
-class Fruit (models.Model):
+class FruitType (models.Model):
 
   """
-    The Fruit class maps the fruit table.
+    The FruitType class maps the fruit_type table.
     It defines:
       - an ID ;
       - a type ;
-      - a colour ;
   """
 
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  COLOUR_NAMES = "brown",
-  COLOURS = tuple (enumerate (COLOUR_NAMES))
-  colour = models.PositiveSmallIntegerField (choices=COLOURS)
+  TYPE_NAMES = "all", "aggregate fruit", "achene", "berry", "capsule",         \
+    "cypsela", "drupe", "edible", "follicle", "grain", "hesperidium", "legume",\
+    "multiple fruit", "nut", "pepo", "pome", "samara", "schizocarp", "silicle",\
+    "silique", "aborted or absent", "cone", "sporangium", "unknown"
 
-  TYPE_NAMES = "capsule",
   TYPES = tuple (enumerate (TYPE_NAMES))
+  TYPE_VALUES = dict (map (lambda _:_[::-1], TYPES))
   type = models.PositiveSmallIntegerField (choices=TYPES)
 
   # Definition of the relation-related attributes
-  months = models.ManyToManyField (Month)
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (FruitType, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.colour + self.type)
+    return Digester ().digest (str (self))
+
+  def str_type (self):
+    return FruitType.TYPE_NAMES[self.type]
+
+  def __str__ (self):
+    return "FruitType (%s)" % self.str_type ()
+
+  def __repr__ (self):
+    return ('\n'.join (("FruitType object of id %(id)s ({ ",
+      "\ttype             = %(type)s",
+      "})")) % { "id": str (self.id), "type": self.str_type () })
+
+
+class Fruit (models.Model):
+
+  """
+    The Fruit class maps the fruit table.
+    It defines:
+      - an ID ;
+      - some type ;
+      - some colours ;
+      - some fruit time.
+  """
+
+  # Definition of the regular attributes.
+  id = models.CharField (max_length=90, primary_key=True, unique=True)
+
+  # Definition of the relation-related attributes
+  colours = models.ManyToManyField (Colour, related_name="fruits")
+  types = models.ManyToManyField (FruitType, related_name="fruits")
+  months = models.ManyToManyField (Month, related_name="fruits")
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Fruit, self).__init__ (*args, **kwargs)
+    self.update_id ()
+
+  def update_id (self):
+    self.id = self.digest ()
+
+  def digest (self):
+    return Digester (salt=True).digest ('')# str (self))
+
+  def str_colour (self):
+    return ', '.join ([colour.str_colour () for colour in self.colours.all ()])
+
+  def str_month (self):
+    return ', '.join ([month.str_month () for month in self.months.all ()])
+
+  def str_type (self):
+    return ', '.join ([fruit_type.str_type () \
+      for fruit_type in self.types.all ()])
+
+  def __str__ (self):
+    return "Fruit (colours are %s ; types are %s ; fruiting times are %s)" % (
+      self.str_colour (), self.str_type (), self.str_month ())
+
+  def __repr__ (self):
+    return ('\n'.join (("Fruit object of id %(id)s ({ ",
+      "\tcolour           = %(colour)s",
+      "})")) % { "id": str (self.id), "colour": self.str_colour () })
 
 
 class Flower (models.Model):
@@ -364,27 +517,46 @@ class Flower (models.Model):
     The Flower class maps the flower table.
     It defines:
       - an ID ;
-      - a scent ;
-      - a colour ;
+      - some scents ;
+      - some petal colours ;
+      - some flower times
   """
 
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
-  COLOUR_NAMES = "brown",
-  COLOURS = tuple (enumerate (COLOUR_NAMES))
-  colour = models.PositiveSmallIntegerField (choices=COLOURS)
-
-  SCENT_NAMES = "fragrant",
-  SCENTS = tuple (enumerate (SCENT_NAMES))
-  scent = models.PositiveSmallIntegerField (choices=SCENTS)
-
   # Definition of the relation-related attributes
-  months = models.ManyToManyField (Month)
+  months = models.ManyToManyField (Month, related_name="flowers")
+  petal_colours = models.ManyToManyField (Colour, related_name="flowers")
+  scents = models.ManyToManyField (Scent, related_name="flowers")
+  None
+
+  def __init__ (self, *args, **kwargs):
+    super (Flower, self).__init__ (*args, **kwargs)
+    self.update_id ()
+
+  def update_id (self):
+    self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.scent + self.colour)
+    return Digester (salt=True).digest ('')
+
+  def str_colour (self):
+    return ', '.join (colour.str_colour () for colour in self.petal_colours.all ())
+
+  def str_scent (self):
+    return ', '.join (scent.str_scent () for scent in self.scents.all ())
+    return Flower.SCENT_NAMES[self.scent]
+
+  def __str__ (self):
+    return "Flower (colour is %s ; scent is %s)" % (self.str_colour (), self.str_scent ())
+
+  def __repr__ (self):
+    return ('\n'.join (("Flower object of id %(id)s ({ ",
+      "\tcolours          = %(colours)s",
+      "})")) % { "id": self.id, "colours": self.str_colour ()
+    })
 
 
 class Habit (models.Model):
@@ -415,10 +587,10 @@ class Habit (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.habit)
+    return Digester ().digest (str (self))
 
   def str_habit (self):
-    return Habit.HABITS[self.habit][1]
+    return Habit.HABIT_NAMES[self.habit]
 
   def __str__ (self):
     return "Habit (%s)" % self.str_habit ()
@@ -459,10 +631,10 @@ class Form (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.form)
+    return Digester ().digest (str (self))
 
   def str_form (self):
-    return Form.FORMS[self.form][1]
+    return Form.FORM_NAMES[self.form]
 
   def __str__ (self):
     return "Form (%s)" % self.str_form ()
@@ -501,7 +673,7 @@ class Water (models.Model):
     self.id = self.digest ()
 
   def digest (self):
-    return Digester ().digest (self.water)
+    return Digester ().digest (str (self))
 
   def str_water (self):
     return Water.WATERS[self.water][1]
@@ -570,9 +742,6 @@ class Plant (models.Model):
   DEFAULT_CLIMATE_NAME = CLIMATE_NAMES[DEFAULT_CLIMATE]
   climate = models.PositiveSmallIntegerField (choices=CLIMATES)
 
-  can_flower = models.BooleanField (default=False)
-  can_fruit = models.BooleanField (default=False)
-
   # Definition of the relation-related attributes
 
   fruit = models.ForeignKey (Fruit, null=True, related_name="plants")
@@ -609,6 +778,8 @@ class Plant (models.Model):
       "\texposure         = %(exposure)s", 
       "\tground           = %(ground)s", 
       "\tform             = %(form)s", 
+      "\tflower           = %(flower)s", 
+      "\tfruit            = %(fruit)s", 
       "\theight           = %(height_min)s - %(height_max)s", 
       "\tspread           = %(spread_min)s - %(spread_max)s", 
       "\tgrowth rate      = %(growth_rate)s", 
@@ -616,8 +787,6 @@ class Plant (models.Model):
       "\tplantation time  = %(plantation_time)s", 
       "\twater            = %(water)s", 
       "\tlandscape        = %(landscape)s", 
-      "\tcan flower       = %(can_flower)s", 
-      "\tcan fruit        = %(can_fruit)s", 
       "})"
     )) % {
       "scientific_name" : self.scientific_name,
@@ -626,6 +795,8 @@ class Plant (models.Model):
       "exposure" : map (str, self.exposures.all ()) if self.exposures else "unknown",
       "ground" : map (str, self.grounds.all ()) if self.grounds else "unknown",
       "form" : map (str, self.forms.all ()) if self.forms else "unknown",
+      "flower" : str (self.flower) if self.flower else "unknown",
+      "fruit" : str (self.fruit) if self.fruit else "unknown",
       "height_min" : self.height_min if self.height_min else "unknown",
       "height_max" : self.height_max if self.height_max else "unknown",
       "spread_min" : self.spread_min if self.spread_min else "unknown",
@@ -635,12 +806,6 @@ class Plant (models.Model):
       "plantation_time" : map (str, self.plantation_time.all ()),
       "water" : map (str, self.waters.all ()) if self.waters else "unknown",
       "landscape" : map (str, self.landscapes.all ()) if self.landscapes else "unknown",
-      "can_flower" : "?" if self.can_flower is None else \
-        "No" if self.can_flower is False else \
-        "Yes (%s)" % map (str, self.flower.all ()),
-      "can_fruit" : "?" if self.can_fruit is None else \
-        "No" if self.can_fruit is False else \
-        "Yes (%s)" % map (str, self.fruit.all ()),
       "id": self.id,
     })
 
