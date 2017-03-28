@@ -51,6 +51,7 @@ class Digester (object):
     sha256_base64_90 = Digester ()
     print sha256_base64_90.digest ("some string")
     regular_sha256 = Digester ("sha256;;")
+    # or regular_sha256 = Digester (Digester.SEP.join (["sha256", '', '']))
     digester = Digester (hash_name="md5", cutoff=0, salt=True, salt_length=32)
     hashed, salt = digester.digest ("some string", get_salt=True)
     # lol, salt is bigger than output
