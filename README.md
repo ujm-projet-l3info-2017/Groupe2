@@ -25,7 +25,9 @@ Put this text into .git/commit.sample:
 ```
 Open a terminal in the parent directory
 of .git then type
+```bash
 git config commit.template .git/commit.template
+```
 Keep following the sample not to be rejected by hooks.
 
 
