@@ -38,7 +38,7 @@ class PlantSpider (scrapy.Spider):
       "flower_flower_scent": "flower_scent",
       "flower_flower_time": "flower_time",
       "flower_colour_(petals)": "petal_colour",
-      "flower_flower_time_at_peak": "flower_time",
+      "flower_flower_time_at_peak": "flower_time_peak",
       "hardiness_rating": "climate",
       "water_use": "water", 
     }

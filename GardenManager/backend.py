@@ -39,7 +39,12 @@ class Backend (object):
     "ground": { "ground" },
     "form": { "form" },
     "habit": { "habit" },
-    "month": { "month" }
+    "month": { "month" },
+    "fruit": { "fruit_type", "fruit_colour", "fruiting_time" },
+    "colour": { "colour" },
+    "fruit_type": { "fruit_type" },
+    "flower": { "petal_colour", "flower_scent", "flower_time" },
+    "flower_scent": { "scent" } ,
   }
 
   ADDITIONNAL_KEYS = { key: set () for key in DATA_TYPES }
@@ -151,7 +156,7 @@ class Backend (object):
   def create_model_instance (self, model_class, model_attributes):
     """
       Create an instance of the given model, having the given attributes
-      and return the insgtance.
+      and return the instance.
     """
     attributes = self.model_attributes.get (model_class, set ())
     arguments = dict (map (lambda key:(key, model_attributes[key]),
@@ -169,25 +174,33 @@ class Backend (object):
       Remove any parenthesis is remove_parenthesis is True (before split).
     """
     if remove_quotes:
-      if sentence.startswith ('"') and sentence.endswith ('"') or \
-          sentence.startswith ("'") and sentence.endswith ("'"):
-        sentence = sentence[1:-1]
+      sentence = self.remove_trailing_from_data (sentence)
     try:
-      while remove_parenthesis and sentence.index ('(') < sentence.index (')'):
-        sentence = re.sub ("\ ?\([^)]*\)", "", sentence)
+      while sentence is not None and remove_parenthesis and \
+          sentence.index ('(') < sentence.index (')'):
+        sentence = self.remove_parenthesis_from_data (sentence)
     except ValueError:
       pass
-    if lower:
+    if lower and sentence is not None:
       sentence = sentence.lower ()
-    return re.split (sep, sentence)
+    return re.split (sep, sentence or '')
+
+  def remove_trailing_from_data (self, sentence, trailing="\"'"):
+    for character in trailing:
+      if sentence.startswith (character) and sentence.endswith (character):
+        sentence = sentence[1:-1]
+    return sentence
+
+  def remove_parenthesis_from_data (self, sentence):
+    return re.sub ("\ ?\([^)]*\)", "", sentence)
 
   def create_plant_and_related (self, plant_data_set):
     """
       Create a plant and all its related attributes in foreign tables:
         - exposures ;
-        - flower (todo) ;
+        - flower (in progress) ;
         - forms ;
-        - fruit (todo) ;
+        - fruit (in progress) ;
         - grounds ;
         - habits ;
         - landscapes ;
@@ -197,12 +210,16 @@ class Backend (object):
     plant = self.create_plant (plant_data_set, verify=False)
     exposures = self.create_exposure_set (plant_data_set, verify=False)
     forms = self.create_form_set (plant_data_set, verify=False)
+    flower = self.create_flowers (plant_data_set, verify=False)
+    fruit = self.create_fruits (plant_data_set, verify=False)
     grounds = self.create_ground_set (plant_data_set, verify=False)
     habits = self.create_habit_set (plant_data_set, verify=False)
     landscapes = self.create_landscape_use_set (plant_data_set, verify=False)
     waters = self.create_water_set (plant_data_set, verify=False)
     self.link_plant_to_exposures (plant, exposures)
     self.link_plant_to_forms (plant, forms)
+    self.link_plant_to_flower (plant, flower)
+    self.link_plant_to_fruit (plant, fruit)
     self.link_plant_to_grounds (plant, grounds)
     self.link_plant_to_habits (plant, habits)
     self.link_plant_to_landscapes (plant, landscapes)
@@ -273,6 +290,14 @@ class Backend (object):
   def link_plant_to_forms (self, plant, forms):
     plant.forms.add (*forms)
 
+  def link_plant_to_fruit (self, plant, fruit):
+    if fruit:
+      plant.fruit = fruit
+
+  def link_plant_to_flower (self, plant, flower):
+    if flower:
+      plant.flower = flower
+
   def link_plant_to_grounds (self, plant, grounds):
     plant.grounds.add (*grounds)
 
@@ -284,6 +309,160 @@ class Backend (object):
 
   def link_plant_to_waters (self, plant, waters):
     plant.waters.add (*waters)
+
+  def create_flowers (self, flower_data_set, verify=True):
+    """
+      Extract the flower's attributes from the flower_data_set,
+      create a models.Flower instance with the given data.
+      Create the related months and link them to the created flower.
+      Return the newly created flower.
+    """
+    self.sanitize_flower_data_set (flower_data_set)
+    errors = self.pass_mandatory_fields_tests (flower_data_set, "flower")
+    assert errors is None, errors
+    flower = self.create_model_instance (self.model_module.Flower, flower_data_set)
+    months = self.create_month_set (
+      {"months" : flower_data_set["flower_time"]})
+    colours = self.create_colour_set (
+      {"colours" : flower_data_set["petal_colour"]})
+    scents = self.create_flower_scent_set (
+      {"scents" : flower_data_set["flower_scent"]})
+    self.link_flower_to_months (flower, months)
+    self.link_flower_to_colours (flower, colours)
+    self.link_flower_to_scents (flower, scents)
+    
+    return flower
+
+  def sanitize_flower_data_set (self, flower_data_set):
+    """
+      Sanitize the flower_data_set dictionnary by:
+        - Replacing the flower value by its corresponding integer.
+    """
+    flower_data_set["petal_colour"] = re.sub ("Male\ Cone(\([^)]*\))?", 
+      "red, yellow", flower_data_set["petal_colour"])
+    if "no flowers" in flower_data_set["petal_colour"].lower ():
+      flower_data_set["petal_colour"] = "none"
+
+  def link_flower_to_months (self, flower, months):
+    flower.months.add (*months)
+
+  def link_flower_to_colours (self, flower, colours):
+    flower.petal_colours.add (*colours)
+
+  def link_flower_to_scents (self, flower, scents):
+    flower.scents.add (*scents)
+
+  def create_flower_scents (self, flower_scent_data_set, verify=True):
+    """
+      Extract the flower_scent's attributes from the flower_scent_data_set,
+      create a models.FruitType instance with the given data and return it.
+    """
+    self.sanitize_flower_scent_data_set (flower_scent_data_set)
+    errors = self.pass_mandatory_fields_tests (flower_scent_data_set,
+      "flower_scent")
+    assert errors is None, errors
+    return self.create_model_instance (self.model_module.Scent, 
+      flower_scent_data_set)
+
+  def parse_flower_scents (self, flower_scent):
+    """
+      Extract all diffrent flower_scents (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (flower_scent, lower=True)
+
+  def sanitize_flower_scent_data_set (self, flower_scent_data_set):
+    """
+      Sanitize the flower_scent_data_set dictionnary by:
+        - Replacing the flower_scent value by its corresponding integer.
+    """
+    if isinstance (flower_scent_data_set["scent"], str):
+      flower_scent_data_set["scent"] = self.model_module.Scent.\
+        SCENT_VALUES[flower_scent_data_set["scent"] or "unknown"]
+
+  def create_flower_scent_set (self, flower_scent_data_set, verify=True):
+    flower_scents = flower_scent_data_set.get ("scents", None)
+    if flower_scents is not None:
+      flower_scents = self.parse_flower_scents (flower_scents)
+      return map (lambda *args:self.create_flower_scents (*args, verify=verify),
+        map (lambda flower_scent: { "scent": flower_scent }, flower_scents))
+    return []
+
+  def create_fruits (self, fruit_data_set, verify=True):
+    """
+      Extract the fruit's attributes from the fruit_data_set,
+      create a models.Fruit instance with the given data.
+      Create the related months and link them to the created fruit.
+      Return the newly created fruit.
+    """
+    self.sanitize_fruit_data_set (fruit_data_set)
+    errors = self.pass_mandatory_fields_tests (fruit_data_set, "fruit")
+    assert errors is None, errors
+    fruit = self.create_model_instance (self.model_module.Fruit, fruit_data_set)
+    months = self.create_month_set (
+      {"months" : fruit_data_set["fruiting_time"]})
+    colours = self.create_colour_set (
+      {"colours" : fruit_data_set["fruit_colour"]})
+    types = self.create_fruit_type_set (
+      {"types" : fruit_data_set["fruit_type"]})
+    self.link_fruit_to_months (fruit, months)
+    self.link_fruit_to_colours (fruit, colours)
+    self.link_fruit_to_types (fruit, types)
+    
+    return fruit
+
+  def sanitize_fruit_data_set (self, fruit_data_set):
+    """
+      Sanitize the fruit_data_set dictionnary by:
+        - Replacing the fruit value by its corresponding integer.
+    """
+    return
+
+  def link_fruit_to_months (self, fruit, months):
+    fruit.months.add (*months)
+
+  def link_fruit_to_colours (self, fruit, colours):
+    fruit.colours.add (*colours)
+
+  def link_fruit_to_types (self, fruit, types):
+    fruit.types.add (*types)
+
+  def create_fruit_types (self, fruit_type_data_set, verify=True):
+    """
+      Extract the fruit_type's attributes from the fruit_type_data_set,
+      create a models.FruitType instance with the given data and return it.
+    """
+    self.sanitize_fruit_type_data_set (fruit_type_data_set)
+    errors = self.pass_mandatory_fields_tests (fruit_type_data_set, "fruit_type")
+    assert errors is None, errors
+    return self.create_model_instance (self.model_module.FruitType, 
+      fruit_type_data_set)
+
+  def parse_fruit_types (self, fruit_type):
+    """
+      Extract all diffrent fruit_types (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (fruit_type, lower=True)
+
+  def sanitize_fruit_type_data_set (self, fruit_type_data_set):
+    """
+      Sanitize the fruit_type_data_set dictionnary by:
+        - Replacing the fruit_type value by its corresponding integer.
+    """
+    if isinstance (fruit_type_data_set["fruit_type"], str):
+      if fruit_type_data_set["fruit_type"] == "n/a":
+        fruit_type_data_set["fruit_type"] = "unknown"
+      fruit_type_data_set["type"] = self.model_module.FruitType.\
+        TYPE_VALUES[fruit_type_data_set["fruit_type"] or "unknown"]
+
+  def create_fruit_type_set (self, fruit_type_data_set, verify=True):
+    fruit_types = fruit_type_data_set.get ("types", None)
+    if fruit_types is not None:
+      fruit_types = self.parse_fruit_types (fruit_types)
+      return map (lambda *args:self.create_fruit_types (*args, verify=verify),
+        map (lambda fruit_type: { "fruit_type": fruit_type }, fruit_types))
+    return []
 
   def create_exposures (self, exposure_data_set, verify=True):
     """
@@ -379,9 +558,8 @@ class Backend (object):
         - Replacing the ground value by its corresponding integer.
     """
     if isinstance (ground_data_set["ground"], str):
-      ground_data_set["ground"] = \
-        self.model_module.Ground.GROUND_VALUES[ground_data_set["ground"] or \
-          "unknown"]
+      ground_data_set["ground"] = self.model_module.Ground.GROUND_VALUES[\
+        ground_data_set["ground"] or "unknown"]
 
   def create_ground_set (self, ground_data_set, verify=True):
     grounds = ground_data_set.get ("soil_or_growing_medium", None)
@@ -411,9 +589,8 @@ class Backend (object):
         - Replacing the habit value by its corresponding integer.
     """
     if isinstance (habit_data_set["habit"], str):
-      habit_data_set["habit"] = \
-        self.model_module.Habit.HABIT_VALUES[habit_data_set["habit"] or \
-          "unknown"]
+      habit_data_set["habit"] = self.model_module.Habit.HABIT_VALUES[\
+        habit_data_set["habit"] or "unknown"]
 
   def create_habit_set (self, habit_data_set, verify=True):
     habits = habit_data_set.get ("habit", None)
@@ -455,6 +632,84 @@ class Backend (object):
       uses = self.parse_landscape_uses (landscape_uses)
       return map (lambda *args:self.create_landscape_uses(*args, verify=verify),
         map (lambda use: { "landscape": use }, uses))
+    return []
+
+  def create_colour (self, colour_data_set, verify=True):
+    """
+      Extract the colour's attributes from the colour_data_set,
+      create a models.Colour instance with the given data.
+    """
+    self.sanitize_colour_data_set (colour_data_set)
+    if colour_data_set["colour"] is not None:
+      errors = self.pass_mandatory_fields_tests (colour_data_set, "colour")
+      assert errors is None, errors
+      return self.create_model_instance (self.model_module.Colour, colour_data_set)
+
+  def parse_colours (self, colour):
+    """
+      Extract all diffrent colours (without parenthesis) from comma
+      separated sentence.
+    """
+    return self.split_from_data (colour, lower=True)
+
+  def sanitize_colour_data_set (self, colour_data_set):
+    """
+      Sanitize the colour_data_set dictionnary by:
+        - Replacing the colour value by its corresponding integer.
+    """
+    if isinstance (colour_data_set["colour"], str):
+      if colour_data_set["colour"] in ("n/a", '', None):
+        colour_data_set["colour"] = "unknown"
+      colour_data_set["colour"] = self.model_module.Colour.COLOUR_VALUES.get (\
+        colour_data_set["colour"],
+        self.model_module.Colour.COLOUR_VALUES["unknown"])
+
+  def create_colour_set (self, colour_data_set, verify=True):
+    colours = colour_data_set.get ("colours", None)
+    if colours is not None:
+      colours = self.parse_colours (colours)
+      return filter (None, map (lambda *args:self.create_colour (*args,
+        verify=verify), map (lambda colour: { "colour": colour }, colours)))
+    return []
+
+  def create_month (self, month_data_set, verify=True):
+    """
+      Extract the month's attributes from the month_data_set,
+      create a models.Month instance with the given data.
+    """
+    self.sanitize_month_data_set (month_data_set)
+    if month_data_set["month"] is not None:
+      errors = self.pass_mandatory_fields_tests (month_data_set, "month")
+      assert errors is None, errors
+      return self.create_model_instance (self.model_module.Month, month_data_set)
+
+  def parse_months (self, month):
+    """
+      Extract all diffrent months (without parenthesis) from comma
+      separated sentence.
+    """
+    if "can flower any month" in month.lower ():
+      month = str (", ".join (self.model_module.Month.MONTH_FULL_NAME.keys ()))
+    return self.split_from_data (month, lower=True)
+
+  def sanitize_month_data_set (self, month_data_set):
+    """
+      Sanitize the month_data_set dictionnary by:
+        - Replacing the month value by its corresponding integer.
+    """
+    if isinstance (month_data_set["month"], str):
+      if month_data_set["month"] in ("n/a", '', None):
+        month_data_set["month"] = None
+      else:
+        month_data_set["month"] = self.model_module.Month.MONTH_VALUES[\
+          self.model_module.Month.MONTH_FULL_NAME[month_data_set["month"]]]
+
+  def create_month_set (self, month_data_set, verify=True):
+    months = month_data_set.get ("months", None)
+    if months is not None:
+      months = self.parse_months (months)
+      return filter (None, map (lambda *args:self.create_month (*args,
+        verify=verify), map (lambda month: { "month": month }, months)))
     return []
 
   def create_waters (self, water_data_set, verify=True):
