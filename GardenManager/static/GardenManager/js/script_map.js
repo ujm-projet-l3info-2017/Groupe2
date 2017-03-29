@@ -1,14 +1,13 @@
 var map;
-var key="AIzaSyCt2Sw46PUXm2hF_e4yrztN0ogH44yeTFk";
-getKey = function getKey() { return key ; } ;
+getKey = function getKey() { return "AIzaSyCt2Sw46PUXm2hF_e4yrztN0ogH44yeTFk"; } ;
 
 	function takePicture(document, map) {
 		var currentPosition = map.getCenter();
-		document.location.href="http://maps.google.com/maps/api/staticmap?maptype=hybrid?sensor=false&center=" +
+		document.location.href='https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=' + currentPosition.lat() + ',' + currentPosition.lng() + '&zoom=' + map.getZoom() + '&size=640x400&key=' + getKey();
+/*		document.location.href="https://maps.googleapis.com/maps/api/staticmap?maptype=hybrid?sensor=false&center=" +
 currentPosition.lat() + "," + currentPosition.lng() +
 "&zoom=" + map.getZoom()+"&key=" + getKey() + "&size=600x400&" +
-currentPosition.lat() + ',' + currentPosition.lng();
-	}
+currentPosition.lat() + ',' + currentPosition.lng();	*/	}
 	function initialize(document) {
 //		var lat = google.loader.ClientLocation.latitude;
 //      var lng = google.loader.ClientLocation.longitude;
