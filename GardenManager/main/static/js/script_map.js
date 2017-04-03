@@ -9,16 +9,16 @@ getKey = function getKey () {
 
 function takePicture (document, map) {
   var currentPosition = map.getCenter ();
-  document.location.href = \
-    'https://maps.googleapis.com/maps/api/staticmap?' + \
-    'maptype=satellite' + \
-    '&center=' + currentPosition.lat () + ',' + currentPosition.lng () + \
-    '&zoom=' + map.getZoom () + \
-    '&size=640x400' + \
+  document.location.href =
+    'https://maps.googleapis.com/maps/api/staticmap?' +
+    'maptype=satellite' +
+    '&center=' + currentPosition.lat () + ',' + currentPosition.lng () +
+    '&zoom=' + map.getZoom () +
+    '&size=640x400' +
     '&key=' + getKey ();
   /*
-   * document.location.href='https://maps.googleapis.com/maps/api/staticmap?' +\
-   * 'maptype=hybrid?' + \
+   * document.location.href='https://maps.googleapis.com/maps/api/staticmap?' +
+   * 'maptype=hybrid?' +
    * 'sensor=false&center=' +
    * currentPosition.lat() + "," + currentPosition.lng() +
    * "&zoom=" + map.getZoom()+"&key=" + getKey() + "&size=600x400&" +
@@ -26,7 +26,7 @@ function takePicture (document, map) {
    */
 } ;
 
-function initialize (document) {
+function initialize () {
   // var lat = google.loader.ClientLocation.latitude;
   // var lng = google.loader.ClientLocation.longitude;
   var latlng = new google.maps.LatLng (46.227636, 2.213749);
