@@ -191,6 +191,7 @@ class User (models.Model):
       - an ID ;
       - a login ;
       - a password ;
+      - a password's salt ;
       - an email ;
       - a date of last login ;
   """
@@ -200,12 +201,16 @@ class User (models.Model):
   id = models.CharField (max_length=90, primary_key=True, unique=True)
 
   login = models.CharField (max_length=32, null=True)
-  password = models.CharField (max_length=90, null=True)
+  password_hash = models.CharField (max_length=90, null=True)
+  salt = models.CharField (max_length=90, null=True)
   email = models.EmailField (null=True)
   last_login = models.DateField (auto_now=True)
 
   # Definition of the relation-related attributes
   session = models.ForeignKey (Session, null=True)
+
+  def __init__ (self, login="anonymous", *args, **kwargs):
+    super (User, self).__init__ (login=login, *args, **kwargs)
 
   @staticmethod
   def updating_session_operation (function):
@@ -214,12 +219,25 @@ class User (models.Model):
       return function (self, *args, **kwargs)
     return updating_session_function
 
+  @property
+  def password (self):
+    return self.password_hash
+
+  @password.setter
+  def password (self, password, salt=True):
+    self.password_hash, self.salt = Digester (salt=salt).digest (password, \
+      get_salt=True)
+
   def update_last_operation (self):
     if self.session:
       self.session.update_last_operation ()
 
   def has_password (self, password):
     return str (sha512 (password + self.salt).digest ()) == self.password
+
+  @property
+  def is_logged (self):
+    return self.login != "anonymous"
 
   def is_connected (self):
     return self.session is not None and self.session.has_expired is False
