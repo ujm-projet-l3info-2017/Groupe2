@@ -7,10 +7,12 @@ from models import User
 
 
 def get_default_context (user=None):
-  return {
+  context = {
     "user": user or User (),
     "title": "Garden Project",
+    "error": "There are not any error!!! lel",
   }
+  return context
 
 
 def root (request, user=None):
