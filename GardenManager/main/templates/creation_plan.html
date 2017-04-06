@@ -1,4 +1,10 @@
-    <script type="text/javascript" src="/static/js/script_map.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt2Sw46PUXm2hF_e4yrztN0ogH44yeTFk&amp;callback=initialize" type="text/javascript"></script>
-    <button onclick="takePicture(document, map)">Prendre la photo</button> 
-    <div id="divMap" style="width:600px; height:400px"></div>
+          <script type="text/javascript" src="/static/js/google_map_api.js"></script>
+          <script type="text/javascript" src="/static/js/script_map.js"></script>
+          <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&amp;callback=initialize" type="text/javascript"></script>
+          <link rel="stylesheet" media="all" href="/static/stylesheets/creation_plan.css" />
+
+          <button id="creation_plan_take_shot_button" title="Next step is select squares where you'll do gardening">
+            Keep this view
+          </button> 
+          <div id="google_map_api_div">
+          </div>
