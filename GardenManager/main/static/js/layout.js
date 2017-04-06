@@ -1,5 +1,5 @@
 
-window.onload = function () {
+window.addEventListener ("load", function () {
 
   document.getElementById ("global_info_alert").onclick = function () {
     $("#flash_notice").hide () ;
@@ -27,4 +27,4 @@ window.onload = function () {
     this.setCustomValidity('Password does not match') ;
   } ;
 
-} ;
+}) ;
