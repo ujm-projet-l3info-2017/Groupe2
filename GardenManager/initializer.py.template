@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+with open ("main/static/js/google_map_api.js", "w") as google_map_api_js_file:
+  google_map_api_key = ""
+  google_map_api_js_file.write (
+    "get_google_api_key = function () { return '%s' } ;" % google_map_api_key
+  )
