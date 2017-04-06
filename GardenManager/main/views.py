@@ -1,5 +1,7 @@
 
 
+import os
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from models import User
@@ -11,6 +13,7 @@ def get_default_context (user=None):
     "user": user or User (),
     "title": "Garden Project",
     "error": "There are not any error!!! lel",
+    "google_api_key": os.environ.get ("GOOGLE_MAPS_API_KEY", ""),
   }
   return context
 
