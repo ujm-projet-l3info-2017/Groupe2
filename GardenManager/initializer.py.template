@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
+import os
+
 with open ("main/static/js/google_map_api.js", "w") as google_map_api_js_file:
   google_map_api_key = ""
   os.environ["GOOGLE_MAPS_API_KEY"] = google_map_api_key
