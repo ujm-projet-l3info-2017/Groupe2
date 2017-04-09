@@ -20,6 +20,10 @@ from main import views
 
 urlpatterns = [
     url(r'^$', views.root),
+    url(r'^home/$', views.home),
+    url(r'^new/$', views.new_project),
+    url(r'^projects/$', views.view_projects),
+    url(r'^info/$', views.info),
     url(r'^login$', views.login),
     url(r'^register$', views.register),
     url(r'^logout$', views.logout),
