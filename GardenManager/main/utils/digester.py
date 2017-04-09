@@ -99,15 +99,19 @@ class Digester (object):
     self.hash_algorithm = getattr (hashlib, hash_name)
     self.encoding = encoding
     self.salt_length = salt_length
-    if salt is False:
+    if salt is False or salt is None:
       self.apply_salt = False
       self.salt = ""
+    elif isinstance (salt, (str, bytes, unicode)):
+      self.apply_salt = True
+      self.salt = str (salt)
     elif salt is True:
       self.apply_salt = True
       self.salt = None
-    elif isinstance (salt, str):
-      self.apply_salt = True
-      self.salt = salt
+    else:
+      self.apply_salt = False
+      self.salt = ""
+      raise TypeError ("Salt must be str, bytes or unicode")
 
   def digest (self, sentence="", get_salt=False):
     """
