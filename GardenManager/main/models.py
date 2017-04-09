@@ -182,13 +182,14 @@ class User (models.Model):
   # Definition of the relation-related attributes
   None
 
-  def __init__ (self, login="anonymous", *args, **kwargs):
-    super (User, self).__init__ (login=login, *args, **kwargs)
+  def __init__ (self, *args, **kwargs):
+    if kwargs.has_key ("login") is False or kwargs.get ("login", None) is None:
+      kwargs["login"] = "anonymous"
+    super (User, self).__init__ (*args, **kwargs)
 
   @staticmethod
-  def hash_password (password, salt=True):
-    print Digester (salt=salt).digest (password, get_salt=True)
-    return Digester (salt=salt).digest (password, get_salt=True)
+  def hash_password (password, salt=True, get_salt=True):
+    return Digester (salt=salt).digest (password, get_salt=get_salt)
 
   @property
   def password (self):
@@ -196,15 +197,14 @@ class User (models.Model):
 
   @password.setter
   def password (self, password, salt=True):
-    self.password_hash, self.salt = User.hash_password (password, salt)
+    self.password_hash, self.salt = User.hash_password (password, salt=salt)
 
   def save (self):
     self.id = str (self.digest ())
     super (User, self).save ()
 
   def has_password (self, password):
-    print self.password, self.email, self.salt
-    return User.hash_password(password, salt=self.salt) == self.password
+    return User.hash_password (password, salt=self.salt, get_salt=False) == self.password
 
   @property
   def is_logged (self):
