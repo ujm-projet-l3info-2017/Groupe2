@@ -65,8 +65,31 @@ def root (request):
 @need_logged_user
 def home (request):
   user = get_user (request)
-  context = get_default_context (request, user)
+  context = get_default_context (request, user, page_name="home")
   return render (request, "home.html", context=context)
+
+@require_http_methods(["GET"])
+@destroy_session_error
+@need_logged_user
+def new_project (request):
+  user = get_user (request)
+  context = get_default_context (request, user, page_name="new")
+  return render (request, "new.html", context=context)
+
+@require_http_methods(["GET"])
+@destroy_session_error
+@need_logged_user
+def view_projects (request):
+  user = get_user (request)
+  context = get_default_context (request, user, page_name="view")
+  return render (request, "home.html", context=context)
+
+@require_http_methods(["GET"])
+@destroy_session_error
+def info (request):
+  user = get_user (request)
+  context = get_default_context (request, user, page_name="info")
+  return render (request, "info.html", context=context)
 
 
 @require_http_methods(["POST"])

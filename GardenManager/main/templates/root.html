@@ -1,4 +1,62 @@
 {% extends "layout.html" %}
 {% block content %}
-{% include "creation_plan.html" %}
+    {% if user.is_logged is False %}
+        <div class="col-xs-12">
+          <p class="big-button-border">
+            <a data-toggle="modal" href="#register_form_modal" class="big-button" title="register">
+              Get started with The Garden Project<br />
+              <span class="glyphicon glyphicon-check"></span> 
+            </a>
+          </p>
+        </div>
+      {% else %}
+        <div class="col-xs-12">
+          <p class="big-button-border">
+            <a href="/new/" class="big-button", title="Create a new Garden Project">
+              New Garden Project <br />
+               <span class="glyphicon glyphicon glyphicon-plus"></span>
+            </a>
+          </p>
+        </div>
+        <div class="col-xs-12">
+          <p class="big-button-border">
+            <a href="/projects/" class="big-button", title="View the list of Garden Project">
+              Garden Project List <br />
+               <span class="glyphicon glyphicon glyphicon-tasks"></span>
+            </a>
+          </p>
+        </div>
+      {% endif %}
+        <div class="col-xs-12">
+          <p class="big-button-border">
+            <a data-toggle="modal" href="/info" class="big-button" title="Informations">
+              What is The Garden Project for <br />
+              <span class="glyphicon glyphicon-question-sign"></span> 
+            </a>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p class="home-description">
+            Helps you create and manage your garden
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p class="home-description">
+            Tells you where and when plant your flowers and vegetables
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p class="home-description">
+            Gives you advices about the weather
+          </p>
+        </div>
+        <div class="col-md-12 pull-down">
+          <p class="home-description home-description-large">
+            Design your ground shapes and dimensions using google maps <br />
+            select the shadow areas, the pH of your soil <br />
+            drag-n-drop the plants you want, where you want <br />
+            use our advises to know which plant will grow the better in your grounds <br />
+            Get a beatiful, productive garden ! <br />
+          </p>
+        </div>
 {% endblock %}

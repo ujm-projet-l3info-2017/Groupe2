@@ -1,9 +1,11 @@
 
 window.addEventListener ("load", function () {
 
-  document.getElementById ("global_info_alert").onclick = function () {
-    $("#flash_notice").hide () ;
-  } ;
+  var alert = document.getElementById ("global_info_alert") ;
+  if (alert !== null)
+    document.getElementById ("global_info_alert").onclick = function () {
+      $("#flash_notice").hide () ;
+    } ;
 
   document.getElementById ("submit_login_form_button").onclick = function () {
     $('#submit_login')[0].click () ;
