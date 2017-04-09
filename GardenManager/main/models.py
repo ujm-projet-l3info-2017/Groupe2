@@ -156,33 +156,6 @@ class Ground (models.Model):
       "})")) % { "id": self.id, "ground": Ground.GROUND_NAMES[self.ground], "ph": self.ph })
 
 
-class Session (models.Model):
-
-  """
-    The Session class maps the Session table.
-    It defines:
-      - a user_id ;
-      - a last_operation ;
-      - a cookie ;
-  """
-
-  # Definition of the regular attributes.
-
-  user_id = models.CharField (max_length=90, primary_key=True, unique=True)
-  last_operation = models.DateField (auto_now=True)
-  cookie = models.CharField (max_length=256)
-
-  # Definition of the relation-related attributes
-  None
-
-  def update_last_operation (self):
-    # with auto_now, the last_operation field will be updated at each save op.
-    self.save ()
-
-  def digest (self):
-    return Digester ().digest (self.user_id)
-
-
 class User (models.Model):
 
   """
@@ -190,7 +163,7 @@ class User (models.Model):
     It defines:
       - an ID ;
       - a login ;
-      - a password ;
+      - a password hash ;
       - a password's salt ;
       - an email ;
       - a date of last login ;
@@ -202,22 +175,20 @@ class User (models.Model):
 
   login = models.CharField (max_length=32, null=True)
   password_hash = models.CharField (max_length=90, null=True)
-  salt = models.CharField (max_length=90, null=True)
+  salt = models.BinaryField (max_length=90, null=True)
   email = models.EmailField (null=True)
   last_login = models.DateField (auto_now=True)
 
   # Definition of the relation-related attributes
-  session = models.ForeignKey (Session, null=True)
+  None
 
   def __init__ (self, login="anonymous", *args, **kwargs):
     super (User, self).__init__ (login=login, *args, **kwargs)
 
   @staticmethod
-  def updating_session_operation (function):
-    def updating_session_function (self, *args, **kwargs):
-      self.update_last_operation ()
-      return function (self, *args, **kwargs)
-    return updating_session_function
+  def hash_password (password, salt=True):
+    print Digester (salt=salt).digest (password, get_salt=True)
+    return Digester (salt=salt).digest (password, get_salt=True)
 
   @property
   def password (self):
@@ -225,29 +196,22 @@ class User (models.Model):
 
   @password.setter
   def password (self, password, salt=True):
-    self.password_hash, self.salt = Digester (salt=salt).digest (password, \
-      get_salt=True)
+    self.password_hash, self.salt = User.hash_password (password, salt)
 
-  def update_last_operation (self):
-    if self.session:
-      self.session.update_last_operation ()
+  def save (self):
+    self.id = str (self.digest ())
+    super (User, self).save ()
 
   def has_password (self, password):
-    return str (sha512 (password + self.salt).digest ()) == self.password
+    print self.password, self.email, self.salt
+    return User.hash_password(password, salt=self.salt) == self.password
 
   @property
   def is_logged (self):
     return self.login != "anonymous"
 
-  def is_connected (self):
-    return self.session is not None and self.session.has_expired is False
-
-  def disconnect (self):
-    if self.session:
-      self.session.delete ()
-
   def digest (self):
-    return Digester ().digest (self.exposure)
+    return Digester ().digest (self.email)
 
 
 class Project (models.Model):
