@@ -48,7 +48,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="/logout">
+                  <a href="/logout?next_page={{ next_page }}" method="POST">
                     <span class="glyphicon glyphicon-log-out"></span> 
                     logout
                   </a>
@@ -85,9 +85,9 @@
           </div>
         </div>
       </div>
+{% endif %}
       <div class="container">
         <div class="col-xs-12">
-{% endif %}
 {% block content %} {% endblock %}
         </div>
       </div>
@@ -114,7 +114,7 @@
             <h4 class="modal-title">Login</h4>
           </div>
           <div class="modal-body">
-            <form id="login_form" action="/login" method="post">
+            <form id="login_form" action="/login?next_page={{ next_page }}" method="post">
               {% csrf_token %}
               <div class="input-group">
                 <span class="input-group-addon">login</span>
@@ -125,7 +125,7 @@
                 <span class="input-group-addon">password</span>
                 <input id="user_password" name="password" type="password" class="form-control" placeholder="password">
               </div>
-            <button hidden id="submit_login" type="submit">Register</button>
+            <button hidden id="submit_login" type="submit"></button>
             </form>
           </div>
           <div class="modal-footer">
@@ -144,7 +144,7 @@
             <h4 class="modal-title">Register</h4>
           </div>
           <div class="modal-body">
-            <form id="register_form" action="/register" method="post">
+            <form id="register_form" action="/register?next_page={{ next_page }}" method="post">
               {% csrf_token %}
               <div class="input-group">
                 <span class="input-group-addon">Login</span>
@@ -165,7 +165,7 @@
                 <span class="input-group-addon">password</span>
                 <input required id="register_user_password_verif" name="register_user_password_verif" type="password" class="form-control" placeholder="password (verification)" AUTOCOMPLETE='OFF'>
               </div>
-            <button hidden id="submit_register" type="submit">Register</button>
+            <button hidden id="submit_register" type="submit"></button>
             </form>
           </div>
           <div class="modal-footer">
