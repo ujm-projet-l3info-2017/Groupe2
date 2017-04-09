@@ -48,7 +48,7 @@ def login (request):
   user = get_user (request)
   if not user.is_logged:
     login = request.POST.get ("login", "")
-    password = request.POST.get ("user_password", "")
+    password = request.POST.get ("password", "")
     try:
       logged_user = User.objects.get (login=login)
     except ObjectDoesNotExist:
@@ -95,10 +95,7 @@ def register (request):
     user.password = unicode (password)
     user.email = unicode (mail)
     user.save ()
-    copy = User.objects.get (id=user.id)
-    print user.id, user.login, user.password, user.email, user.salt, user.last_login
-    print copy.id, copy.login, copy.password, copy.email, copy.salt, copy.last_login
-    #request.session["user_id"] = user.id
+    request.session["user_id"] = user.id
   request.session["_old_post"] = request.POST
   if redirect_page is not None:
     return HttpResponseRedirect (redirect_page)
