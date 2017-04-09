@@ -12,7 +12,7 @@ if __name__ == "__main__":
   if not os.path.exists (os.path.join (os.getcwd (), "initializer.py")):
     copyfile ("initializer.py.template", "initializer.py")
   import initializer
-  
+
   os.environ.setdefault("DJANGO_SETTINGS_MODULE", "GardenManager.settings")
   try:
     from django.core.management import execute_from_command_line
@@ -30,3 +30,5 @@ if __name__ == "__main__":
       )
     raise
   execute_from_command_line(sys.argv)
+
+
