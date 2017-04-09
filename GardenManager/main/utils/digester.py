@@ -4,6 +4,7 @@
 
 import hashlib
 import os
+import random
 
 
 class Digester (object):
@@ -102,7 +103,7 @@ class Digester (object):
     if salt is False or salt is None:
       self.apply_salt = False
       self.salt = ""
-    elif isinstance (salt, (str, bytes, unicode)):
+    elif isinstance (salt, (str, bytes, unicode, buffer)):
       self.apply_salt = True
       self.salt = str (salt)
     elif salt is True:
@@ -132,11 +133,11 @@ class Digester (object):
       Apply the hash phase
     """
     if self.apply_salt and self.salt is None:
-      salt = os.urandom (self.salt_length)
+      salt = ''.join (chr (random.randrange (32,127)) for _ in range (self.salt_length))
     else:
       salt = self.salt
     sentence = str (sentence)
-    hashed = str (self.hash_algorithm (sentence or '' + salt or '').digest ())
+    hashed = str (self.hash_algorithm ((sentence or '') + (salt or '')).digest ())
     return hashed, salt
 
   def encode (self, sentence):
