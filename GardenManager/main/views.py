@@ -93,6 +93,20 @@ def info (request):
   context = get_default_context (request, user, page_name="info")
   return render (request, "info.html", context=context)
 
+@require_http_methods(["POST"])
+@need_logged_user
+def remove_user (request):
+  user = get_user (request)
+  context = get_default_context (request, user, page_name="info")
+  if request.POST["magic_sentence"] == "Delete the account with login %s" % user.login:
+    user.delete ()
+    del request.session["user_id"]
+    request.session["error"] = "Your account has been deleted successfully"
+    return HttpResponseRedirect ("/")
+  else:
+    request.session["error"] = "Wrong magic sentence"
+    return HttpResponseRedirect ("/home")
+
 
 @require_http_methods(["POST"])
 def login (request):

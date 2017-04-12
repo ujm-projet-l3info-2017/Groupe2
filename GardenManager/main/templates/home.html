@@ -1,3 +1,99 @@
 {% extends "layout.html" %}
 {% block content %}
+        <div class="col-md-12">
+          <span id="usage" class="anchor"></span>
+          <span class="title">Projects</span>
+          <div class="container">
+{% if projects is not None %}
+            <ul>
+  {% for project in projects %}
+              <li>
+                <div>
+                  <a href="/projects/{{ project.name }}">{{ project.name }}</a>
+                  <span class="action-button-container">
+                    <a href="/edit/{{ project.name }}" class="small-button btn" title="New Project">
+                      <span class="glyphicon glyphicon glyphicon-edit"></span>
+                      Edit
+                    </a>
+                    <a href="/delete/{{ project.name }}" class="small-button btn" title="New Project">
+                      <span class="glyphicon glyphicon glyphicon-trash"></span>
+                      Delete
+                    </a>
+                  </span>
+                </div>
+              </li>
+  {% endfor %}
+            </ul>
+{% else %}
+            <p class="home-description">
+              You do not have any project for the moment. <br />
+              Click on the botton bellow to create your first project
+            </p>
+{% endif %}
+            <div class="small-button-border">
+              <a href="/new/" class="small-button btn" title="New Project">
+                New Garden Project <br />
+                <span class="glyphicon glyphicon glyphicon-plus"></span>
+              </a>
+            </div>
+          </div>
+          <span id="legal" class="anchor"></span>
+          <span class="title" >Profile</span>
+          <div class="container">
+            
+            <p class="home-description">
+              Login: {{ user.login }}<br />
+              E-mail: {{ user.email }}<br />
+              <br />
+              Your whole profile can only be seen by you. <br />
+              Logged users can see your login <br />
+              Not logged users cannot see anything <br />
+            </p>
+            <div class="small-button-border">
+              <a class="btn btn-danger" data-toggle="modal" href="#delete_account_modal"
+              title="/!\ Delete User /!\
+Delete also projects
+Cannot be undone">
+                Delete my account <br />
+                <span class="glyphicon glyphicon glyphicon-remove-sign"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="delete_account_modal" tabindex="-1" role="dialog" aria-labelledby="delete_account_modal" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">/!\ Attention /!\</h4>
+              </div>
+              <div class="modal-body">
+                <form id="delete_account_form" action="/remove_user?next_page=/" method="post">
+                  {% csrf_token %}
+                  <span>You are going to delete:</span>
+                  <ul>
+                    <li> Your account </li>
+                    <li> Your projects </li>
+                  </ul>
+                  This cannot be undone! <br />
+                  Your magic sentence is '{{ delete_account_sentence }}' (without quotes).
+                  <div class="input-group">
+                    <span class="input-group-addon">Magic sentence</span>
+                    <input required id="magic_sentence" name="magic_sentence" type="text" class="form-control" placeholder="{{ delete_account_sentence }}" AUTOCOMPLETE='OFF'>
+                  </div>
+                  <br />
+                  <div class="input-group">
+                    <span class="input-group-addon">Password</span>
+                    <input required id="remove_user_password" name="remove_user_password" type="password" class="form-control" placeholder="password">
+                  </div>
+                <button hidden id="submit_delete_account" type="submit"></button>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button id="submit_delete_account_button" type="button" class="btn btn-danger">DELETE</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
 {% endblock %}
