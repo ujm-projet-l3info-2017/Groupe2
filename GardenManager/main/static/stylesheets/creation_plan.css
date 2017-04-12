@@ -1,5 +1,10 @@
 #google_map_api_div {
   height: 400px ;
+  max-width: 640px ;
+}
+
+canvas {
+  border:1px solid black ;
 }
 
 .big-button {
@@ -25,19 +30,6 @@
   font-weight: 300 ;
   line-height: 1.3 ;
   text-align: center ;
-}
-
-#canvas-wrap {
-  position: relative ;
-  width: 800px ;
-  height: 600px ;
-}
-
-#canvas-wrap canvas {
-  position: absolute ;
-  top: 0 ;
-  left: 0 ;
-  z-index: 0 ;
 }
 
 #canvas-wrap {

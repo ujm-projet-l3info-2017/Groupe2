@@ -18,7 +18,6 @@ function toggle_draw_mode (id) {
   } else {
     element = document.getElementById (id) ;
     style = element.style["display"] == "inline" ? "none" : "inline" ;
-    console.log (" make " + id + " " + style)
     while (element.style["display"] !== style) {
       element.style["display"] = style ;
     }
@@ -34,12 +33,16 @@ function takePicture () {
   var drawing_canvas = document.getElementById ("drawing_canvas") ;
   drawing_canvas.width = width ;
   drawing_canvas.height = height ;
-  document.getElementById ("google_map_image").src = 'https://maps.googleapis.com/maps/api/staticmap?' +
+  image = new Image () ;
+  image.src = 'https://maps.googleapis.com/maps/api/staticmap?' +
     'maptype=satellite' +
     '&center=' + currentPosition.lat () + ',' + currentPosition.lng () +
     '&zoom=' + map.getZoom () +
     '&size=' + width + 'x' + height +
     '&key=' + get_google_api_key () ;
+  image.onload = function() {
+    drawing_canvas.getContext ("2d").drawImage (image, 0, 0); 
+  } ;
   toggle_draw_mode () ;
 } ;
 
