@@ -1,7 +1,15 @@
           <link rel="stylesheet" media="all" href="/static/stylesheets/creation_plan.css" />
-
-          <button id="creation_plan_take_shot_button" title="Next step is select squares where you'll do gardening">
-            Keep this view
-          </button> 
-          <div id="google_map_api_div" class="col-md-12">
+          <div class="big-button-border">
+            <button id="creation_plan_take_shot_button" class="big-button" title="Next step is select squares where you'll do gardening">
+              Keep this view
+            </button>
+          </div>
+          <div id="google_map_api_div_wrapper">
+            <div id="google_map_api_div">
+            </div>
+          </div>
+          <div id="canvas-wrap" class="col-md-12">
+            <img id="google_map_image" class="img" />
+            <canvas id="drawing_canvas" width="800" height="600">
+            </canvas>
           </div>

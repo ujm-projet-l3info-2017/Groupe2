@@ -1,3 +1,49 @@
 #google_map_api_div {
   height: 400px ;
 }
+
+.big-button {
+  display: inline-block;
+  text-align: center ;
+  color: #fff ;
+  background: #167911 ;
+  max-width: 300px;
+  min-width: 150px;
+  font-size: 1.8rem ;
+  line-height: 1.3 ;
+  padding: 10px 50px 11px ;
+  margin-bottom:9px ;
+  margin-top:18px ;
+  margin-left:auto ;
+  margin-right:auto ;
+  border-radius: 8px ;
+}
+
+.big-button-border {
+  font-size: 3.6rem ;
+  padding: 1px 0 6px ;
+  font-weight: 300 ;
+  line-height: 1.3 ;
+  text-align: center ;
+}
+
+#canvas-wrap {
+  position: relative ;
+  width: 800px ;
+  height: 600px ;
+}
+
+#canvas-wrap canvas {
+  position: absolute ;
+  top: 0 ;
+  left: 0 ;
+  z-index: 0 ;
+}
+
+#canvas-wrap {
+  display: none ;
+}
+
+#google_map_api_div_wrapper {
+  display: inline ;
+}
