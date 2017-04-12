@@ -6,6 +6,15 @@ function toggle_draw_mode (id) {
   if (arguments.length === 0) {
     toggle_draw_mode ("google_map_api_div_wrapper") ;
     toggle_draw_mode ("canvas-wrap") ;
+    if (document.getElementById ("google_map_api_div_wrapper").style["display"] == "inline") {
+      map_div = document.getElementById ("google_map_api_div") ;
+      map_div.width -= 1 ;
+      document.getElementById ("creation_plan_take_shot_button").innerText = "Keep this view" ;
+    } else {
+      document.getElementById ("creation_plan_take_shot_button").innerText = "Select the view" ;
+      map_div = document.getElementById ("google_map_api_div") ;
+      map_div.width += 1 ;
+    }
   } else {
     element = document.getElementById (id) ;
     style = element.style["display"] == "inline" ? "none" : "inline" ;
