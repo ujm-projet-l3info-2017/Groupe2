@@ -8,7 +8,9 @@
 
 /*! normalize.css v2.1.3 | MIT License | git.io/normalize */
 
-
+.modal {
+    overflow-y: auto;
+}
 .dropdown-toggle:active, .open .dropdown-toggle {
   background: #167911 !important ;
 /*
