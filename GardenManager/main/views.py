@@ -9,7 +9,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import Http404
-from models import User
+from models import Plant, User
 
 
 def destroy_session_error (function):
@@ -37,7 +37,7 @@ def need_logged_user (function):
 def get_default_context (request, user=None, next_page=None, page_name=None):
   context = {
     "user": user or User (),
-    "title": "Garden Project",
+    "title": "The Garden Project",
     "error": request.session.get ("error", "There are not any error!!! lel"),
     "google_api_key": os.environ.get ("GOOGLE_MAPS_API_KEY", ""),
     "next_page": next_page or page_name or request.POST.get ("next_page", "/"),
@@ -58,6 +58,8 @@ def get_user (request):
 def root (request):
   user = get_user (request)
   context = get_default_context (request, user, next_page="/", page_name="root")
+  context["flower_number"] = len (Plant.objects.all ())
+  context["user_number"] = len (User.objects.all ())
   return render (request, "root.html", context=context)
 
 @require_http_methods(["GET"])
