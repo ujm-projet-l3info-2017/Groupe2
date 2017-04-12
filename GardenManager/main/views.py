@@ -93,7 +93,7 @@ def new_project (request):
 def view_projects (request):
   user = get_user (request)
   context = get_default_context (request, user, page_name="view")
-  return render (request, "home.html", context=context)
+  return render (request, "view.html", context=context)
 
 @require_http_methods(["GET"])
 @destroy_session_error
