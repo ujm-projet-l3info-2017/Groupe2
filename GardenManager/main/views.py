@@ -42,7 +42,8 @@ def get_default_context (request, user=None, next_page=None, page_name=None):
     "google_api_key": os.environ.get ("GOOGLE_MAPS_API_KEY", ""),
     "next_page": next_page or page_name or request.POST.get ("next_page", "/"),
     "js": [page_name] if page_name is not None else [], 
-    "css": [page_name] if page_name is not None else [], 
+    "css": [page_name] if page_name is not None else [],
+    "raw_resource": [], 
   }
   return context
 
@@ -76,6 +77,14 @@ def home (request):
 def new_project (request):
   user = get_user (request)
   context = get_default_context (request, user, page_name="new")
+  context["js"] += ["google_map_api", "script_map"]
+  context["css"].append ("creation_plan")
+  context["raw_resource"].append (
+    ("<script type=\"text/javascript\" async defer " + \
+    "src=\"https://maps.googleapis.com/maps/api/js?" + \
+    "key=%s&amp;callback=initialize\"></script>") % \
+    context["google_api_key"]
+  )
   return render (request, "new.html", context=context)
 
 @require_http_methods(["GET"])
