@@ -132,6 +132,7 @@ def login (request):
     elif logged_user.has_password (password):
       user = logged_user
       request.session["user_id"] = user.id
+      request.session["error"] = "Connexion success"
     else:
       request.session["error"] = "Bad password"
   else:
@@ -178,9 +179,11 @@ def register (request):
 
 @require_http_methods(["GET"])
 def logout (request):
-  del request.session["user_id"]
+  if request.session.has_key ("user_id"):
+    request.session["error"] = "Logout success"
+    del request.session["user_id"]
+  else:
+    request.session["error"] = "You are not logged"
   redirect_page = request.GET.get ("next_page", None)
   request.session["_old_post"] = request.POST
-  if redirect_page is not None:
-    return HttpResponseRedirect (redirect_page)
   return HttpResponseRedirect ("/")
