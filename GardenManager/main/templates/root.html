@@ -2,7 +2,7 @@
 {% block content %}
     {% if user.is_logged is False %}
         <div class="col-xs-12">
-          <p class="big-button-border">
+          <p class="big-button-border text-center">
             <a data-toggle="modal" href="#register_form_modal" class="big-button" title="register">
               Get started with The Garden Project<br />
               <span class="glyphicon glyphicon-check"></span> 
@@ -11,16 +11,16 @@
         </div>
       {% else %}
         <div class="col-xs-12">
-          <p class="big-button-border">
-            <a href="/new/" class="big-button", title="Create a new Garden Project">
+          <p class="big-button-border text-center">
+            <a href="/new/" class="big-button" title="Create a new Garden Project">
               New Garden Project <br />
                <span class="glyphicon glyphicon glyphicon-plus"></span>
             </a>
           </p>
         </div>
         <div class="col-xs-12">
-          <p class="big-button-border">
-            <a href="/projects/" class="big-button", title="View the list of Garden Project">
+          <p class="big-button-border text-center">
+            <a href="/projects/" class="big-button" title="View the list of Garden Project">
               Garden Project List <br />
                <span class="glyphicon glyphicon glyphicon-tasks"></span>
             </a>
@@ -28,7 +28,7 @@
         </div>
       {% endif %}
         <div class="col-xs-12">
-          <p class="big-button-border">
+          <p class="big-button-border text-center">
             <a data-toggle="modal" href="/info" class="big-button" title="Informations">
               What is The Garden Project for <br />
               <span class="glyphicon glyphicon-question-sign"></span> 
