@@ -26,15 +26,21 @@ function toggle_draw_mode (id) {
 }
 
 function takePicture () {
-  toggle_draw_mode () ;
+  var map_div = document.getElementById ("google_map_api_div") ;
+  var map_div_rect = map_div.getBoundingClientRect() ;
+  var width = map_div_rect.width ;
+  var height = map_div_rect.height ;
   var currentPosition = map.getCenter ();
+  var drawing_canvas = document.getElementById ("drawing_canvas") ;
+  drawing_canvas.width = width ;
+  drawing_canvas.height = height ;
   document.getElementById ("google_map_image").src = 'https://maps.googleapis.com/maps/api/staticmap?' +
     'maptype=satellite' +
     '&center=' + currentPosition.lat () + ',' + currentPosition.lng () +
     '&zoom=' + map.getZoom () +
-    '&size=640x400' +
+    '&size=' + width + 'x' + height +
     '&key=' + get_google_api_key () ;
-    
+  toggle_draw_mode () ;
 } ;
 
 function initialize () {
