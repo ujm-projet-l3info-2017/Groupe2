@@ -38,6 +38,31 @@ class ProjectCreation (object):
         matching_string = False
     return string
 
+  @staticmethod
+  def dynamic_creation (models):
+    project_name = ProjectCreation.dynamic_input (help="Project's name")
+    user_name = ProjectCreation.dynamic_input (help="User's name")
+    ground_names = " ; ".join (map (": ".join, map (lambda x:(str(x[0]),x[1]),
+      tuple (enumerate (models.Ground.GROUND_NAMES)))))
+    match_coordinates = lambda x: re.match ("^\d+\s*\:\s*\d+$", x)
+    area_points = [
+      [
+        [
+          ProjectCreation.dynamic_input (help=ground_names, 
+            match=lambda x:int(x) < len (models.Ground.GROUND_NAMES)), 
+          [
+            map (int, re.split ("\s*\:\s*", ProjectCreation.dynamic_input (
+              help="x : y", match=match_coordinates)))
+            for _ in range (int (ProjectCreation.dynamic_input
+              (match=str.isdigit, help="Point number for the area %d" % (_+1))))
+          ]
+        ]
+      ] for _ in range (int (ProjectCreation.dynamic_input (match=str.isdigit,
+          help="Number of areas")))
+    ]
+    return ProjectCreation (user_name, project_name, area_points)
+
+
 class Backend (object):
 
   """
