@@ -20,6 +20,24 @@ class ProjectCreation (object):
     print "users_name: %s\nproject_name: %s\narea_points: %s\n" % \
       (users_name, project_name, area_points)
 
+  @staticmethod
+  def dynamic_input (match=lambda x:isinstance (x, str), help="",
+      prompt=">>> ", error="The input does not match pattern"):
+    print 
+    string = None
+    matching_string = False
+    while string is None or not matching_string:
+      if string is not None:
+        print error
+      print help
+      string = raw_input (prompt)
+      try:
+        matching_string = match (string)
+      except Exception as e:
+        print e
+        matching_string = False
+    return string
+
 class Backend (object):
 
   """
