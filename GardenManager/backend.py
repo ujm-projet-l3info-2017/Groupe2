@@ -819,7 +819,6 @@ if __name__ == "__main__":
   args = parser.parse_args ()
 
   if Backend.usable_arguments (args) is False:
-    #backend = Backend (args=args)
     parser.print_help ()
     exit ()
 
