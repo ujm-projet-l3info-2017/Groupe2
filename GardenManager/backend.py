@@ -126,7 +126,7 @@ class Backend (object):
       Return True if the arguments given in the command line are enough to
       execute one of the backend workflow.
     """
-    return args.csv is not None
+    return args.csv is not None or args.project_creation
 
   def __init__ (self, args, settings_path=None):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
@@ -154,6 +154,8 @@ class Backend (object):
     """
     if self.args.csv is not None:
       self.process_csv ()
+    elif self.args.project_creation:
+      ProjectCreation.dynamic_creation (self.model_module)
 
   def process_csv (self):
     """
