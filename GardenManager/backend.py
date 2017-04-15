@@ -10,6 +10,16 @@ import django
 from django.conf import settings
 
 
+
+class ProjectCreation (object):
+  """
+    Defines a backend sub-part the create some user's projects.
+  """
+
+  def __init__ (self, users_name, project_name, area_points):
+    print "users_name: %s\nproject_name: %s\narea_points: %s\n" % \
+      (users_name, project_name, area_points)
+
 class Backend (object):
 
   """
