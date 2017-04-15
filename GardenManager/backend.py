@@ -43,7 +43,8 @@ class Backend (object):
   """
     Defines a backend class to be allowed to create some plant (for the moment)
     and its related tables.
-    Only handle csv files for the moment.
+    Handle csv files and allow the use of ProjectCreation class by giving the
+    project creation flag.
   """
 
   SETTINGS_PATH = "GardenManager.settings"
