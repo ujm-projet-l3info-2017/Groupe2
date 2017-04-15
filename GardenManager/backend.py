@@ -813,6 +813,8 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser (description=description)
   parser.add_argument ('--csv', metavar='csv_path', type=str, nargs=1,
     help='The path to the CSV file to process')
+  parser.add_argument ('--project-creation', metavar="1|0",
+    type=bool, help='Set to 1 to create user\'s projects', default=False)
 
   args = parser.parse_args ()
 
