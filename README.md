@@ -2,7 +2,6 @@ Garden Project
 ==============
 
 
-
 Metadata
 --------
 
