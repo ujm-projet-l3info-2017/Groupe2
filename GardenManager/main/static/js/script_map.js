@@ -2,6 +2,7 @@
 
 var map ;
 var drawingManager ;
+var polygones = [] ;
 
 /*
 function toggle_draw_mode (id) {
@@ -58,6 +59,44 @@ window.addEventListener ("load", function () {
 
 */
 
+
+polygone_complete = function (polygone) {
+  coordonates = [] ;
+  id = 0 ;
+  polygone.getPaths ().forEach (function (a) {
+    for (i=0 ; i < a.b.length ; i++) {
+      coordonates.push ([a.b[i].lat (), a.b[i].lng ()]) ;
+      id += a.b[i].lat () + a.b[i].lng () ;
+    }
+  }) ;
+  div = document.createElement ("div") ;
+  div.className = "alert alert-info" ;
+  div.id = id ;
+  div.coordonates = coordonates ;
+  div.polygone = polygone ;
+  p = document.createElement ("p") ;
+  span = document.createElement ("span") ;
+  span.className = "pull-right" ;
+  a = document.createElement ("a") ;
+  a.className = "glyphicon glyphicon-remove" ;
+  a.onclick = function () { document.getElementById (id).remove () } ;
+  span.appendChild (a) ;
+  p.appendChild (span) ;
+  div.appendChild (p) ;
+  for (coordonate = 0 ; coordonate < coordonates.length ; coordonate++) {
+    span = document.createElement ("span") ;
+    span.innerText = coordonates[coordonate].join (' ; ') ;
+    p.appendChild (span) ;
+    p.appendChild (document.createElement ("br")) ;
+  }
+  document.getElementById ("polygones_div").appendChild (div) ;
+  polygones.push (coordonates) ;
+}
+
+rectangle_complete = function (rectangle) {
+  polygone_complete (rectangle) ;
+}
+
 function initialize () {
   var latlng = new google.maps.LatLng (46.227636, 2.213749);
   var options = {
@@ -71,9 +110,7 @@ function initialize () {
     drawingControl: true,
     drawingControlOptions: {
       position: google.maps.ControlPosition.TOP_CENTER,
-      drawingModes: ['marker', 'polygon', 'rectangle']
-    }, markerOptions: {
-      icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+      drawingModes: ['polygon', 'rectangle']
     }, circleOptions: {
       fillColor: '#ffff00',
       fillOpacity: 1,
@@ -84,4 +121,7 @@ function initialize () {
     }
   });
   drawingManager.setMap (map) ;
+  google.maps.event.addListener (drawingManager, 'polygoncomplete', polygone_complete);
+  google.maps.event.addListener (drawingManager, 'rectanglecomplete', rectangle_complete);
 } ;
+
