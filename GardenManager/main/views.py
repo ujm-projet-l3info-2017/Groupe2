@@ -69,7 +69,7 @@ def root (request):
 def home (request):
   user = get_user (request)
   context = get_default_context (request, user, page_name="home")
-  context["projects"] = [
+  context["projects"] = user.projects.all () or [
     type ('', (), {"name": "The following are test projects"}) (), 
     type ('', (), {"name": "Delete me"}) (), 
     type ('', (), {"name": "And me too"}) (), 
