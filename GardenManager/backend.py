@@ -5,6 +5,7 @@ import re
 import os, sys
 import csv
 import argparse
+import time
 
 import django
 from django.conf import settings
@@ -12,13 +13,34 @@ from django.conf import settings
 
 
 class ProjectCreation (object):
+
   """
     Defines a backend sub-part the create some user's projects.
   """
 
-  def __init__ (self, users_name, project_name, area_points):
+  models = None
+
+  def __init__ (self, user_name, project_name, area_points):
+    models = ProjectCreation.models
     print "users_name: %s\nproject_name: %s\narea_points: %s\n" % \
-      (users_name, project_name, area_points)
+      (user_name, project_name, area_points)
+    self.user = models.User.objects.filter (login=user_name)[0]
+    self.project = models.Project ()
+    self.project.name = project_name
+    for soil_type, points in area_points:
+      other_points = points[1:]
+      self.area = models.Area ()
+      self.area.x, self.area.y = points[0]
+      self.area.ground = models.Ground.objects.filter (ground=int (soil_type))[0]
+      positions = [models.Position (**kwargs) for kwargs in 
+        [dict ((('x', point[0]), ('y', point[1]))) for point in points[1:]]]
+      for position in positions:
+        position.save ()
+      self.area.positions = positions
+      self.area.save ()
+    self.project.save ()
+    print self.project.name
+    self.user.projects.add (self.project)
 
   @staticmethod
   def dynamic_input (match=lambda x:isinstance (x, str), help="",
@@ -40,6 +62,7 @@ class ProjectCreation (object):
 
   @staticmethod
   def dynamic_creation (models):
+    ProjectCreation.models = models
     project_name = ProjectCreation.dynamic_input (help="Project's name")
     user_name = ProjectCreation.dynamic_input (help="User's name")
     ground_names = " ; ".join (map (": ".join, map (lambda x:(str(x[0]),x[1]),
@@ -47,7 +70,6 @@ class ProjectCreation (object):
     match_coordinates = lambda x: re.match ("^\d+\s*\:\s*\d+$", x)
     area_points = [
       [
-        [
           ProjectCreation.dynamic_input (help=ground_names, 
             match=lambda x:int(x) < len (models.Ground.GROUND_NAMES)), 
           [
@@ -56,7 +78,6 @@ class ProjectCreation (object):
             for _ in range (int (ProjectCreation.dynamic_input
               (match=str.isdigit, help="Point number for the area %d" % (_+1))))
           ]
-        ]
       ] for _ in range (int (ProjectCreation.dynamic_input (match=str.isdigit,
           help="Number of areas")))
     ]
