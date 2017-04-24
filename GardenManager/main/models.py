@@ -152,8 +152,7 @@ class Ground (models.Model):
   def __repr__ (self):
     return ('\n'.join (("Ground object of id %(id)s ({ ",
       "\ttype             = %(ground)s",
-      "\tph               = %(ph)s",
-      "})")) % { "id": self.id, "ground": Ground.GROUND_NAMES[self.ground], "ph": self.ph })
+      "})")) % { "id": self.id, "ground": Ground.GROUND_NAMES[self.ground] })
 
 
 class User (models.Model):
