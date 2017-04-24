@@ -1,8 +1,12 @@
 
 
 var map ;
+var drawingManager ;
 
+/*
 function toggle_draw_mode (id) {
+  if (true)
+    return ;
   if (arguments.length === 0) {
     toggle_draw_mode ("google_map_api_div_wrapper") ;
     toggle_draw_mode ("canvas-wrap") ;
@@ -25,6 +29,8 @@ function toggle_draw_mode (id) {
 }
 
 function takePicture () {
+  if (true)
+    return ;
   var map_div = document.getElementById ("google_map_api_div") ;
   var map_div_rect = map_div.getBoundingClientRect() ;
   var width = map_div_rect.width ;
@@ -46,6 +52,12 @@ function takePicture () {
   toggle_draw_mode () ;
 } ;
 
+window.addEventListener ("load", function () {
+  document.getElementById ("creation_plan_take_shot_button").onclick = takePicture
+}, false) ;
+
+*/
+
 function initialize () {
   var latlng = new google.maps.LatLng (46.227636, 2.213749);
   var options = {
@@ -55,9 +67,21 @@ function initialize () {
     mapTypeId: google.maps.MapTypeId.HYBRID
   } ;
   map = new google.maps.Map (document.getElementById ("google_map_api_div"), options);
-  toggle_draw_mode ("google_map_api_div_wrapper") ;
+  drawingManager = new google.maps.drawing.DrawingManager ({
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: ['marker', 'polygon', 'rectangle']
+    }, markerOptions: {
+      icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+    }, circleOptions: {
+      fillColor: '#ffff00',
+      fillOpacity: 1,
+      strokeWeight: 5,
+      clickable: false,
+      editable: true,
+      zIndex: 1
+    }
+  });
+  drawingManager.setMap (map) ;
 } ;
-
-window.addEventListener ("load", function () {
-  document.getElementById ("creation_plan_take_shot_button").onclick = takePicture
-}, false) ;

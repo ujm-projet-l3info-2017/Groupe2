@@ -86,9 +86,14 @@ def new_project (request):
   context["js"] += ["google_map_api", "script_map"]
   context["css"].append ("creation_plan")
   context["raw_resource"].append (
+    ("<script type=\"text/javascript\" src=\"https://maps.googleapis.com/" +
+    "maps/api/js?key=%s&amp;libraries=drawing\"></script>") % \
+    context["google_api_key"]
+  )
+  context["raw_resource"].append (
     ("<script type=\"text/javascript\" async defer " + \
     "src=\"https://maps.googleapis.com/maps/api/js?" + \
-    "key=%s&amp;callback=initialize\"></script>") % \
+    "key=%s&amp;libraries=drawing&amp;callback=initialize\"></script>") % \
     context["google_api_key"]
   )
   return render (request, "new.html", context=context)
