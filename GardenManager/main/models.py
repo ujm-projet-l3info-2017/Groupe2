@@ -229,15 +229,19 @@ class Project (models.Model):
       raise ValidationError('Already existing project with name: %s' % name,
         code='invalid')
 
+  def __init__ (self, *args, **kwargs):
+    super (Project, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
+
   # Definition of the regular attributes.
 
   id = models.CharField (max_length=90, primary_key=True, unique=True)
   name = models.CharField (max_length=32)
-  creation_date = models.DateField ()
+  creation_date = models.DateField (auto_now_add=True)
   update_date = models.DateField (auto_now=True)
 
   # Definition of the relation-related attributes
-  user = models.ForeignKey (User, null=True)
+  user = models.ForeignKey (User, null=True, related_name="projects")
 
   def save (self):
     """
@@ -882,6 +886,11 @@ class Position (models.Model):
   # Definition of the relation-related attributes
   area = models.ForeignKey (Area, null=True, related_name="positions")
   plant_spot = models.ForeignKey (PlantSpot, null=True, related_name="positions")
+
+
+  def __init__ (self, *args, **kwargs):
+    super (Position, self).__init__ (*args, **kwargs)
+    self.id = self.digest ()
 
   def digest (self):
     # juste a random salt hashed
