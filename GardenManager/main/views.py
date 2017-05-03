@@ -42,12 +42,32 @@ def logout (request):
   return HttpResponseRedirect ("/")
 
 class Weather ():
-  
+    
+  def get_day_attribute_value_1 (self, day, attr1):
+    return self.list[day][attr1]
+    
+    
+  def get_day_attribute_value_2 (self, day, attr1, attr2):
+    return self.list[day][attr1][attr2]
+    
+    
+  def get_temp_min (self, day):
+    return self.get_day_attribute_value_2 (day, "temp", "min")
+    
+    
+  def get_temp_min (self, day):
+    return self.get_day_attribute_value_2 (day, "temp", "max")
+    
+    
+  def get_rain (self,day):
+   return self.get_day_attribute_value_1 (day, "rain") 
+
+
   def __init__ (self, latitude, longitude):
     request_url = self.get_request_url(latitude, longitude)
     json_output = self.get_request_output(request_url)
     self.__dict__  = load(json_output)
-    print self.list[0]["humidity"]
+
     
   def get_owm_api_key (self):
     return '2d5dd571dc377d57fd57c3b30cea7335'
