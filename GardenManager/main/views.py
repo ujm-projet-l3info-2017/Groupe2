@@ -41,6 +41,8 @@ def logout (request):
   request.session["_old_post"] = request.POST
   return HttpResponseRedirect ("/")
 
+
+
 class Weather ():
     
   def get_day_attribute_value_1 (self, day, attr1):
@@ -72,6 +74,7 @@ class Weather ():
   def get_owm_api_key (self):
     return '2d5dd571dc377d57fd57c3b30cea7335'
 
+
   def get_request_url (self, latitude, longitude):
     return 'http://api.openweathermap.org/data/2.5/forecast/daily?' +\
      'lat=' + str(longitude) +\
@@ -80,6 +83,7 @@ class Weather ():
      '&units=metric' +\
      '&cnt=7' +\
      '&appid=' + str(self.get_owm_api_key())
+
 
   def get_request_output (self, url):
     opener = build_opener()
