@@ -44,6 +44,12 @@ def logout (request):
 
 
 class Weather ():
+  
+  """
+    Create a Weather object using latitude and longitude given in parameters.
+      Here there are only 3 interesting attribut, the rain (in millimeter), 
+    the temperature max and min (in Kelvin)
+  """
     
   def get_day_attribute_value_1 (self, day, attr1):
     return self.list[day][attr1]
@@ -66,6 +72,11 @@ class Weather ():
 
 
   def __init__ (self, latitude, longitude):
+    """
+      Attributes are setted depending of the output of the request output,
+      it is a dictionnary extracted from a JSON string. So field (keys) mays 
+      change as the weather do.
+    """
     request_url = self.get_request_url(latitude, longitude)
     json_output = self.get_request_output(request_url)
     self.__dict__  = load(json_output)
@@ -92,10 +103,3 @@ class Weather ():
     return response
 
 obj = Weather (45.41484, 4.398651)
-
-"""
-temperature :
-  min - max   -> 
-pluvio :
-prévenir si c'est violent
-"""
