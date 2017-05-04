@@ -82,7 +82,7 @@ def home (request):
 @need_logged_user
 def new_project (request):
   user = get_user (request)
-  context = get_default_context (request, user, page_name="new")
+  context = get_default_context (request, user, page_name="new", next_page="projects")
   context["js"] += ["google_map_api", "script_map"]
   context["css"].append ("creation_plan")
   context["raw_resource"].append (
