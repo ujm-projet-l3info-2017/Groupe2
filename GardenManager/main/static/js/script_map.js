@@ -2,7 +2,7 @@
 
 var map ;
 var drawingManager ;
-var polygones = [] ;
+var polygones = {} ;
 
 /*
 function toggle_draw_mode (id) {
@@ -69,6 +69,21 @@ polygone_complete = function (polygone) {
       id += a.b[i].lat () + a.b[i].lng () ;
     }
   }) ;
+  create_bubble (coordonates, polygone, id) ;
+}
+
+rectangle_complete = function (rectangle) {
+  coordonates = [] ;
+  ne = rectangle.getBounds().getNorthEast() ;
+  sw = rectangle.getBounds().getSouthWest() ;
+  coordonates.push ([sw.lat(), ne.lng ()])
+  coordonates.push ([ne.lat(), ne.lng ()])
+  coordonates.push ([ne.lat(), sw.lng ()])
+  coordonates.push ([sw.lat(), sw.lng ()])
+  create_bubble (coordonates, rectangle, ne.lat()+ne.lng()+sw.lat()+sw.lng()) ;
+}
+
+create_bubble = function (coordonates, polygone, id) {
   div = document.createElement ("div") ;
   div.className = "alert alert-info" ;
   div.id = id ;
@@ -79,7 +94,13 @@ polygone_complete = function (polygone) {
   span.className = "pull-right" ;
   a = document.createElement ("a") ;
   a.className = "glyphicon glyphicon-remove" ;
-  a.onclick = function () { document.getElementById (id).remove () } ;
+  a.div_id = id ;
+  a.onclick = function (event) {
+    delete polygones[event.target.div_id] ;
+    div = document.getElementById (event.target.div_id) ;
+    div.polygone.setMap (null) ;
+    div.remove () ;
+  } ;
   span.appendChild (a) ;
   p.appendChild (span) ;
   div.appendChild (p) ;
@@ -90,11 +111,7 @@ polygone_complete = function (polygone) {
     p.appendChild (document.createElement ("br")) ;
   }
   document.getElementById ("polygones_div").appendChild (div) ;
-  polygones.push (coordonates) ;
-}
-
-rectangle_complete = function (rectangle) {
-  polygone_complete (rectangle) ;
+  polygones[id] = coordonates ;
 }
 
 function initialize () {
