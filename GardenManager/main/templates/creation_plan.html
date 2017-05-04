@@ -1,14 +1,25 @@
-          <link rel="stylesheet" media="all" href="/static/stylesheets/creation_plan.css" />
 <!--
-          <div class="big-button-border">
-            <button id="creation_plan_take_shot_button" class="big-button" title="Next step is select squares where you'll do gardening">
-              Keep this view
-            </button>
-          </div>
+        <link rel="stylesheet" media="all" href="/static/stylesheets/creation_plan.css" />
+        <div class="big-button-border">
+          <button id="creation_plan_take_shot_button" class="big-button" title="Next step is select squares where you'll do gardening">
+            Keep this view
+          </button>
+        </div>
 -->
-          <div id="google_map_api_div" class="col-md-8">
-          </div>
-          <div id="polygones_div" class="col-md-4">
-          <p class="text"> Polygones </p>
-            
-          </div>
+        <div id="google_map_api_div" class="col-md-8">
+        </div>
+        <div class="col-md-4">
+          <br />
+          <form id="new_project_form" action="/new_project?next_page={{ next_page }}" method="post">
+            <p class="text"> Polygones </p>
+            <div id="polygones_div"></div>
+            {% csrf_token %}
+            <div class="input-group">
+              <span class="input-group-addon">Project Name</span>
+              <input required id="new_project_name" name="new_project_name" type="text" class="form-control" placeholder="Project name">
+            </div>
+            <div class="actions">
+              <input type="submit" name="commit" value="Create Project" class="btn btn-primary" />
+            </div>
+          </form>
+        </div>
