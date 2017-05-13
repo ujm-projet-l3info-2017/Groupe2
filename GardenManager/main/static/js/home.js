@@ -9,6 +9,4 @@ window.addEventListener ("load", function () {
     return false ;
   } ;
 
-
-
 }) ;

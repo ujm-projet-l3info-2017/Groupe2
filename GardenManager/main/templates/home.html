@@ -7,15 +7,15 @@
 {% if projects is not None %}
             <ul>
   {% for project in projects %}
-              <li>
+              <li id="project_{{project.name}}">
                 <div>
                   <a href="/projects/{{ project.name }}">{{ project.name }}</a>
                   <span class="action-button-container">
-                    <a href="/edit/{{ project.name }}" class="small-button btn" title="New Project">
+                    <a href="/edit/{{ project.name }}" class="small-button btn" title="Edit Project">
                       <span class="glyphicon glyphicon glyphicon-edit"></span>
                       Edit
                     </a>
-                    <a href="/delete/{{ project.name }}" class="small-button btn" title="New Project">
+                    <a class="small-button btn" title="Delete Project" onclick="delete_project('{{project.name}}', '{{csrf_token}}')">
                       <span class="glyphicon glyphicon glyphicon-trash"></span>
                       Delete
                     </a>
