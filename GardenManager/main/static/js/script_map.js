@@ -3,6 +3,7 @@
 var map ;
 var drawingManager ;
 var polygones = {} ;
+var coordinate_set = [] ;
 
 /*
 function toggle_draw_mode (id) {
@@ -111,6 +112,8 @@ create_bubble = function (coordonates, polygone, id) {
     p.appendChild (document.createElement ("br")) ;
   }
   document.getElementById ("polygones_div").appendChild (div) ;
+  coordinate_set.push (coordonates) ;
+  document.getElementById("coordinate_set").value = JSON.stringify(coordinate_set) ;
   polygones[id] = coordonates ;
 }
 

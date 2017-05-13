@@ -10,7 +10,8 @@
         </div>
         <div class="col-md-4">
           <br />
-          <form id="new_project_form" action="/new_project?next_page={{ next_page }}" method="post">
+          <form id="new_project_form" action="/create_project?next_page={{ next_page }}" method="post">
+            <input hidden id="coordinate_set" name="coordinate_set" value="[]">
             <p class="text"> Polygones </p>
             <div id="polygones_div"></div>
             {% csrf_token %}
