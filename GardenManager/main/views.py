@@ -2,6 +2,7 @@
 
 import os
 import re
+import json
 
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
@@ -9,7 +10,8 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import Http404
-from models import Plant, User
+from models import Plant, User, Ground, Project, Area, Position
+from django.core.exceptions import ValidationError
 
 
 def destroy_session_error (function):
@@ -93,13 +95,43 @@ def new_project (request):
   )
   return render (request, "new.html", context=context)
 
+@require_http_methods(["POST"])
+@need_logged_user
+def create_project (request):
+  user = get_user (request)
+  project = Project ()
+  project.user = user
+  project.name = request.POST.get ("new_project_name", None)
+  area_points = json.loads(request.POST.get ("coordinate_set", "[]"))
+  soil_type = Ground.GROUND_VALUES[Ground.GROUND_NAMES[-1]]
+  for points in area_points:
+    other_points = points[1:]
+    area = Area ()
+    area.x, area.y = points[0]
+    area.ground = Ground.objects.filter (ground=int (soil_type))[0]
+    positions = [Position (**kwargs) for kwargs in 
+      [dict ((('x', point[0]), ('y', point[1]))) for point in points[1:]]]
+    for position in positions:
+      position.save ()
+    area.positions = positions
+    area.save ()
+  try:
+    project.save ()
+    user.projects.add (project)
+    user.save ()
+  except ValidationError:
+    request.session["error"] = "You already have a project with this name."
+    return HttpResponseRedirect ("new")
+  return HttpResponseRedirect ("projects")
+
 @require_http_methods(["GET"])
 @destroy_session_error
 @need_logged_user
 def view_projects (request):
   user = get_user (request)
-  context = get_default_context (request, user, page_name="view")
-  return render (request, "view.html", context=context)
+  context = get_default_context (request, user, page_name="projects")
+  context["projects"] = user.projects.all ()
+  return render (request, "projects.html", context=context)
 
 @require_http_methods(["GET"])
 @destroy_session_error
