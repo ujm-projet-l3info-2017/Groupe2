@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+        <div class="col-md-12">
+          <span id="usage" class="anchor"></span>
+          <span class="title">Projects</span>
+          <div class="container">
+{% if projects is not None %}
+            <ul>
+  {% for project in projects %}
+              <li id="project_{{project.name}}">
+                <div>
+                  <a href="/projects/{{ project.name }}">{{ project.name }}</a>
+                  <span class="action-button-container">
+                    <a href="/edit/{{ project.name }}" class="small-button btn" title="New Project">
+                      <span class="glyphicon glyphicon glyphicon-edit"></span>
+                      Edit
+                    </a>
+                    <a class="small-button btn" title="Delete Project" onclick="delete_project('{{project.name}}', '{{csrf_token}}')">
+                      <span class="glyphicon glyphicon glyphicon-trash"></span>
+                      Delete
+                    </a>
+                  </span>
+                </div>
+              </li>
+  {% endfor %}
+            </ul>
+{% else %}
+            <p class="home-description">
+              You do not have any project for the moment. <br />
+              Click on the botton bellow to create your first project
+            </p>
+{% endif %}
+            <div class="small-button-border">
+              <a href="/new/" class="small-button btn" title="New Project">
+                New Garden Project <br />
+                <span class="glyphicon glyphicon glyphicon-plus"></span>
+              </a>
+            </div>
+          </div>
+{% endblock %}
