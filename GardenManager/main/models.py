@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import time
 
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from utils.digester import Digester
 from utils.circular_list import CircularList
@@ -224,8 +225,9 @@ class Project (models.Model):
       - an update date ;
   """
 
-  def validate_name (name):
-    if self.user.projects.filter (name=name) is not None:
+  def validate_name (self, name):
+    if self.user.projects.filter (name=name).exists ():
+      print self.user.projects.filter (name=name)
       raise ValidationError('Already existing project with name: %s' % name,
         code='invalid')
 
@@ -248,6 +250,7 @@ class Project (models.Model):
       This save check for the existance of another project with the same name.
       If one is found, throw a ValidationError.
     """
+    self.validate_name (self.name)
     super (Project, self).save ()
 
   def digest (self):
