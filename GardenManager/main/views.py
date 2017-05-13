@@ -5,6 +5,7 @@ import re
 import json
 
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.exceptions import ObjectDoesNotExist
@@ -76,6 +77,7 @@ def home (request):
     type ('', (), {"name": "Delete me"}) (), 
     type ('', (), {"name": "And me too"}) (), 
   ]
+  context["js"].append ("projects")
   context["delete_account_sentence"] = "Delete the account with login %s" % user.login
   return render (request, "home.html", context=context)
 
@@ -216,6 +218,7 @@ def register (request):
 
 
 @require_http_methods(["GET"])
+@need_logged_user
 def logout (request):
   if request.session.has_key ("user_id"):
     request.session["error"] = "Logout success"
@@ -225,3 +228,14 @@ def logout (request):
   redirect_page = request.GET.get ("next_page", None)
   request.session["_old_post"] = request.POST
   return HttpResponseRedirect ("/")
+
+@require_http_methods(["POST"])
+@need_logged_user
+def delete_project (request):
+  user = get_user (request)
+  project_name = request.POST.get ("name", "")
+  project = user.projects.filter (name=project_name)
+  if project:
+    project.delete ()
+    return HttpResponse ('', status=200)
+  return HttpResponse ('', status=422)
