@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+          <span id="usage" class="anchor"></span>
+          <span class="title col-md-12">Project: {{ project.name }}</span>
+          <div id="manage_project_id">
+            <span class="title col-md-12">Manage {{ project.name }} project</span>
+            <div id="canvas_container" class="col-md-6"></div>
+            <div class="col-md-6">
+              <select id="plant_selector">
+                {% for plant in plants %}
+                <option value='{ "id":"{{ plant.id }}", "cn": "{{ plant.common_name }}", "sp": "{{ plant.spread }}" }'>{{ plant.common_name }}</option>
+                {% endfor %}
+              </select>
+              <button id="add_selected_plant">Add</button>
+            </div>
+          </div>
+          <div id="edit_project_id">
+            <span class="title">Edit {{ project.name }} project</span>
+          </div>
+{% endblock %}
