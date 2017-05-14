@@ -5,61 +5,6 @@ var drawingManager ;
 var polygones = {} ;
 var coordinate_set = [] ;
 
-/*
-function toggle_draw_mode (id) {
-  if (true)
-    return ;
-  if (arguments.length === 0) {
-    toggle_draw_mode ("google_map_api_div_wrapper") ;
-    toggle_draw_mode ("canvas-wrap") ;
-    if (document.getElementById ("google_map_api_div_wrapper").style["display"] == "inline") {
-      map_div = document.getElementById ("google_map_api_div") ;
-      map_div.width -= 1 ;
-      document.getElementById ("creation_plan_take_shot_button").innerText = "Keep this view" ;
-    } else {
-      document.getElementById ("creation_plan_take_shot_button").innerText = "Select the view" ;
-      map_div = document.getElementById ("google_map_api_div") ;
-      map_div.width += 1 ;
-    }
-  } else {
-    element = document.getElementById (id) ;
-    style = element.style["display"] == "inline" ? "none" : "inline" ;
-    while (element.style["display"] !== style) {
-      element.style["display"] = style ;
-    }
-  }
-}
-
-function takePicture () {
-  if (true)
-    return ;
-  var map_div = document.getElementById ("google_map_api_div") ;
-  var map_div_rect = map_div.getBoundingClientRect() ;
-  var width = map_div_rect.width ;
-  var height = map_div_rect.height ;
-  var currentPosition = map.getCenter ();
-  var drawing_canvas = document.getElementById ("drawing_canvas") ;
-  drawing_canvas.width = width ;
-  drawing_canvas.height = height ;
-  image = new Image () ;
-  image.src = 'https://maps.googleapis.com/maps/api/staticmap?' +
-    'maptype=satellite' +
-    '&center=' + currentPosition.lat () + ',' + currentPosition.lng () +
-    '&zoom=' + map.getZoom () +
-    '&size=' + width + 'x' + height +
-    '&key=' + get_google_api_key () ;
-  image.onload = function() {
-    drawing_canvas.getContext ("2d").drawImage (image, 0, 0); 
-  } ;
-  toggle_draw_mode () ;
-} ;
-
-window.addEventListener ("load", function () {
-  document.getElementById ("creation_plan_take_shot_button").onclick = takePicture
-}, false) ;
-
-*/
-
 
 polygone_complete = function (polygone) {
   coordonates = [] ;
@@ -77,14 +22,15 @@ rectangle_complete = function (rectangle) {
   coordonates = [] ;
   ne = rectangle.getBounds().getNorthEast() ;
   sw = rectangle.getBounds().getSouthWest() ;
-  coordonates.push ([sw.lat(), ne.lng ()])
   coordonates.push ([ne.lat(), ne.lng ()])
   coordonates.push ([ne.lat(), sw.lng ()])
   coordonates.push ([sw.lat(), sw.lng ()])
+  coordonates.push ([sw.lat(), ne.lng ()])
   create_bubble (coordonates, rectangle, ne.lat()+ne.lng()+sw.lat()+sw.lng()) ;
 }
 
 create_bubble = function (coordonates, polygone, id) {
+  coordonates = translate_coordonates_to_positions (coordonates) ;
   div = document.createElement ("div") ;
   div.className = "alert alert-info" ;
   div.id = id ;
@@ -146,12 +92,27 @@ function initialize () {
 } ;
 
 
+translate_coordonates_to_positions = function (coordinates) {
+  var positions = [[0, 0]]
+  base = coordinates[0] ;
+  for (i = 1; i < coordinates.length ; i += 1) {
+    distance_y = getDistanceFromLatLonInKm (base[0], 0, coordinates[i][0], 0) * 1000. ; // from Km to m
+    if (base[0] > coordinates[i][0])
+      distance_y *= -1 ;
+    distance_x = getDistanceFromLatLonInKm (0, base[1], 0, coordinates[i][1]) * 1000. ; // from Km to m
+    if (base[1] < coordinates[i][1])
+      distance_x *= -1 ;
+    positions.push ([distance_x, distance_y])
+  }
+  return positions ;
+}
+
 /*
  * Taken from:
  *  https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates-shows-wrong
  *
  */
-function getDistanceFromLatLonInKm (lat1,lon1,lat2,lon2) {
+function getDistanceFromLatLonInKm (lat1, lon1, lat2, lon2) {
   var R = 6371; // Radius of the earth in km
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
   var dLon = deg2rad(lon2-lon1); 
