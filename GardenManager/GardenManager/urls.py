@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^home/$', views.home),
     url(r'^new/$', views.new_project),
     url(r'^projects/$', views.view_projects),
+    url(r'^project/(?P<name>[^\.]+)$', views.view_project),
     url(r'^create_project$', views.create_project),
     url(r'^info/$', views.info),
     url(r'^login$', views.login),
