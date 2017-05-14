@@ -137,6 +137,23 @@ def view_projects (request):
 
 @require_http_methods(["GET"])
 @destroy_session_error
+@need_logged_user
+def view_project (request, name):
+  user = get_user (request)
+  print name
+  context = get_default_context (request, user, page_name="project")
+  project = user.projects.filter (name=name)
+  if len (project) != 1:
+    return Http404 ()
+  context["project"] = project[0]
+  context["raw_resource"].append (
+    "<script type=\"text/javascript\" \
+src=\"https://cdn.rawgit.com/konvajs/konva/1.6.2/konva.min.js\"></script>")
+  context["plants"] = Plant.objects.all ().order_by('common_name')
+  return render (request, "project.html", context=context)
+
+@require_http_methods(["GET"])
+@destroy_session_error
 def info (request):
   user = get_user (request)
   context = get_default_context (request, user, page_name="info")
