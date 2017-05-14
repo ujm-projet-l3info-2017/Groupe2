@@ -9,7 +9,7 @@
   {% for project in projects %}
               <li id="project_{{project.name}}">
                 <div>
-                  <a href="/projects/{{ project.name }}">{{ project.name }}</a>
+                  <a href="/project/{{ project.name }}">{{ project.name }}</a>
                   <span class="action-button-container">
                     <a href="/edit/{{ project.name }}" class="small-button btn" title="New Project">
                       <span class="glyphicon glyphicon glyphicon-edit"></span>
@@ -37,4 +37,5 @@
               </a>
             </div>
           </div>
+        </div>
 {% endblock %}
