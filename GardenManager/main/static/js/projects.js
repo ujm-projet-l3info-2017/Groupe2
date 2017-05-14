@@ -6,7 +6,7 @@ delete_project_success = function (name) {
         <div id="success_notice" class="text-center">\
           <button id="success_info_alert" type="button" class="close">&times;</button>\
           <div class="alert alert-success">\
-            <p>success</p>\
+            <p>The project "' + name + '" has been deleted</p>\
           </div>\
         </div>\
   ' ;
@@ -18,13 +18,13 @@ delete_project_success = function (name) {
   document.getElementById ("project_"+name).style["display"] = "none" ;
 }
 
-delete_project_fail = function () {
+delete_project_fail = function (name) {
   div = document.createElement ("div") ;
   div.innerHTML = '\
         <div id="fail_notice" class="text-center">\
           <button id="fail_info_alert" type="button" class="close">&times;</button>\
           <div class="alert alert-success">\
-            <p>Fail</p>\
+            <p>Fail<br />The project "' + name + '" could not be deleted</p>\
           </div>\
         </div>\
   ' ;
@@ -36,6 +36,8 @@ delete_project_fail = function () {
 }
 
 delete_project = function (name, csrf) {
+  if (!confirm("This will delete the project '" + name + "'"))
+    return ;
   $.ajax ({
     type: 'POST',
     url: "/delete",
@@ -44,7 +46,7 @@ delete_project = function (name, csrf) {
     dataType: "json",
     statusCode: {
       200: function () {delete_project_success (name)}, 
-      422: delete_project_fail
+      422: function () {delete_project_fail (name)}
     }
   }).done(null);
 }
