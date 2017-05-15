@@ -1,5 +1,11 @@
 
 
+window.addEventListener ("load", function () {
+
+  document.getElementById ("ground_name_unknown").selected = "selected" ;
+  
+}) ;
+
 toggle_hidden = function (id) {
   if (typeof(id) == "string") {
     element = document.getElementById (id) ;
