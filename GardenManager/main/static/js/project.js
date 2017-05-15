@@ -46,12 +46,15 @@ window.addEventListener ("load", function () {
 }) ;
 
 add_selected_plant = function () {
-  plant = JSON.parse (document.getElementById ("plant_selector").value) ;
+  plant_selector = document.getElementById ("plant_selector") ;
+  plant = JSON.parse (plant_selector.value) ;
+  console.log (plant["sp"]) ;
+  console.log (plant["sp"] * 10) ;
   plant_circle = new Konva.Circle ({
-    radius : plant["sp"] || 5,
+    radius : plant["sp"] * 10 || 5,
     x: 10,
     y: 10,
-    fill: 'black',
+    fill: plant["color"],
     draggable: true
   })
   layer = new Konva.Layer () ;

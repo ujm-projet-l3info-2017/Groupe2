@@ -149,16 +149,20 @@ def view_projects (request):
 @need_logged_user
 def view_project (request, name):
   user = get_user (request)
-  print name
   context = get_default_context (request, user, page_name="project")
   project = user.projects.filter (name=name)
   if len (project) != 1:
     return Http404 ()
   context["project"] = project[0]
-  context["raw_resource"].append (
-    "<script type=\"text/javascript\" \
-src=\"https://cdn.rawgit.com/konvajs/konva/1.6.2/konva.min.js\"></script>")
-  context["plants"] = Plant.objects.all ().order_by('common_name')
+  context["js"].append ("konva.min")
+  ground_no = project[0].areas.first ().ground.ground
+  ground_name = Ground.GROUND_NAMES[ground_no]
+  context["plants"] = [
+    [plant, plant.get_compatility_color(ground_name)]
+    for plant in Plant.objects.all ().order_by('common_name')
+  ]
+  context["ground_name"] = ground_name
+  print project[0]
   return render (request, "project.html", context=context)
 
 @require_http_methods(["GET"])
@@ -262,6 +266,6 @@ def delete_project (request):
   project_name = request.POST.get ("name", "")
   project = user.projects.filter (name=project_name)
   if project:
-    project.delete ()
+    project[0].delete ()
     return HttpResponse ('', status=200)
   return HttpResponse ('', status=422)
