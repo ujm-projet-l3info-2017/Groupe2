@@ -817,6 +817,7 @@ class Area (models.Model):
 
   # Definition of the relation-related attributes
   ground = models.ForeignKey (Ground, null=False, related_name="areas")
+  project = models.ForeignKey (Project, null=True, related_name="areas")
 
   def digest (self):
     return Digester ().digest (str (self.x) + str (self.y) + self.ground_id)
