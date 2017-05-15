@@ -11,6 +11,14 @@
               <span class="input-group-addon">Project Name</span>
               <input required id="new_project_name" name="new_project_name" type="text" class="form-control" placeholder="Project name">
             </div>
+            <div class="input-group">
+              <span class="input-group-addon">Soil type</span>
+              <select required id="new_project_soil_type" name="new_project_soil_type" type="text" class="form-control" placeholder="Soil types" selected="unknown">
+                {% for ground_name in ground_names %}{% if ground_name != "all" %}
+                <option id="ground_name_{{ground_name}}"value="{{ground_name}}">{{ground_name}}</option>
+                {% endif %}{% endfor %}
+              </select>
+            </div>
             <div class="actions">
               <input type="submit" name="commit" value="Create Project" class="btn btn-primary" />
             </div>

@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import time
+from math import fabs
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -147,6 +148,17 @@ class Ground (models.Model):
   def digest (self):
     return Digester ().digest (str (self))
 
+  def get_compatility (self, name):
+    if name == "all":
+      return 0
+    if name == "unknown":
+      return -1
+    index_name = Ground.GROUND_NAMES.index (name)
+    diff = fabs (index_name - self.ground)
+    if diff > 1:
+      return 2
+    return diff
+
   def __str__ (self):
     return "Ground (%s)" % Ground.GROUND_NAMES[self.ground]
 
@@ -230,10 +242,13 @@ class Project (models.Model):
       print self.user.projects.filter (name=name)
       raise ValidationError('Already existing project with name: %s' % name,
         code='invalid')
+    if not name:
+      print name
+      raise ValidationError('Already existing project with name: %s' % name,
+        code='invalid')
 
   def __init__ (self, *args, **kwargs):
     super (Project, self).__init__ (*args, **kwargs)
-    self.id = self.digest ()
 
   # Definition of the regular attributes.
 
@@ -251,10 +266,20 @@ class Project (models.Model):
       If one is found, throw a ValidationError.
     """
     self.validate_name (self.name)
+    self.id = self.digest ()
     super (Project, self).save ()
 
   def digest (self):
-    return Digester (salt=True).digest ()
+    return Digester (salt=False).digest (self.name)
+
+  def __str__ (self):
+    return "Project (%s)" % self.name
+
+  def __repr__ (self):
+    return ('\n'.join (("Project object of id %(id)s ({ ",
+      "\tname  = %(name)s",
+      "})")) % { "id": self.id, "name": self.name
+    })
 
 
 class Exposure (models.Model):
@@ -745,6 +770,14 @@ class Plant (models.Model):
   def __init__ (self, *args, **kwargs):
     super (Plant, self).__init__ (*args, **kwargs)
     self.id = self.digest ()
+
+  def soil_compatibility (self, ground_name):
+    return min ([ground.get_compatility (ground_name)
+      for ground in self.grounds.all ()
+    ]) 
+
+  def get_compatility_color (self, name):
+    return ['#00f000', '#f0f000', '#f00000', '#808080'][int(self.soil_compatibility(name))]
 
   def digest (self):
     return Digester ().digest (self.common_name + self.scientific_name)

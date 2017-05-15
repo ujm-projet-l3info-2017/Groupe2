@@ -95,6 +95,7 @@ def new_project (request):
     "key=%s&amp;libraries=drawing&amp;callback=initialize\"></script>") % \
     context["google_api_key"]
   )
+  context["ground_names"] = Ground.GROUND_NAMES
   return render (request, "new.html", context=context)
 
 @require_http_methods(["POST"])
@@ -105,7 +106,12 @@ def create_project (request):
   project.user = user
   project.name = request.POST.get ("new_project_name", None)
   area_points = json.loads(request.POST.get ("coordinate_set", "[]"))
-  soil_type = Ground.GROUND_VALUES[Ground.GROUND_NAMES[-1]]
+  soil_type = request.POST.get ("new_project_soil_type", None)
+  soil_type = Ground.GROUND_VALUES[soil_type]
+  areas = []
+  if not area_points:
+    request.session["error"] = "You must define at least one ground."
+    return HttpResponseRedirect ("new")
   for points in area_points:
     other_points = points[1:]
     area = Area ()
@@ -117,13 +123,16 @@ def create_project (request):
       position.save ()
     area.positions = positions
     area.save ()
+    areas.append (area)
   try:
     project.save ()
-    user.projects.add (project)
-    user.save ()
-  except ValidationError:
+  except ValidationError as e:
     request.session["error"] = "You already have a project with this name."
+    print e
     return HttpResponseRedirect ("new")
+  project.areas.add (*areas)
+  user.projects.add (project)
+  user.save ()
   return HttpResponseRedirect ("projects")
 
 @require_http_methods(["GET"])
